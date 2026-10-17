@@ -1,0 +1,6 @@
+@Tahdeera.API_HostAddress = http://localhost:5096
+
+GET {{Tahdeera.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Tahdeera.API/Tahdeera.API.csproj" />
+    <Project Path="src/Tahdeera.Application/Tahdeera.Application.csproj" />
+    <Project Path="src/Tahdeera.Domain/Tahdeera.Domain.csproj" />
+    <Project Path="src/Tahdeera.Infrastructure/Tahdeera.Infrastructure.csproj" />
+  </Folder>
+</Solution>
