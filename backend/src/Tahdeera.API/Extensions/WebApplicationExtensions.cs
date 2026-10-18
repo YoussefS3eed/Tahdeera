@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Tahdeera.API.Middlewares;
 using Tahdeera.Infrastructure.Persistence;
 using Tahdeera.Infrastructure.Persistence.Seed;
@@ -54,6 +55,7 @@ public static class WebApplicationExtensions
     {
         using var scope = app.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<TahdeeraDbContext>();
+        await context.Database.MigrateAsync();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser<Guid>>>();
         await DatabaseSeeder.SeedAsync(context, userManager);
     }

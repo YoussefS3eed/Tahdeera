@@ -23,7 +23,8 @@ public static class DependencyInjection
         services.AddDbContext<TahdeeraDbContext>(options =>
         {
             options.UseNpgsql(connectionString)
-                   .UseSnakeCaseNamingConvention();
+                   .UseSnakeCaseNamingConvention()
+                   .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
         });
 
         services.AddScoped<ITahdeeraDbContext>(provider => provider.GetRequiredService<TahdeeraDbContext>());
