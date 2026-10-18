@@ -40,7 +40,7 @@ public class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
             .IsUnique();
 
         builder.Property(u => u.Phone)
-            .HasMaxLength(11);//01096817311
+            .HasMaxLength(32);
 
         builder.Property(u => u.PreferredLanguage)
             .HasMaxLength(10)

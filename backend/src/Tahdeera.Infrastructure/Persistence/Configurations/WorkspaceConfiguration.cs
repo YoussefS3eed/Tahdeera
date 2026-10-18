@@ -38,7 +38,7 @@ public class WorkspaceConfiguration : IEntityTypeConfiguration<Workspace>
             .IsRequired();
 
         builder.Property(w => w.ContactPhone)
-            .HasMaxLength(11);
+            .HasMaxLength(32);
 
         builder.Property(w => w.CityAddress)
             .HasMaxLength(240);

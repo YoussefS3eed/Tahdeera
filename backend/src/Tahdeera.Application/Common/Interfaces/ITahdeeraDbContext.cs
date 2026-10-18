@@ -15,6 +15,14 @@ public interface ITahdeeraDbContext
     DbSet<SubscriptionPayment> SubscriptionPayments { get; }
     DbSet<AuditLog> AuditLogs { get; }
 
+    DbSet<Grade> Grades { get; }
+    DbSet<AcademicYear> AcademicYears { get; }
+    DbSet<Subject> Subjects { get; }
+    DbSet<Student> Students { get; }
+    DbSet<StudentAcademicHistory> StudentAcademicHistories { get; }
+    DbSet<WorkspaceStudent> WorkspaceStudents { get; }
+    DbSet<StudentCredential> StudentCredentials { get; }
+
     DatabaseFacade Database { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);

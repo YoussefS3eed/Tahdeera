@@ -22,6 +22,14 @@ public class TahdeeraDbContext : IdentityDbContext<IdentityUser<Guid>, IdentityR
     public DbSet<SubscriptionPayment> SubscriptionPayments => Set<SubscriptionPayment>();
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
 
+    public DbSet<Grade> Grades => Set<Grade>();
+    public DbSet<AcademicYear> AcademicYears => Set<AcademicYear>();
+    public DbSet<Subject> Subjects => Set<Subject>();
+    public DbSet<Student> Students => Set<Student>();
+    public DbSet<StudentAcademicHistory> StudentAcademicHistories => Set<StudentAcademicHistory>();
+    public DbSet<WorkspaceStudent> WorkspaceStudents => Set<WorkspaceStudent>();
+    public DbSet<StudentCredential> StudentCredentials => Set<StudentCredential>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

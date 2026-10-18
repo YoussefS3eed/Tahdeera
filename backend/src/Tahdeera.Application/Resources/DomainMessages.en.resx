@@ -45,4 +45,28 @@
   <data name="USER_ALREADY_MEMBER" xml:space="preserve">
     <value>The user is already an active member of this workspace.</value>
   </data>
+  <data name="QUOTA_MAX_STUDENTS_REACHED" xml:space="preserve">
+    <value>Maximum student quota reached for your current subscription plan. Please upgrade your plan to enroll more students.</value>
+  </data>
+  <data name="CREDENTIAL_TOKEN_ALREADY_EXISTS" xml:space="preserve">
+    <value>This credential token is already registered in the system. Please scan a new, unassigned card.</value>
+  </data>
+  <data name="STUDENT_ENROLLMENT_VERIFICATION_FAILED" xml:space="preserve">
+    <value>Student verification failed. Student code or guardian phone number does not match.</value>
+  </data>
+  <data name="INVALID_OR_REVOKED_CARD" xml:space="preserve">
+    <value>This credential is invalid or has been revoked.</value>
+  </data>
+  <data name="STUDENT_ALREADY_ENROLLED_IN_WORKSPACE" xml:space="preserve">
+    <value>This student is already enrolled in this workspace.</value>
+  </data>
+  <data name="STUDENT_NOT_FOUND_IN_WORKSPACE" xml:space="preserve">
+    <value>Student not found in this workspace.</value>
+  </data>
+  <data name="GRADE_REQUIRED_FOR_NEW_ACADEMIC_YEAR" xml:space="preserve">
+    <value>Grade selection is required for the new academic year to link or promote student.</value>
+  </data>
+  <data name="RATE_LIMIT_EXCEEDED" xml:space="preserve">
+    <value>Rate limit exceeded. Please wait and try again later.</value>
+  </data>
 </root>

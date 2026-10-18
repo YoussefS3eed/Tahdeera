@@ -104,5 +104,8 @@ public static class DatabaseSeeder
                 await context.SaveChangesAsync();
             }
         }
+
+        // 3. Seed Default Academic Reference Grades (Milestone B2)
+        await GradeSeeder.SeedAsync(context);
     }
 }

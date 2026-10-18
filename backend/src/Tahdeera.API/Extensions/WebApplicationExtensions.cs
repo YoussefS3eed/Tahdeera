@@ -42,7 +42,10 @@ public static class WebApplicationExtensions
         app.UseAuthentication();
         app.UseAuthorization();
 
-        // 6. Server-Side Subscription Lockout Middleware (DEC-08)
+        // 6. Rate Limiting
+        app.UseRateLimiter();
+
+        // 7. Server-Side Subscription Lockout Middleware (DEC-08)
         app.UseMiddleware<SubscriptionLockoutMiddleware>();
 
         // 7. Health Checks (Constitution Principle 10)

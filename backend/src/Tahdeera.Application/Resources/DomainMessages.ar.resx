@@ -45,4 +45,28 @@
   <data name="USER_ALREADY_MEMBER" xml:space="preserve">
     <value>المستخدم مسجل بالفعل كعضو نشط في مساحة العمل هذه.</value>
   </data>
+  <data name="QUOTA_MAX_STUDENTS_REACHED" xml:space="preserve">
+    <value>تم الوصول إلى الحد الأقصى لعدد الطلاب المسموح به في باقة اشتراكك الحالية. يرجى ترقية الباقة لإضافة المزيد من الطلاب.</value>
+  </data>
+  <data name="CREDENTIAL_TOKEN_ALREADY_EXISTS" xml:space="preserve">
+    <value>هذا الكارت مسجل بالفعل في النظام لبطاقة أخرى. يرجى مسح كارت جديد فارغ.</value>
+  </data>
+  <data name="STUDENT_ENROLLMENT_VERIFICATION_FAILED" xml:space="preserve">
+    <value>تعذر التحقق من بيانات الطالب. كود الطالب أو رقم هاتف ولي الأمر غير متطابق.</value>
+  </data>
+  <data name="INVALID_OR_REVOKED_CARD" xml:space="preserve">
+    <value>هذا الكارت غير صالح أو تم إلغاؤه مسبقاً.</value>
+  </data>
+  <data name="STUDENT_ALREADY_ENROLLED_IN_WORKSPACE" xml:space="preserve">
+    <value>هذا الطالب مسجل بالفعل في هذه المساحة التعليمية.</value>
+  </data>
+  <data name="STUDENT_NOT_FOUND_IN_WORKSPACE" xml:space="preserve">
+    <value>الطالب غير مسجل في هذه المساحة التعليمية.</value>
+  </data>
+  <data name="GRADE_REQUIRED_FOR_NEW_ACADEMIC_YEAR" xml:space="preserve">
+    <value>يجب تحديد المرحلة الدراسية للسنة الدراسية الجديدة لنقل الطالب.</value>
+  </data>
+  <data name="RATE_LIMIT_EXCEEDED" xml:space="preserve">
+    <value>تم تجاوز الحد المسموح به للمحاولات. يرجى الانتظار والمحاولة مرة أخرى لاحقاً.</value>
+  </data>
 </root>

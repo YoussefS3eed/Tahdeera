@@ -265,6 +265,52 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Tahdeera.Domain.Entities.AcademicYear", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<DateOnly>("EndsOn")
+                        .HasColumnType("date")
+                        .HasColumnName("ends_on");
+
+                    b.Property<bool>("IsCurrent")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_current");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("name");
+
+                    b.Property<DateOnly>("StartsOn")
+                        .HasColumnType("date")
+                        .HasColumnName("starts_on");
+
+                    b.HasKey("Id")
+                        .HasName("pk_academic_years");
+
+                    b.HasIndex("IsCurrent")
+                        .IsUnique()
+                        .HasDatabaseName("ux_one_current_academic_year")
+                        .HasFilter("is_current = true");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("ix_academic_years_name");
+
+                    b.ToTable("academic_years", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_academic_years_dates", "ends_on > starts_on");
+                        });
+                });
+
             modelBuilder.Entity("Tahdeera.Domain.Entities.AppUser", b =>
                 {
                     b.Property<Guid>("Id")
@@ -361,7 +407,7 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                         {
                             t.HasCheckConstraint("ck_app_users_preferred_language", "preferred_language IN ('ar', 'en')");
 
-                            t.HasCheckConstraint("ck_app_users_preferred_theme", "preferred_theme IN ('light', 'dark', 'system')");
+                            t.HasCheckConstraint("ck_app_users_preferred_theme", "preferred_theme IN ('light', 'dark')");
                         });
                 });
 
@@ -426,6 +472,63 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                     b.ToTable("audit_logs", (string)null);
                 });
 
+            modelBuilder.Entity("Tahdeera.Domain.Entities.Grade", b =>
+                {
+                    b.Property<short>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("smallint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<short>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("code");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name_ar");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name_en");
+
+                    b.Property<int>("SortOrder")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0)
+                        .HasColumnName("sort_order");
+
+                    b.HasKey("Id")
+                        .HasName("pk_grades");
+
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("ix_grades_code");
+
+                    b.HasIndex("NameAr")
+                        .IsUnique()
+                        .HasDatabaseName("ix_grades_name_ar");
+
+                    b.HasIndex("NameEn")
+                        .IsUnique()
+                        .HasDatabaseName("ix_grades_name_en");
+
+                    b.ToTable("grades", (string)null);
+                });
+
             modelBuilder.Entity("Tahdeera.Domain.Entities.RefreshToken", b =>
                 {
                     b.Property<Guid>("Id")
@@ -474,6 +577,259 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                         .HasFilter("revoked_at IS NULL");
 
                     b.ToTable("refresh_tokens", (string)null);
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.Student", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("full_name");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
+
+                    b.Property<string>("StudentCode")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("student_code");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<byte[]>("VerificationPinHash")
+                        .HasColumnType("bytea")
+                        .HasColumnName("verification_pin_hash");
+
+                    b.HasKey("Id")
+                        .HasName("pk_students");
+
+                    b.HasIndex("StudentCode")
+                        .IsUnique()
+                        .HasDatabaseName("ix_students_student_code");
+
+                    b.ToTable("students", (string)null);
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.StudentAcademicHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid>("AcademicYearId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("academic_year_id");
+
+                    b.Property<short>("GradeId")
+                        .HasColumnType("smallint")
+                        .HasColumnName("grade_id");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text")
+                        .HasColumnName("notes");
+
+                    b.Property<DateTimeOffset>("RecordedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("recorded_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<Guid?>("RecordedByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("recorded_by_user_id");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("student_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_student_academic_history");
+
+                    b.HasIndex("AcademicYearId")
+                        .HasDatabaseName("ix_student_academic_history_academic_year_id");
+
+                    b.HasIndex("GradeId")
+                        .HasDatabaseName("ix_student_academic_history_grade_id");
+
+                    b.HasIndex("RecordedByUserId")
+                        .HasDatabaseName("ix_student_academic_history_recorded_by_user_id");
+
+                    b.HasIndex("StudentId", "AcademicYearId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_student_academic_history_student_id_academic_year_id");
+
+                    b.HasIndex("StudentId", "AcademicYearId", "GradeId")
+                        .HasDatabaseName("ix_student_academic_history_lookup");
+
+                    b.ToTable("student_academic_history", (string)null);
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.StudentCredential", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<string>("CardUidDisplay")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("card_uid_display");
+
+                    b.Property<string>("CredentialType")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("credential_type");
+
+                    b.Property<DateTimeOffset?>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expires_at");
+
+                    b.Property<DateTimeOffset>("IssuedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("issued_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<Guid>("IssuedByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("issued_by_user_id");
+
+                    b.Property<string>("Label")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("label");
+
+                    b.Property<string>("RevocationReason")
+                        .HasColumnType("text")
+                        .HasColumnName("revocation_reason");
+
+                    b.Property<DateTimeOffset?>("RevokedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("revoked_at");
+
+                    b.Property<Guid?>("RevokedByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("revoked_by_user_id");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("student_id");
+
+                    b.Property<byte[]>("TokenHash")
+                        .IsRequired()
+                        .HasColumnType("bytea")
+                        .HasColumnName("token_hash");
+
+                    b.Property<Guid>("WorkspaceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("workspace_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_student_credentials");
+
+                    b.HasIndex("IssuedByUserId")
+                        .HasDatabaseName("ix_student_credentials_issued_by_user_id");
+
+                    b.HasIndex("RevokedByUserId")
+                        .HasDatabaseName("ix_student_credentials_revoked_by_user_id");
+
+                    b.HasIndex("StudentId")
+                        .HasDatabaseName("ix_student_credentials_student_active")
+                        .HasFilter("revoked_at IS NULL");
+
+                    b.HasIndex("TokenHash")
+                        .IsUnique()
+                        .HasDatabaseName("ux_student_credentials_token_hash");
+
+                    b.HasIndex("WorkspaceId", "StudentId", "CredentialType")
+                        .IsUnique()
+                        .HasDatabaseName("ux_one_active_nfc_per_student_workspace")
+                        .HasFilter("revoked_at IS NULL AND credential_type = 'NFC'");
+
+                    b.ToTable("student_credentials", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_student_credentials_expires_at", "expires_at IS NULL OR expires_at > issued_at");
+
+                            t.HasCheckConstraint("ck_student_credentials_revoked_at", "revoked_at IS NULL OR revoked_at >= issued_at");
+
+                            t.HasCheckConstraint("ck_student_credentials_type", "credential_type IN ('QR', 'NFC', 'FallbackCode')");
+                        });
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.Subject", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("code");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasColumnName("name_ar");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasColumnName("name_en");
+
+                    b.HasKey("Id")
+                        .HasName("pk_subjects");
+
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("ix_subjects_code");
+
+                    b.HasIndex("NameAr")
+                        .IsUnique()
+                        .HasDatabaseName("ix_subjects_name_ar");
+
+                    b.HasIndex("NameEn")
+                        .IsUnique()
+                        .HasDatabaseName("ix_subjects_name_en");
+
+                    b.ToTable("subjects", (string)null);
                 });
 
             modelBuilder.Entity("Tahdeera.Domain.Entities.SubscriptionPayment", b =>
@@ -829,6 +1185,102 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Tahdeera.Domain.Entities.WorkspaceStudent", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid?>("CreatedByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_user_id");
+
+                    b.Property<DateTimeOffset>("EnrolledAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("enrolled_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<string>("GuardianName")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("guardian_name");
+
+                    b.Property<string>("GuardianPhone")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("guardian_phone");
+
+                    b.Property<string>("LocalNotes")
+                        .HasColumnType("text")
+                        .HasColumnName("local_notes");
+
+                    b.Property<string>("SeatNumber")
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("seat_number");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("Active")
+                        .HasColumnName("status");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("student_id");
+
+                    b.Property<string>("StudentPhone")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("student_phone");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<bool>("WhatsappOptIn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("whatsapp_opt_in");
+
+                    b.Property<DateTimeOffset?>("WhatsappOptInAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("whatsapp_opt_in_at");
+
+                    b.Property<Guid>("WorkspaceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("workspace_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_workspace_students");
+
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_workspace_students_created_by_user_id");
+
+                    b.HasIndex("GuardianPhone")
+                        .HasDatabaseName("ix_workspace_students_guardian_phone");
+
+                    b.HasIndex("StudentId")
+                        .HasDatabaseName("ix_workspace_students_student");
+
+                    b.HasIndex("WorkspaceId", "StudentId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_workspace_students_workspace_id_student_id");
+
+                    b.ToTable("workspace_students", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_workspace_students_status", "status IN ('Active', 'Inactive', 'Archived', 'Blocked')");
+                        });
+                });
+
             modelBuilder.Entity("Tahdeera.Domain.Entities.WorkspaceSubscription", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1023,6 +1475,82 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Tahdeera.Domain.Entities.StudentAcademicHistory", b =>
+                {
+                    b.HasOne("Tahdeera.Domain.Entities.AcademicYear", "AcademicYear")
+                        .WithMany("AcademicHistories")
+                        .HasForeignKey("AcademicYearId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_student_academic_history_academic_years_academic_year_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.Grade", "Grade")
+                        .WithMany("AcademicHistories")
+                        .HasForeignKey("GradeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_student_academic_history_grades_grade_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.AppUser", "RecordedByUser")
+                        .WithMany()
+                        .HasForeignKey("RecordedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_student_academic_history_app_users_recorded_by_user_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.Student", "Student")
+                        .WithMany("AcademicHistories")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_student_academic_history_students_student_id");
+
+                    b.Navigation("AcademicYear");
+
+                    b.Navigation("Grade");
+
+                    b.Navigation("RecordedByUser");
+
+                    b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.StudentCredential", b =>
+                {
+                    b.HasOne("Tahdeera.Domain.Entities.AppUser", "IssuedByUser")
+                        .WithMany()
+                        .HasForeignKey("IssuedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_student_credentials_app_users_issued_by_user_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.AppUser", "RevokedByUser")
+                        .WithMany()
+                        .HasForeignKey("RevokedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_student_credentials_app_users_revoked_by_user_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.Student", "Student")
+                        .WithMany("Credentials")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_student_credentials_students_student_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.Workspace", "Workspace")
+                        .WithMany()
+                        .HasForeignKey("WorkspaceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_student_credentials_workspaces_workspace_id");
+
+                    b.Navigation("IssuedByUser");
+
+                    b.Navigation("RevokedByUser");
+
+                    b.Navigation("Student");
+
+                    b.Navigation("Workspace");
+                });
+
             modelBuilder.Entity("Tahdeera.Domain.Entities.SubscriptionPayment", b =>
                 {
                     b.HasOne("Tahdeera.Domain.Entities.AppUser", "RecordedByUser")
@@ -1084,6 +1612,35 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                     b.Navigation("Workspace");
                 });
 
+            modelBuilder.Entity("Tahdeera.Domain.Entities.WorkspaceStudent", b =>
+                {
+                    b.HasOne("Tahdeera.Domain.Entities.AppUser", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_workspace_students_app_users_created_by_user_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.Student", "Student")
+                        .WithMany("WorkspaceEnrollments")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_workspace_students_students_student_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.Workspace", "Workspace")
+                        .WithMany()
+                        .HasForeignKey("WorkspaceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_workspace_students_workspaces_workspace_id");
+
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("Student");
+
+                    b.Navigation("Workspace");
+                });
+
             modelBuilder.Entity("Tahdeera.Domain.Entities.WorkspaceSubscription", b =>
                 {
                     b.HasOne("Tahdeera.Domain.Entities.AppUser", "CreatedByUser")
@@ -1120,11 +1677,30 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                     b.Navigation("Workspace");
                 });
 
+            modelBuilder.Entity("Tahdeera.Domain.Entities.AcademicYear", b =>
+                {
+                    b.Navigation("AcademicHistories");
+                });
+
             modelBuilder.Entity("Tahdeera.Domain.Entities.AppUser", b =>
                 {
                     b.Navigation("RefreshTokens");
 
                     b.Navigation("WorkspaceMemberships");
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.Grade", b =>
+                {
+                    b.Navigation("AcademicHistories");
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.Student", b =>
+                {
+                    b.Navigation("AcademicHistories");
+
+                    b.Navigation("Credentials");
+
+                    b.Navigation("WorkspaceEnrollments");
                 });
 
             modelBuilder.Entity("Tahdeera.Domain.Entities.SubscriptionPlan", b =>

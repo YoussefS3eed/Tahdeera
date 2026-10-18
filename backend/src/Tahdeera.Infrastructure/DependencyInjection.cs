@@ -78,6 +78,7 @@ public static class DependencyInjection
         services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddScoped<IAuditLogService, AuditLogService>();
         services.AddScoped<IIdentityService, IdentityService>();
+        services.AddScoped<ICredentialSecurityService, CredentialSecurityService>();
 
         // Repositories & Unit of Work
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));

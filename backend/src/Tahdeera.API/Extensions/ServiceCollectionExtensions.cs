@@ -92,7 +92,10 @@ public static class ServiceCollectionExtensions
         services.AddApplication();
         services.AddInfrastructure(configuration);
 
-        // 8. Health Checks
+        // 8. Rate Limiting
+        services.AddAntiEnumerationRateLimiter();
+
+        // 9. Health Checks
         services.AddHealthChecks()
             .AddCheck<Tahdeera.API.Health.DatabaseHealthCheck>("PostgreSQL", tags: new[] { "ready" });
 

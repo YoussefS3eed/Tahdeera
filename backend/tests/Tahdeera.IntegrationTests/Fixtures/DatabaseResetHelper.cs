@@ -15,9 +15,15 @@ public static class DatabaseResetHelper
 {
     public static async Task ResetAsync(TahdeeraDbContext context, UserManager<IdentityUser<Guid>> userManager)
     {
-        // 1. Truncate mutable workspace, member, token, and payment tables
+        // 1. Truncate mutable workspace, member, student, token, and payment tables
         await context.Database.ExecuteSqlRawAsync(@"
             TRUNCATE TABLE 
+                student_credentials,
+                workspace_students,
+                student_academic_history,
+                students,
+                subjects,
+                academic_years,
                 audit_logs, 
                 subscription_payments, 
                 workspace_subscriptions, 
