@@ -36,4 +36,13 @@
   <data name="INTERNAL_SERVER_ERROR" xml:space="preserve">
     <value>An unexpected error occurred, please try again later.</value>
   </data>
+  <data name="MEMBER_NOT_FOUND" xml:space="preserve">
+    <value>The requested staff member was not found in this workspace.</value>
+  </data>
+  <data name="CANNOT_DEACTIVATE_OWNER" xml:space="preserve">
+    <value>Cannot deactivate the workspace owner.</value>
+  </data>
+  <data name="USER_ALREADY_MEMBER" xml:space="preserve">
+    <value>The user is already an active member of this workspace.</value>
+  </data>
 </root>

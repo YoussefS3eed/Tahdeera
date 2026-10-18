@@ -2,7 +2,6 @@ using MediatR;
 using Tahdeera.Application.Common.Interfaces;
 using Tahdeera.Application.Features.Auth.DTOs;
 using Tahdeera.Domain.Common;
-using Tahdeera.Domain.Entities;
 using Tahdeera.Domain.Repositories;
 using DomainRefreshToken = Tahdeera.Domain.Entities.RefreshToken;
 

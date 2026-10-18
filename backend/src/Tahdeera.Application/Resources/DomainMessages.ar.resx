@@ -36,4 +36,13 @@
   <data name="INTERNAL_SERVER_ERROR" xml:space="preserve">
     <value>حدث خطأ غير متوقع، يرجى المحاولة لاحقاً.</value>
   </data>
+  <data name="MEMBER_NOT_FOUND" xml:space="preserve">
+    <value>عضو طاقم العمل المطلوب غير موجود في مساحة العمل هذه.</value>
+  </data>
+  <data name="CANNOT_DEACTIVATE_OWNER" xml:space="preserve">
+    <value>لا يمكن إلغاء تفعيل مالك مساحة العمل.</value>
+  </data>
+  <data name="USER_ALREADY_MEMBER" xml:space="preserve">
+    <value>المستخدم مسجل بالفعل كعضو نشط في مساحة العمل هذه.</value>
+  </data>
 </root>

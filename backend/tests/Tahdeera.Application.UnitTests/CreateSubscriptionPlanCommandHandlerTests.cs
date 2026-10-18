@@ -4,7 +4,6 @@ using NSubstitute;
 using Tahdeera.Application.Common.Interfaces;
 using Tahdeera.Application.Common.Mappings;
 using Tahdeera.Application.Features.Subscriptions.Commands.CreateSubscriptionPlan;
-using Tahdeera.Application.Features.Subscriptions.DTOs;
 using Tahdeera.Domain.Common;
 using Tahdeera.Domain.Entities;
 using Tahdeera.Domain.Repositories;

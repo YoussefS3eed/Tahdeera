@@ -41,7 +41,10 @@ public static class WebApplicationExtensions
         app.UseAuthentication();
         app.UseAuthorization();
 
-        // 6. Controllers
+        // 6. Server-Side Subscription Lockout Middleware (DEC-08)
+        app.UseMiddleware<SubscriptionLockoutMiddleware>();
+
+        // 7. Controllers
         app.MapControllers();
 
         return app;
