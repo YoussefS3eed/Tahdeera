@@ -1,4 +1,8 @@
+using FluentValidation;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
+using Tahdeera.Application.Common.Behaviors;
 
 namespace Tahdeera.Application;
 
@@ -6,7 +10,18 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
-        // Register Application layer services (e.g. MediatR, FluentValidation, Mappers)
+        var assembly = Assembly.GetExecutingAssembly();
+
+        services.AddValidatorsFromAssembly(assembly);
+
+        services.AddMediatR(cfg =>
+        {
+            cfg.RegisterServicesFromAssembly(assembly);
+            cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+            cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+            cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
+        });
+
         return services;
     }
 }
