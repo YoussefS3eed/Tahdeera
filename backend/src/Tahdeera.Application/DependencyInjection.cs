@@ -1,4 +1,6 @@
 using FluentValidation;
+using Mapster;
+using MapsterMapper;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -12,8 +14,16 @@ public static class DependencyInjection
     {
         var assembly = Assembly.GetExecutingAssembly();
 
+        // 1. FluentValidation
         services.AddValidatorsFromAssembly(assembly);
 
+        // 2. Mapster
+        var config = TypeAdapterConfig.GlobalSettings;
+        config.Scan(assembly);
+        services.AddSingleton(config);
+        services.AddScoped<IMapper, ServiceMapper>();
+
+        // 3. MediatR
         services.AddMediatR(cfg =>
         {
             cfg.RegisterServicesFromAssembly(assembly);
@@ -24,4 +34,7 @@ public static class DependencyInjection
 
         return services;
     }
+
+    public static IServiceCollection AddApplication(this IServiceCollection services)
+        => services.AddApplicationServices();
 }

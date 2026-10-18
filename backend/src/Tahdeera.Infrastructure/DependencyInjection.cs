@@ -6,7 +6,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Tahdeera.Application.Common.Interfaces;
+using Tahdeera.Domain.Repositories;
 using Tahdeera.Infrastructure.Persistence;
+using Tahdeera.Infrastructure.Persistence.Repositories;
 using Tahdeera.Infrastructure.Services;
 
 namespace Tahdeera.Infrastructure;
@@ -15,7 +17,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("DefaultConnection") 
+        var connectionString = configuration.GetConnectionString("DefaultConnection")
             ?? "Host=localhost;Port=5433;Database=tahdeera;Username=postgres;Password=SetSecurePassword";
 
         services.AddDbContext<TahdeeraDbContext>(options =>
@@ -41,7 +43,7 @@ public static class DependencyInjection
         .AddDefaultTokenProviders();
 
         // JWT Authentication
-        var signingKey = configuration["Jwt:SigningKey"] 
+        var signingKey = configuration["Jwt:SigningKey"]
             ?? "SuperSecretJwtSigningKeyWith256BitsMinimumLengthForDevelopmentOnly!";
         var issuer = configuration["Jwt:Issuer"] ?? "https://api.tahdeera.app";
         var audience = configuration["Jwt:Audience"] ?? "https://tahdeera.app";
@@ -74,7 +76,17 @@ public static class DependencyInjection
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddScoped<IAuditLogService, AuditLogService>();
+        services.AddScoped<IIdentityService, IdentityService>();
+
+        // Repositories & Unit of Work
+        services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+        services.AddScoped<ISubscriptionPlanRepository, SubscriptionPlanRepository>();
+        services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;
     }
+
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+        => services.AddInfrastructureServices(configuration);
 }

@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tahdeera.Application.Common.Interfaces;
+using Tahdeera.Domain.Common;
 
 namespace Tahdeera.Application.Common.Behaviors;
 
@@ -29,6 +30,13 @@ public class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TReque
             try
             {
                 var response = await next();
+
+                if (response is Result result && result.IsFailure)
+                {
+                    await transaction.RollbackAsync(cancellationToken);
+                    return response;
+                }
+
                 await transaction.CommitAsync(cancellationToken);
                 return response;
             }
