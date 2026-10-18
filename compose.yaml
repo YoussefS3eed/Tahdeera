@@ -1,53 +1,76 @@
 services:
-  db:
-    image: postgres:18
+  postgres:
+    image: postgres:18-alpine
     container_name: tahdeera-postgres
     restart: unless-stopped
-
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-
+      POSTGRES_DB: ${POSTGRES_DB:-tahdeera}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-SetSecurePassword}
+      TZ: UTC
     ports:
-      - "127.0.0.1:5433:5432"
-
+      - "5433:5432"
     volumes:
-      - tahdeera-postgres-data:/var/lib/postgresql
-
+      - tahdeera_pgdata:/var/lib/postgresql
     healthcheck:
-      test:
-        - CMD-SHELL
-        - pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}
-      interval: 5s
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-tahdeera}"]
+      interval: 10s
       timeout: 5s
-      retries: 10
+      retries: 5
+    networks:
+      - tahdeera-net
 
-  backend:
+  rabbitmq:
+    image: rabbitmq:4-management-alpine
+    container_name: tahdeera-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-tahdeera_mq}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-SetSecurePassword}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - tahdeera_mqdata:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tahdeera-net
+
+  backend-api:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: tahdeera-backend
+    container_name: tahdeera-api
     restart: unless-stopped
-    ports:
-      - "5000:8080"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
     depends_on:
-      db:
+      postgres:
         condition: service_healthy
-
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: tahdeera-frontend
-    restart: unless-stopped
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=${POSTGRES_DB:-tahdeera};Username=${POSTGRES_USER:-postgres};Password=${POSTGRES_PASSWORD:-SetSecurePassword}
+      RabbitMq__Host: rabbitmq
+      RabbitMq__Port: 5672
+      RabbitMq__Username: ${RABBITMQ_USER:-tahdeera_mq}
+      RabbitMq__Password: ${RABBITMQ_PASSWORD:-SetSecurePassword}
+      Jwt__Issuer: ${JWT_ISSUER:-https://api.tahdeera.app}
+      Jwt__Audience: ${JWT_AUDIENCE:-https://tahdeera.app}
+      Jwt__SigningKey: ${JWT_SIGNING_KEY:-SuperSecretJwtSigningKeyWith256BitsMinimumLengthForDevelopmentOnly!}
     ports:
-      - "4200:80"
-    depends_on:
-      - backend
+      - "5080:8080"
+    networks:
+      - tahdeera-net
+
+networks:
+  tahdeera-net:
+    driver: bridge
 
 volumes:
-  tahdeera-postgres-data:
+  tahdeera_pgdata:
+  tahdeera_mqdata:

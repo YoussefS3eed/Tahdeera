@@ -5,4 +5,9 @@
     <Project Path="src/Tahdeera.Domain/Tahdeera.Domain.csproj" />
     <Project Path="src/Tahdeera.Infrastructure/Tahdeera.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Tahdeera.Application.UnitTests/Tahdeera.Application.UnitTests.csproj" />
+    <Project Path="tests/Tahdeera.Domain.UnitTests/Tahdeera.Domain.UnitTests.csproj" />
+    <Project Path="tests/Tahdeera.IntegrationTests/Tahdeera.IntegrationTests.csproj" />
+  </Folder>
 </Solution>
