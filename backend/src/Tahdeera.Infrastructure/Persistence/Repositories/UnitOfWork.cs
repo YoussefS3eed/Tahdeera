@@ -14,6 +14,7 @@ public class UnitOfWork : IUnitOfWork
     private IGenericRepository<WorkspaceSubscription>? _workspaceSubscriptions;
     private IGenericRepository<SubscriptionPayment>? _subscriptionPayments;
     private IGenericRepository<AuditLog>? _auditLogs;
+    private IGenericRepository<RefreshToken>? _refreshTokens;
 
     public UnitOfWork(TahdeeraDbContext context)
     {
@@ -40,6 +41,9 @@ public class UnitOfWork : IUnitOfWork
 
     public IGenericRepository<AuditLog> AuditLogs =>
         _auditLogs ??= new GenericRepository<AuditLog>(_context);
+
+    public IGenericRepository<RefreshToken> RefreshTokens =>
+        _refreshTokens ??= new GenericRepository<RefreshToken>(_context);
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

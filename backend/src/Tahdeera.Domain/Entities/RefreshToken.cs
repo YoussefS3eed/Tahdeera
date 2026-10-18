@@ -21,4 +21,17 @@ public class RefreshToken : BaseEntity
         ReplacedByTokenHash = replacedByTokenHash;
         UpdatedAt = now;
     }
+
+    public static RefreshToken Create(Guid userId, byte[] tokenHash, DateTimeOffset expiresAt)
+    {
+        return new RefreshToken
+        {
+            Id = Guid.NewGuid(),
+            UserId = userId,
+            TokenHash = tokenHash,
+            ExpiresAt = expiresAt,
+            CreatedAt = DateTimeOffset.UtcNow,
+            UpdatedAt = DateTimeOffset.UtcNow
+        };
+    }
 }

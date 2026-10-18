@@ -28,8 +28,6 @@ public static class WebApplicationExtensions
             c.RoutePrefix = string.Empty;
         });
 
-        // Redirect /swagger to root
-        app.MapGet("/swagger", () => Results.Redirect("/"));
 
         // 4. CORS
         app.UseCors();
