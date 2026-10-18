@@ -1,4 +1,5 @@
 using MediatR;
+using Tahdeera.Application.Common.Behaviors;
 using Tahdeera.Application.Features.Workspaces.DTOs;
 using Tahdeera.Domain.Common;
 
@@ -6,4 +7,4 @@ namespace Tahdeera.Application.Features.Workspaces.Commands.DeactivateWorkspaceM
 
 public record DeactivateWorkspaceMemberCommand(
     Guid WorkspaceId,
-    Guid MemberId) : IRequest<Result<DeactivateWorkspaceMemberResultDto>>;
+    Guid MemberId) : IRequest<Result<DeactivateWorkspaceMemberResultDto>>, ITransactionalRequest;

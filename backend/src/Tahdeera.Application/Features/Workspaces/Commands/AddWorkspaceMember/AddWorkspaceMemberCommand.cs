@@ -1,4 +1,5 @@
 using MediatR;
+using Tahdeera.Application.Common.Behaviors;
 using Tahdeera.Application.Features.Workspaces.DTOs;
 using Tahdeera.Domain.Common;
 
@@ -11,4 +12,4 @@ public record AddWorkspaceMemberCommand(
     string Password,
     string DisplayName,
     string? Phone,
-    string Role) : IRequest<Result<AddWorkspaceMemberResultDto>>;
+    string Role) : IRequest<Result<AddWorkspaceMemberResultDto>>, ITransactionalRequest;

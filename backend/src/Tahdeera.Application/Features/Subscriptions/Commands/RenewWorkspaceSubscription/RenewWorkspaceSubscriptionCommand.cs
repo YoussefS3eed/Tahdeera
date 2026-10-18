@@ -1,4 +1,5 @@
 using MediatR;
+using Tahdeera.Application.Common.Behaviors;
 using Tahdeera.Application.Features.Subscriptions.DTOs;
 using Tahdeera.Domain.Common;
 
@@ -13,4 +14,4 @@ public record RenewWorkspaceSubscriptionCommand(
     Guid? PlanId,
     int DurationDays,
     DateTimeOffset? OverrideStartsAt,
-    DateTimeOffset? OverrideEndsAt) : IRequest<Result<RenewSubscriptionResultDto>>;
+    DateTimeOffset? OverrideEndsAt) : IRequest<Result<RenewSubscriptionResultDto>>, ITransactionalRequest;

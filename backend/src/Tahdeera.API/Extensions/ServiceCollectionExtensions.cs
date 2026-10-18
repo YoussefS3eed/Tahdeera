@@ -37,7 +37,9 @@ public static class ServiceCollectionExtensions
         services.AddApiVersioning(options =>
         {
             options.DefaultApiVersion = new ApiVersion(1, 0);
+#pragma warning disable AV0016
             options.AssumeDefaultVersionWhenUnspecified = true;
+#pragma warning restore AV0016
             options.ReportApiVersions = true;
             options.ApiVersionReader = ApiVersionReader.Combine(
                 new HeaderApiVersionReader("X-Api-Version"),
@@ -89,6 +91,10 @@ public static class ServiceCollectionExtensions
         // 7. Application + Infrastructure layers
         services.AddApplication();
         services.AddInfrastructure(configuration);
+
+        // 8. Health Checks
+        services.AddHealthChecks()
+            .AddCheck<Tahdeera.API.Health.DatabaseHealthCheck>("PostgreSQL", tags: new[] { "ready" });
 
         return services;
     }

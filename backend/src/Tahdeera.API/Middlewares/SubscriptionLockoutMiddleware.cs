@@ -29,7 +29,9 @@ public class SubscriptionLockoutMiddleware
 
         // 1. Whitelist: auth, admin, health, preferences, subscription status check
         if (path.StartsWith("/api/auth", StringComparison.OrdinalIgnoreCase) ||
+            path.StartsWith("/api/v1/auth", StringComparison.OrdinalIgnoreCase) ||
             path.StartsWith("/api/admin", StringComparison.OrdinalIgnoreCase) ||
+            path.StartsWith("/api/v1/admin", StringComparison.OrdinalIgnoreCase) ||
             path.StartsWith("/health", StringComparison.OrdinalIgnoreCase) ||
             path.EndsWith("/preferences", StringComparison.OrdinalIgnoreCase) ||
             path.EndsWith("/subscription-status", StringComparison.OrdinalIgnoreCase))

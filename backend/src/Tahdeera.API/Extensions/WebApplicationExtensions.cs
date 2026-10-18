@@ -45,7 +45,18 @@ public static class WebApplicationExtensions
         // 6. Server-Side Subscription Lockout Middleware (DEC-08)
         app.UseMiddleware<SubscriptionLockoutMiddleware>();
 
-        // 7. Controllers
+        // 7. Health Checks (Constitution Principle 10)
+        app.MapHealthChecks("/health/live", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+        {
+            Predicate = _ => false
+        });
+
+        app.MapHealthChecks("/health/ready", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+        {
+            Predicate = check => check.Tags.Contains("ready")
+        });
+
+        // 8. Controllers
         app.MapControllers();
 
         return app;
