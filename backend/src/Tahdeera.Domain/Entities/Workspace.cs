@@ -18,4 +18,8 @@ public class Workspace : BaseEntity
     public AppUser? CreatedByUser { get; set; }
     public ICollection<WorkspaceMember> Members { get; set; } = new List<WorkspaceMember>();
     public ICollection<WorkspaceSubscription> Subscriptions { get; set; } = new List<WorkspaceSubscription>();
+    public ICollection<Group> Groups { get; set; } = new List<Group>();
+    public ICollection<GroupWorkspaceAccess> WorkspaceAccesses { get; set; } = new List<GroupWorkspaceAccess>();
+    public ICollection<AttendanceRecord> AttendanceRecords { get; set; } = new List<AttendanceRecord>();
+    public ICollection<MessageOutbox> OutboxMessages { get; set; } = new List<MessageOutbox>();
 }

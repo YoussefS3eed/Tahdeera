@@ -195,7 +195,184 @@
   <data name="INSUFFICIENT_PERMISSIONS_Title" xml:space="preserve">
     <value>Insufficient Permissions</value>
   </data>
-  <data name="INSUFFICIENT_PERMISSIONS_Detail" xml:space="preserve">
-    <value>You do not possess the required permission to perform this action in this workspace.</value>
+  <!-- Milestone B3: Groups, Sessions & Attendance Errors -->
+  <data name="GROUP_NAME_DUPLICATE" xml:space="preserve">
+    <value>A group with this name already exists in this academic year.</value>
+  </data>
+  <data name="GROUP_NAME_DUPLICATE_Title" xml:space="preserve">
+    <value>Duplicate Group Name</value>
+  </data>
+  <data name="GROUP_NAME_DUPLICATE_Detail" xml:space="preserve">
+    <value>A group with this name already exists in this academic year.</value>
+  </data>
+
+  <data name="GROUP_NOT_FOUND" xml:space="preserve">
+    <value>The specified group was not found.</value>
+  </data>
+  <data name="GROUP_NOT_FOUND_Title" xml:space="preserve">
+    <value>Group Not Found</value>
+  </data>
+  <data name="GROUP_NOT_FOUND_Detail" xml:space="preserve">
+    <value>The specified group was not found.</value>
+  </data>
+
+  <data name="INVALID_GRADE_ID" xml:space="preserve">
+    <value>Grade ID must be between 1 and 12.</value>
+  </data>
+  <data name="INVALID_GRADE_ID_Title" xml:space="preserve">
+    <value>Invalid Grade Selection</value>
+  </data>
+  <data name="INVALID_GRADE_ID_Detail" xml:space="preserve">
+    <value>Grade ID must be between 1 and 12.</value>
+  </data>
+
+  <data name="INVALID_ABSENCE_THRESHOLD" xml:space="preserve">
+    <value>Consecutive absence threshold must be between 1 and 50.</value>
+  </data>
+  <data name="INVALID_ABSENCE_THRESHOLD_Title" xml:space="preserve">
+    <value>Invalid Absence Threshold</value>
+  </data>
+  <data name="INVALID_ABSENCE_THRESHOLD_Detail" xml:space="preserve">
+    <value>Consecutive absence threshold must be between 1 and 50.</value>
+  </data>
+
+  <data name="GROUP_GRADE_MISMATCH" xml:space="preserve">
+    <value>Student's academic grade does not match the group's grade.</value>
+  </data>
+  <data name="GROUP_GRADE_MISMATCH_Title" xml:space="preserve">
+    <value>Grade Mismatch</value>
+  </data>
+  <data name="GROUP_GRADE_MISMATCH_Detail" xml:space="preserve">
+    <value>Student's academic grade does not match the group's grade.</value>
+  </data>
+
+  <data name="STUDENT_WORKSPACE_STATUS_NOT_ACTIVE" xml:space="preserve">
+    <value>Student is not active in this workspace and cannot be enrolled.</value>
+  </data>
+  <data name="STUDENT_WORKSPACE_STATUS_NOT_ACTIVE_Title" xml:space="preserve">
+    <value>Student Inactive in Workspace</value>
+  </data>
+  <data name="STUDENT_WORKSPACE_STATUS_NOT_ACTIVE_Detail" xml:space="preserve">
+    <value>Student is not active in this workspace and cannot be enrolled.</value>
+  </data>
+
+  <data name="STUDENT_ALREADY_ENROLLED_IN_GROUP" xml:space="preserve">
+    <value>Student is already enrolled in this group.</value>
+  </data>
+  <data name="STUDENT_ALREADY_ENROLLED_IN_GROUP_Title" xml:space="preserve">
+    <value>Student Already Enrolled</value>
+  </data>
+  <data name="STUDENT_ALREADY_ENROLLED_IN_GROUP_Detail" xml:space="preserve">
+    <value>Student is already enrolled in this group.</value>
+  </data>
+
+  <data name="STUDENT_NOT_ENROLLED_IN_GROUP" xml:space="preserve">
+    <value>Student is not enrolled in this group.</value>
+  </data>
+  <data name="STUDENT_NOT_ENROLLED_IN_GROUP_Title" xml:space="preserve">
+    <value>Student Not Enrolled</value>
+  </data>
+  <data name="STUDENT_NOT_ENROLLED_IN_GROUP_Detail" xml:space="preserve">
+    <value>Student is not enrolled in this group.</value>
+  </data>
+
+  <data name="SESSION_NOT_FOUND" xml:space="preserve">
+    <value>The specified teaching session was not found.</value>
+  </data>
+  <data name="SESSION_NOT_FOUND_Title" xml:space="preserve">
+    <value>Session Not Found</value>
+  </data>
+  <data name="SESSION_NOT_FOUND_Detail" xml:space="preserve">
+    <value>The specified teaching session was not found.</value>
+  </data>
+
+  <data name="SESSION_INVALID_TIME_RANGE" xml:space="preserve">
+    <value>Session end time must be strictly after start time.</value>
+  </data>
+  <data name="SESSION_INVALID_TIME_RANGE_Title" xml:space="preserve">
+    <value>Invalid Session Time Range</value>
+  </data>
+  <data name="SESSION_INVALID_TIME_RANGE_Detail" xml:space="preserve">
+    <value>Session end time must be strictly after start time.</value>
+  </data>
+
+  <data name="SESSION_ALREADY_COMPLETED_SCHEDULE_FROZEN" xml:space="preserve">
+    <value>Schedule cannot be modified for a completed or cancelled session.</value>
+  </data>
+  <data name="SESSION_ALREADY_COMPLETED_SCHEDULE_FROZEN_Title" xml:space="preserve">
+    <value>Schedule Modification Frozen</value>
+  </data>
+  <data name="SESSION_ALREADY_COMPLETED_SCHEDULE_FROZEN_Detail" xml:space="preserve">
+    <value>Schedule cannot be modified for a completed or cancelled session.</value>
+  </data>
+
+  <data name="CANCELLATION_REASON_REQUIRED" xml:space="preserve">
+    <value>A cancellation reason is mandatory when cancelling a session.</value>
+  </data>
+  <data name="CANCELLATION_REASON_REQUIRED_Title" xml:space="preserve">
+    <value>Cancellation Reason Required</value>
+  </data>
+  <data name="CANCELLATION_REASON_REQUIRED_Detail" xml:space="preserve">
+    <value>A cancellation reason is mandatory when cancelling a session.</value>
+  </data>
+
+  <data name="CREDENTIAL_REVOKED" xml:space="preserve">
+    <value>This student card has been revoked and cannot be used.</value>
+  </data>
+  <data name="CREDENTIAL_REVOKED_Title" xml:space="preserve">
+    <value>Revoked Credential</value>
+  </data>
+  <data name="CREDENTIAL_REVOKED_Detail" xml:space="preserve">
+    <value>This student card has been revoked and cannot be used.</value>
+  </data>
+
+  <data name="STUDENT_BLOCKED_IN_WORKSPACE" xml:space="preserve">
+    <value>Student is blocked in this workspace and attendance cannot be recorded.</value>
+  </data>
+  <data name="STUDENT_BLOCKED_IN_WORKSPACE_Title" xml:space="preserve">
+    <value>Student Blocked</value>
+  </data>
+  <data name="STUDENT_BLOCKED_IN_WORKSPACE_Detail" xml:space="preserve">
+    <value>Student is blocked in this workspace and attendance cannot be recorded.</value>
+  </data>
+
+  <data name="ATTENDANCE_CORRECTION_WINDOW_EXPIRED" xml:space="preserve">
+    <value>Attendance correction window (7 days) has expired. Modification requires Workspace Owner.</value>
+  </data>
+  <data name="ATTENDANCE_CORRECTION_WINDOW_EXPIRED_Title" xml:space="preserve">
+    <value>Attendance Correction Window Expired</value>
+  </data>
+  <data name="ATTENDANCE_CORRECTION_WINDOW_EXPIRED_Detail" xml:space="preserve">
+    <value>Attendance correction window (7 days) has expired. Modification requires Workspace Owner.</value>
+  </data>
+
+  <data name="CORRECTION_REASON_REQUIRED" xml:space="preserve">
+    <value>A non-empty reason is mandatory for manual attendance corrections.</value>
+  </data>
+  <data name="CORRECTION_REASON_REQUIRED_Title" xml:space="preserve">
+    <value>Correction Reason Required</value>
+  </data>
+  <data name="CORRECTION_REASON_REQUIRED_Detail" xml:space="preserve">
+    <value>A non-empty reason is mandatory for manual attendance corrections.</value>
+  </data>
+
+  <data name="RETROACTIVE_REASON_REQUIRED" xml:space="preserve">
+    <value>A reason is mandatory when recording attendance for a withdrawn student.</value>
+  </data>
+  <data name="RETROACTIVE_REASON_REQUIRED_Title" xml:space="preserve">
+    <value>Retroactive Reason Required</value>
+  </data>
+  <data name="RETROACTIVE_REASON_REQUIRED_Detail" xml:space="preserve">
+    <value>A reason is mandatory when recording attendance for a withdrawn student.</value>
+  </data>
+
+  <data name="ASSISTANT_NOT_AUTHORIZED_DELEGATE" xml:space="preserve">
+    <value>Assistant is not designated as an attendance delegate for this group.</value>
+  </data>
+  <data name="ASSISTANT_NOT_AUTHORIZED_DELEGATE_Title" xml:space="preserve">
+    <value>Unauthorized Attendance Delegate</value>
+  </data>
+  <data name="ASSISTANT_NOT_AUTHORIZED_DELEGATE_Detail" xml:space="preserve">
+    <value>Assistant is not designated as an attendance delegate for this group.</value>
   </data>
 </root>

@@ -14,6 +14,9 @@ public class Student
     public ICollection<WorkspaceStudent> WorkspaceEnrollments { get; set; } = new List<WorkspaceStudent>();
     public ICollection<StudentAcademicHistory> AcademicHistories { get; set; } = new List<StudentAcademicHistory>();
     public ICollection<StudentCredential> Credentials { get; set; } = new List<StudentCredential>();
+    public ICollection<GroupStudent> GroupEnrollments { get; set; } = new List<GroupStudent>();
+    public ICollection<AttendanceRecord> AttendanceRecords { get; set; } = new List<AttendanceRecord>();
+    public ICollection<MessageOutbox> OutboxMessages { get; set; } = new List<MessageOutbox>();
 
     public void UpdateName(string newName)
     {

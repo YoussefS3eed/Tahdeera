@@ -23,6 +23,16 @@ public interface ITahdeeraDbContext
     DbSet<WorkspaceStudent> WorkspaceStudents { get; }
     DbSet<StudentCredential> StudentCredentials { get; }
 
+    DbSet<Group> Groups { get; }
+    DbSet<GroupStudent> GroupStudents { get; }
+    DbSet<GroupStudentStatusHistory> GroupStudentStatusHistories { get; }
+    DbSet<GroupWorkspaceAccess> GroupWorkspaceAccesses { get; }
+    DbSet<GroupAttendanceDelegation> GroupAttendanceDelegations { get; }
+    DbSet<Session> Sessions { get; }
+    DbSet<AttendanceRecord> AttendanceRecords { get; }
+    DbSet<AttendanceHistory> AttendanceHistories { get; }
+    DbSet<MessageOutbox> MessageOutboxes { get; }
+
     DatabaseFacade Database { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);

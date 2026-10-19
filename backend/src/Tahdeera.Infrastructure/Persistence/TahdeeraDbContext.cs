@@ -30,6 +30,16 @@ public class TahdeeraDbContext : IdentityDbContext<IdentityUser<Guid>, IdentityR
     public DbSet<WorkspaceStudent> WorkspaceStudents => Set<WorkspaceStudent>();
     public DbSet<StudentCredential> StudentCredentials => Set<StudentCredential>();
 
+    public DbSet<Group> Groups => Set<Group>();
+    public DbSet<GroupStudent> GroupStudents => Set<GroupStudent>();
+    public DbSet<GroupStudentStatusHistory> GroupStudentStatusHistories => Set<GroupStudentStatusHistory>();
+    public DbSet<GroupWorkspaceAccess> GroupWorkspaceAccesses => Set<GroupWorkspaceAccess>();
+    public DbSet<GroupAttendanceDelegation> GroupAttendanceDelegations => Set<GroupAttendanceDelegation>();
+    public DbSet<Session> Sessions => Set<Session>();
+    public DbSet<AttendanceRecord> AttendanceRecords => Set<AttendanceRecord>();
+    public DbSet<AttendanceHistory> AttendanceHistories => Set<AttendanceHistory>();
+    public DbSet<MessageOutbox> MessageOutboxes => Set<MessageOutbox>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

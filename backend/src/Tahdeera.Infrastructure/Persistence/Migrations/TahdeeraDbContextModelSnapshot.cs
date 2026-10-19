@@ -411,6 +411,228 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Tahdeera.Domain.Entities.AttendanceHistory", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<Guid>("AttendanceRecordId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("attendance_record_id");
+
+                    b.Property<string>("ChangeKind")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("change_kind");
+
+                    b.Property<DateTimeOffset>("ChangedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("changed_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<Guid?>("ChangedByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("changed_by_user_id");
+
+                    b.Property<string>("Metadata")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("metadata")
+                        .HasDefaultValueSql("'{}'::jsonb");
+
+                    b.Property<string>("NewSource")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("new_source");
+
+                    b.Property<string>("NewStatus")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("new_status");
+
+                    b.Property<string>("OldSource")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("old_source");
+
+                    b.Property<string>("OldStatus")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("old_status");
+
+                    b.Property<string>("Reason")
+                        .HasColumnType("text")
+                        .HasColumnName("reason");
+
+                    b.HasKey("Id")
+                        .HasName("pk_attendance_history");
+
+                    b.HasIndex("ChangedByUserId")
+                        .HasDatabaseName("ix_attendance_history_changed_by_user_id");
+
+                    b.HasIndex("AttendanceRecordId", "ChangedAt")
+                        .HasDatabaseName("ix_attendance_history_record_time");
+
+                    b.ToTable("attendance_history", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_attendance_history_change_kind", "change_kind IN ('InitialSystemAbsence', 'InitialUserEntry', 'ManualCorrection', 'SystemReevaluation', 'VoidedOnCancellation', 'RestoredFromCancellation', 'Other')");
+
+                            t.HasCheckConstraint("CK_attendance_history_new_source", "new_source IN ('System', 'User')");
+
+                            t.HasCheckConstraint("CK_attendance_history_new_status", "new_status IN ('Present', 'Absent', 'Late', 'Excused')");
+
+                            t.HasCheckConstraint("CK_attendance_history_old_source", "old_source IS NULL OR old_source IN ('System', 'User')");
+
+                            t.HasCheckConstraint("CK_attendance_history_old_status", "old_status IS NULL OR old_status IN ('Present', 'Absent', 'Late', 'Excused')");
+                        });
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.AttendanceRecord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<bool>("AutoEvaluationLocked")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("auto_evaluation_locked");
+
+                    b.Property<DateTimeOffset?>("CheckInAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("check_in_at");
+
+                    b.Property<Guid?>("HomeGroupId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("home_group_id");
+
+                    b.Property<bool>("IsGuestMakeup")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_guest_makeup");
+
+                    b.Property<DateTimeOffset>("LastModifiedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_modified_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<Guid?>("LastModifiedByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("last_modified_by_user_id");
+
+                    b.Property<Guid>("OwnerWorkspaceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("owner_workspace_id");
+
+                    b.Property<DateTimeOffset>("RecordedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("recorded_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<Guid?>("RecordedByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("recorded_by_user_id");
+
+                    b.Property<string>("RetroactiveReason")
+                        .HasColumnType("text")
+                        .HasColumnName("retroactive_reason");
+
+                    b.Property<Guid>("SessionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("session_id");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("source");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("student_id");
+
+                    b.Property<DateTimeOffset?>("SystemGeneratedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("system_generated_at");
+
+                    b.Property<string>("VoidReason")
+                        .HasColumnType("text")
+                        .HasColumnName("void_reason");
+
+                    b.Property<DateTimeOffset?>("VoidedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("voided_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_attendance_records");
+
+                    b.HasIndex("HomeGroupId")
+                        .HasDatabaseName("ix_attendance_records_home_group_id");
+
+                    b.HasIndex("LastModifiedByUserId")
+                        .HasDatabaseName("ix_attendance_records_last_modified_by_user_id");
+
+                    b.HasIndex("RecordedByUserId")
+                        .HasDatabaseName("ix_attendance_records_recorded_by_user_id");
+
+                    b.HasIndex("SessionId")
+                        .HasDatabaseName("ix_attendance_auto_reevaluate")
+                        .HasFilter("auto_evaluation_locked = false AND voided_at IS NULL");
+
+                    b.HasIndex("OwnerWorkspaceId", "SessionId")
+                        .HasDatabaseName("ix_attendance_owner_session_active")
+                        .HasFilter("voided_at IS NULL");
+
+                    b.HasIndex("SessionId", "StudentId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_attendance_records_session_id_student_id");
+
+                    b.HasIndex("StudentId", "IsGuestMakeup")
+                        .HasDatabaseName("ix_attendance_guest_makeup")
+                        .HasFilter("is_guest_makeup = true");
+
+                    b.HasIndex("StudentId", "RecordedAt")
+                        .IsDescending(false, true)
+                        .HasDatabaseName("ix_attendance_student_recorded_active")
+                        .HasFilter("voided_at IS NULL");
+
+                    b.ToTable("attendance_records", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_attendance_records_check_in", "(status IN ('Present', 'Late') AND check_in_at IS NOT NULL) OR status IN ('Absent', 'Excused')");
+
+                            t.HasCheckConstraint("CK_attendance_records_retroactive_reason", "retroactive_reason IS NULL OR length(trim(retroactive_reason)) > 0");
+
+                            t.HasCheckConstraint("CK_attendance_records_source", "source IN ('System', 'User')");
+
+                            t.HasCheckConstraint("CK_attendance_records_source_user", "(source = 'System' AND recorded_by_user_id IS NULL) OR (source = 'User' AND recorded_by_user_id IS NOT NULL)");
+
+                            t.HasCheckConstraint("CK_attendance_records_status", "status IN ('Present', 'Absent', 'Late', 'Excused')");
+
+                            t.HasCheckConstraint("CK_attendance_records_void", "voided_at IS NULL OR void_reason IS NOT NULL");
+                        });
+                });
+
             modelBuilder.Entity("Tahdeera.Domain.Entities.AuditLog", b =>
                 {
                     b.Property<long>("Id")
@@ -529,6 +751,573 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                     b.ToTable("grades", (string)null);
                 });
 
+            modelBuilder.Entity("Tahdeera.Domain.Entities.Group", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<string>("AbsenceAction")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("NotifyOnly")
+                        .HasColumnName("absence_action");
+
+                    b.Property<Guid>("AcademicYearId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("academic_year_id");
+
+                    b.Property<short?>("ConsecutiveAbsenceThreshold")
+                        .HasColumnType("smallint")
+                        .HasColumnName("consecutive_absence_threshold");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<Guid?>("CreatedByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_user_id");
+
+                    b.Property<decimal>("DefaultMonthlyFee")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)")
+                        .HasDefaultValue(0.00m)
+                        .HasColumnName("default_monthly_fee");
+
+                    b.Property<short>("GradeId")
+                        .HasColumnType("smallint")
+                        .HasColumnName("grade_id");
+
+                    b.Property<int>("LateGraceMinutes")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(20)
+                        .HasColumnName("late_grace_minutes");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("character varying(160)")
+                        .HasColumnName("name");
+
+                    b.Property<Guid>("OwnerWorkspaceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("owner_workspace_id");
+
+                    b.Property<Guid>("ResponsibleTeacherUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("responsible_teacher_user_id");
+
+                    b.Property<string>("RoomName")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("room_name");
+
+                    b.Property<string>("ScheduleSummary")
+                        .HasMaxLength(240)
+                        .HasColumnType("character varying(240)")
+                        .HasColumnName("schedule_summary");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("Active")
+                        .HasColumnName("status");
+
+                    b.Property<Guid?>("SubjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("subject_id");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.HasKey("Id")
+                        .HasName("pk_groups");
+
+                    b.HasIndex("AcademicYearId")
+                        .HasDatabaseName("ix_groups_academic_year_id");
+
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_groups_created_by_user_id");
+
+                    b.HasIndex("GradeId")
+                        .HasDatabaseName("ix_groups_grade_id");
+
+                    b.HasIndex("ResponsibleTeacherUserId")
+                        .HasDatabaseName("ix_groups_responsible_teacher");
+
+                    b.HasIndex("SubjectId")
+                        .HasDatabaseName("ix_groups_subject_id");
+
+                    b.HasIndex("OwnerWorkspaceId", "Status")
+                        .HasDatabaseName("ix_groups_owner_status");
+
+                    b.HasIndex("OwnerWorkspaceId", "AcademicYearId", "Name")
+                        .IsUnique()
+                        .HasDatabaseName("ix_groups_owner_workspace_id_academic_year_id_name");
+
+                    b.ToTable("groups", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_groups_absence_action", "absence_action IN ('NotifyOnly', 'MarkSuspended', 'Archive')");
+
+                            t.HasCheckConstraint("CK_groups_consecutive_absence_threshold", "consecutive_absence_threshold IS NULL OR (consecutive_absence_threshold > 0 AND consecutive_absence_threshold <= 50)");
+
+                            t.HasCheckConstraint("CK_groups_default_monthly_fee", "default_monthly_fee >= 0");
+
+                            t.HasCheckConstraint("CK_groups_late_grace_minutes", "late_grace_minutes >= 0 AND late_grace_minutes <= 1440");
+
+                            t.HasCheckConstraint("CK_groups_status", "status IN ('Active', 'Paused', 'Archived')");
+                        });
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.GroupAttendanceDelegation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid>("AssistantUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("assistant_user_id");
+
+                    b.Property<DateTimeOffset>("GrantedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("granted_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<Guid>("GrantedByTeacherUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("granted_by_teacher_user_id");
+
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("group_id");
+
+                    b.Property<string>("RevocationReason")
+                        .HasColumnType("text")
+                        .HasColumnName("revocation_reason");
+
+                    b.Property<DateTimeOffset?>("RevokedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("revoked_at");
+
+                    b.Property<Guid?>("RevokedByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("revoked_by_user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_group_attendance_delegations");
+
+                    b.HasIndex("AssistantUserId")
+                        .HasDatabaseName("ix_group_delegation_assistant");
+
+                    b.HasIndex("GrantedByTeacherUserId")
+                        .HasDatabaseName("ix_group_attendance_delegations_granted_by_teacher_user_id");
+
+                    b.HasIndex("GroupId")
+                        .IsUnique()
+                        .HasDatabaseName("ux_one_active_attendance_delegate_per_group")
+                        .HasFilter("revoked_at IS NULL");
+
+                    b.HasIndex("RevokedByUserId")
+                        .HasDatabaseName("ix_group_attendance_delegations_revoked_by_user_id");
+
+                    b.ToTable("group_attendance_delegations", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_group_attendance_delegations_revoked_at", "revoked_at IS NULL OR revoked_at >= granted_at");
+                        });
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.GroupStudent", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("group_id");
+
+                    b.Property<DateTimeOffset>("JoinedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("joined_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<DateTimeOffset?>("LeftAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("left_at");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("Active")
+                        .HasColumnName("status");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("student_id");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<Guid?>("UpdatedByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by_user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_group_students");
+
+                    b.HasIndex("StudentId")
+                        .HasDatabaseName("ix_group_students_student");
+
+                    b.HasIndex("UpdatedByUserId")
+                        .HasDatabaseName("ix_group_students_updated_by_user_id");
+
+                    b.HasIndex("GroupId", "Status")
+                        .HasDatabaseName("ix_group_students_group_status");
+
+                    b.HasIndex("GroupId", "StudentId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_group_students_group_id_student_id");
+
+                    b.ToTable("group_students", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_group_students_active_left_at", "(status = 'Active' AND left_at IS NULL) OR status <> 'Active'");
+
+                            t.HasCheckConstraint("CK_group_students_left_at", "left_at IS NULL OR left_at >= joined_at");
+
+                            t.HasCheckConstraint("CK_group_students_status", "status IN ('Active', 'Withdrawn', 'Suspended')");
+                        });
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.GroupStudentStatusHistory", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<Guid?>("ChangedByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("changed_by_user_id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<DateTimeOffset>("EffectiveAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("effective_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<Guid>("GroupStudentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("group_student_id");
+
+                    b.Property<string>("NewStatus")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("new_status");
+
+                    b.Property<string>("OldStatus")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("old_status");
+
+                    b.Property<string>("Reason")
+                        .HasColumnType("text")
+                        .HasColumnName("reason");
+
+                    b.HasKey("Id")
+                        .HasName("pk_group_student_status_history");
+
+                    b.HasIndex("ChangedByUserId")
+                        .HasDatabaseName("ix_group_student_status_history_changed_by_user_id");
+
+                    b.HasIndex("GroupStudentId", "EffectiveAt")
+                        .HasDatabaseName("ix_group_student_history_membership_time");
+
+                    b.ToTable("group_student_status_history", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_group_student_status_history_new_status", "new_status IN ('Active', 'Withdrawn', 'Suspended')");
+
+                            t.HasCheckConstraint("CK_group_student_status_history_old_status", "old_status IS NULL OR old_status IN ('Active', 'Withdrawn', 'Suspended')");
+                        });
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.GroupWorkspaceAccess", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<bool>("CanEditAttendance")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("can_edit_attendance");
+
+                    b.Property<bool>("CanRegisterAttendance")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("can_register_attendance");
+
+                    b.Property<bool>("CanViewRoster")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("can_view_roster");
+
+                    b.Property<DateTimeOffset>("GrantedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("granted_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<Guid>("GrantedByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("granted_by_user_id");
+
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("group_id");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text")
+                        .HasColumnName("notes");
+
+                    b.Property<DateTimeOffset?>("RevokedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("revoked_at");
+
+                    b.Property<Guid?>("RevokedByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("revoked_by_user_id");
+
+                    b.Property<Guid>("WorkspaceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("workspace_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_group_workspace_access");
+
+                    b.HasIndex("GrantedByUserId")
+                        .HasDatabaseName("ix_group_workspace_access_granted_by_user_id");
+
+                    b.HasIndex("RevokedByUserId")
+                        .HasDatabaseName("ix_group_workspace_access_revoked_by_user_id");
+
+                    b.HasIndex("WorkspaceId")
+                        .HasDatabaseName("ix_group_workspace_access_workspace")
+                        .HasFilter("revoked_at IS NULL");
+
+                    b.HasIndex("GroupId", "WorkspaceId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_group_workspace_access_group_id_workspace_id");
+
+                    b.ToTable("group_workspace_access", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_group_workspace_access_revoked_at", "revoked_at IS NULL OR revoked_at >= granted_at");
+                        });
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.MessageOutbox", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<short>("Attempts")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("smallint")
+                        .HasDefaultValue((short)0)
+                        .HasColumnName("attempts");
+
+                    b.Property<Guid?>("AttendanceRecordId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("attendance_record_id");
+
+                    b.Property<string>("BrokerMessageId")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("broker_message_id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<DateTimeOffset?>("DeliveredAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("delivered_at");
+
+                    b.Property<string>("ErrorCode")
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)")
+                        .HasColumnName("error_code");
+
+                    b.Property<string>("ErrorDetails")
+                        .HasColumnType("text")
+                        .HasColumnName("error_details");
+
+                    b.Property<Guid?>("ExamSubmissionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("exam_submission_id");
+
+                    b.Property<string>("FailureCategory")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("failure_category");
+
+                    b.Property<string>("IdempotencyKey")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("idempotency_key");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasDefaultValue("ar")
+                        .HasColumnName("language_code");
+
+                    b.Property<DateTimeOffset?>("LastAttemptAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_attempt_at");
+
+                    b.Property<short>("MaxAttempts")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("smallint")
+                        .HasDefaultValue((short)5)
+                        .HasColumnName("max_attempts");
+
+                    b.Property<string>("MessageType")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("message_type");
+
+                    b.Property<DateTimeOffset?>("NextAttemptAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("next_attempt_at");
+
+                    b.Property<string>("Payload")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("payload");
+
+                    b.Property<string>("ProviderMessageId")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("provider_message_id");
+
+                    b.Property<string>("RecipientPhone")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("recipient_phone");
+
+                    b.Property<DateTimeOffset?>("SentAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("sent_at");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("Pending")
+                        .HasColumnName("status");
+
+                    b.Property<Guid?>("StudentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("student_id");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<Guid>("WorkspaceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("workspace_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_message_outbox");
+
+                    b.HasIndex("AttendanceRecordId")
+                        .HasDatabaseName("ix_message_outbox_attendance");
+
+                    b.HasIndex("IdempotencyKey")
+                        .IsUnique()
+                        .HasDatabaseName("ix_message_outbox_idempotency_key");
+
+                    b.HasIndex("StudentId")
+                        .HasDatabaseName("ix_message_outbox_student_id");
+
+                    b.HasIndex("Status", "NextAttemptAt")
+                        .HasDatabaseName("ix_message_outbox_relay")
+                        .HasFilter("status IN ('Pending', 'FailedTransient')");
+
+                    b.HasIndex("WorkspaceId", "CreatedAt")
+                        .IsDescending(false, true)
+                        .HasDatabaseName("ix_message_outbox_workspace_created");
+
+                    b.ToTable("message_outbox", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_message_outbox_attempts", "attempts >= 0 AND attempts <= 10");
+
+                            t.HasCheckConstraint("CK_message_outbox_failure_category", "failure_category IS NULL OR failure_category IN ('Transient', 'Permanent')");
+
+                            t.HasCheckConstraint("CK_message_outbox_language_code", "language_code IN ('ar', 'en')");
+
+                            t.HasCheckConstraint("CK_message_outbox_max_attempts", "max_attempts >= 1 AND max_attempts <= 10");
+
+                            t.HasCheckConstraint("CK_message_outbox_message_type", "message_type IN ('AttendanceCheckIn', 'AbsenceAlert', 'ExamResult', 'WeeklyParentReport', 'PaymentReceipt')");
+
+                            t.HasCheckConstraint("CK_message_outbox_status", "status IN ('Pending', 'PublishedToBroker', 'Processing', 'Sent', 'Delivered', 'FailedTransient', 'FailedPermanent', 'Cancelled')");
+                        });
+                });
+
             modelBuilder.Entity("Tahdeera.Domain.Entities.RefreshToken", b =>
                 {
                     b.Property<Guid>("Id")
@@ -577,6 +1366,100 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                         .HasFilter("revoked_at IS NULL");
 
                     b.ToTable("refresh_tokens", (string)null);
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.Session", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<DateTimeOffset?>("AutoAbsenceProcessedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("auto_absence_processed_at");
+
+                    b.Property<string>("CancellationReason")
+                        .HasColumnType("text")
+                        .HasColumnName("cancellation_reason");
+
+                    b.Property<DateTimeOffset?>("CancelledAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("cancelled_at");
+
+                    b.Property<Guid?>("CancelledByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("cancelled_by_user_id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<Guid?>("CreatedByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_user_id");
+
+                    b.Property<DateTimeOffset>("EndsAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("ends_at");
+
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("group_id");
+
+                    b.Property<int>("LateGraceMinutes")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(20)
+                        .HasColumnName("late_grace_minutes");
+
+                    b.Property<DateTimeOffset>("StartsAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("starts_at");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("Scheduled")
+                        .HasColumnName("status");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.HasKey("Id")
+                        .HasName("pk_sessions");
+
+                    b.HasIndex("CancelledByUserId")
+                        .HasDatabaseName("ix_sessions_cancelled_by_user_id");
+
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_sessions_created_by_user_id");
+
+                    b.HasIndex("EndsAt")
+                        .HasDatabaseName("ix_sessions_due_for_attendance")
+                        .HasFilter("status <> 'Cancelled'");
+
+                    b.HasIndex("GroupId", "StartsAt")
+                        .HasDatabaseName("ix_sessions_group_start");
+
+                    b.ToTable("sessions", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_sessions_cancellation", "(status = 'Cancelled' AND cancellation_reason IS NOT NULL) OR (status <> 'Cancelled' AND cancellation_reason IS NULL)");
+
+                            t.HasCheckConstraint("CK_sessions_ends_at", "ends_at > starts_at");
+
+                            t.HasCheckConstraint("CK_sessions_late_grace_minutes", "late_grace_minutes >= 0 AND late_grace_minutes <= 1440");
+
+                            t.HasCheckConstraint("CK_sessions_status", "status IN ('Scheduled', 'Completed', 'Cancelled')");
+                        });
                 });
 
             modelBuilder.Entity("Tahdeera.Domain.Entities.Student", b =>
@@ -1444,6 +2327,80 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                         .HasConstraintName("fk_asp_net_user_tokens_asp_net_users_user_id");
                 });
 
+            modelBuilder.Entity("Tahdeera.Domain.Entities.AttendanceHistory", b =>
+                {
+                    b.HasOne("Tahdeera.Domain.Entities.AttendanceRecord", "AttendanceRecord")
+                        .WithMany("HistoryEntries")
+                        .HasForeignKey("AttendanceRecordId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_attendance_history_attendance_records_attendance_record_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.AppUser", "ChangedByUser")
+                        .WithMany()
+                        .HasForeignKey("ChangedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_attendance_history_app_users_changed_by_user_id");
+
+                    b.Navigation("AttendanceRecord");
+
+                    b.Navigation("ChangedByUser");
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.AttendanceRecord", b =>
+                {
+                    b.HasOne("Tahdeera.Domain.Entities.Group", "HomeGroup")
+                        .WithMany()
+                        .HasForeignKey("HomeGroupId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_attendance_records_groups_home_group_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.AppUser", "LastModifiedByUser")
+                        .WithMany()
+                        .HasForeignKey("LastModifiedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_attendance_records_app_users_last_modified_by_user_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.Workspace", "OwnerWorkspace")
+                        .WithMany("AttendanceRecords")
+                        .HasForeignKey("OwnerWorkspaceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_attendance_records_workspaces_owner_workspace_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.AppUser", "RecordedByUser")
+                        .WithMany()
+                        .HasForeignKey("RecordedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_attendance_records_app_users_recorded_by_user_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.Session", "Session")
+                        .WithMany("AttendanceRecords")
+                        .HasForeignKey("SessionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_attendance_records_sessions_session_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.Student", "Student")
+                        .WithMany("AttendanceRecords")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_attendance_records_students_student_id");
+
+                    b.Navigation("HomeGroup");
+
+                    b.Navigation("LastModifiedByUser");
+
+                    b.Navigation("OwnerWorkspace");
+
+                    b.Navigation("RecordedByUser");
+
+                    b.Navigation("Session");
+
+                    b.Navigation("Student");
+                });
+
             modelBuilder.Entity("Tahdeera.Domain.Entities.AuditLog", b =>
                 {
                     b.HasOne("Tahdeera.Domain.Entities.AppUser", "ActorUser")
@@ -1463,6 +2420,214 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                     b.Navigation("Workspace");
                 });
 
+            modelBuilder.Entity("Tahdeera.Domain.Entities.Group", b =>
+                {
+                    b.HasOne("Tahdeera.Domain.Entities.AcademicYear", "AcademicYear")
+                        .WithMany()
+                        .HasForeignKey("AcademicYearId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_groups_academic_years_academic_year_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.AppUser", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_groups_app_users_created_by_user_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.Grade", "Grade")
+                        .WithMany()
+                        .HasForeignKey("GradeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_groups_grades_grade_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.Workspace", "OwnerWorkspace")
+                        .WithMany("Groups")
+                        .HasForeignKey("OwnerWorkspaceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_groups_workspaces_owner_workspace_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.AppUser", "ResponsibleTeacherUser")
+                        .WithMany()
+                        .HasForeignKey("ResponsibleTeacherUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_groups_app_users_responsible_teacher_user_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.Subject", "Subject")
+                        .WithMany()
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_groups_subjects_subject_id");
+
+                    b.Navigation("AcademicYear");
+
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("Grade");
+
+                    b.Navigation("OwnerWorkspace");
+
+                    b.Navigation("ResponsibleTeacherUser");
+
+                    b.Navigation("Subject");
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.GroupAttendanceDelegation", b =>
+                {
+                    b.HasOne("Tahdeera.Domain.Entities.AppUser", "AssistantUser")
+                        .WithMany()
+                        .HasForeignKey("AssistantUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_group_attendance_delegations_app_users_assistant_user_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.AppUser", "GrantedByTeacherUser")
+                        .WithMany()
+                        .HasForeignKey("GrantedByTeacherUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_group_attendance_delegations_app_users_granted_by_teacher_u");
+
+                    b.HasOne("Tahdeera.Domain.Entities.Group", "Group")
+                        .WithMany("Delegations")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_group_attendance_delegations_groups_group_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.AppUser", "RevokedByUser")
+                        .WithMany()
+                        .HasForeignKey("RevokedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_group_attendance_delegations_app_users_revoked_by_user_id");
+
+                    b.Navigation("AssistantUser");
+
+                    b.Navigation("GrantedByTeacherUser");
+
+                    b.Navigation("Group");
+
+                    b.Navigation("RevokedByUser");
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.GroupStudent", b =>
+                {
+                    b.HasOne("Tahdeera.Domain.Entities.Group", "Group")
+                        .WithMany("EnrolledStudents")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_group_students_groups_group_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.Student", "Student")
+                        .WithMany("GroupEnrollments")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_group_students_students_student_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.AppUser", "UpdatedByUser")
+                        .WithMany()
+                        .HasForeignKey("UpdatedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_group_students_app_users_updated_by_user_id");
+
+                    b.Navigation("Group");
+
+                    b.Navigation("Student");
+
+                    b.Navigation("UpdatedByUser");
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.GroupStudentStatusHistory", b =>
+                {
+                    b.HasOne("Tahdeera.Domain.Entities.AppUser", "ChangedByUser")
+                        .WithMany()
+                        .HasForeignKey("ChangedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_group_student_status_history_app_users_changed_by_user_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.GroupStudent", "GroupStudent")
+                        .WithMany("StatusHistory")
+                        .HasForeignKey("GroupStudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_group_student_status_history_group_students_group_student_id");
+
+                    b.Navigation("ChangedByUser");
+
+                    b.Navigation("GroupStudent");
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.GroupWorkspaceAccess", b =>
+                {
+                    b.HasOne("Tahdeera.Domain.Entities.AppUser", "GrantedByUser")
+                        .WithMany()
+                        .HasForeignKey("GrantedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_group_workspace_access_app_users_granted_by_user_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.Group", "Group")
+                        .WithMany("WorkspaceAccesses")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_group_workspace_access_groups_group_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.AppUser", "RevokedByUser")
+                        .WithMany()
+                        .HasForeignKey("RevokedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_group_workspace_access_app_users_revoked_by_user_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.Workspace", "Workspace")
+                        .WithMany("WorkspaceAccesses")
+                        .HasForeignKey("WorkspaceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_group_workspace_access_workspaces_workspace_id");
+
+                    b.Navigation("GrantedByUser");
+
+                    b.Navigation("Group");
+
+                    b.Navigation("RevokedByUser");
+
+                    b.Navigation("Workspace");
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.MessageOutbox", b =>
+                {
+                    b.HasOne("Tahdeera.Domain.Entities.AttendanceRecord", "AttendanceRecord")
+                        .WithMany("OutboxMessages")
+                        .HasForeignKey("AttendanceRecordId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_message_outbox_attendance_records_attendance_record_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.Student", "Student")
+                        .WithMany("OutboxMessages")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_message_outbox_students_student_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.Workspace", "Workspace")
+                        .WithMany("OutboxMessages")
+                        .HasForeignKey("WorkspaceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_message_outbox_workspaces_workspace_id");
+
+                    b.Navigation("AttendanceRecord");
+
+                    b.Navigation("Student");
+
+                    b.Navigation("Workspace");
+                });
+
             modelBuilder.Entity("Tahdeera.Domain.Entities.RefreshToken", b =>
                 {
                     b.HasOne("Tahdeera.Domain.Entities.AppUser", "User")
@@ -1473,6 +2638,34 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                         .HasConstraintName("fk_refresh_tokens_app_users_user_id");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.Session", b =>
+                {
+                    b.HasOne("Tahdeera.Domain.Entities.AppUser", "CancelledByUser")
+                        .WithMany()
+                        .HasForeignKey("CancelledByUserId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_sessions_app_users_cancelled_by_user_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.AppUser", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_sessions_app_users_created_by_user_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.Group", "Group")
+                        .WithMany("Sessions")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_sessions_groups_group_id");
+
+                    b.Navigation("CancelledByUser");
+
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("Group");
                 });
 
             modelBuilder.Entity("Tahdeera.Domain.Entities.StudentAcademicHistory", b =>
@@ -1689,16 +2882,50 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                     b.Navigation("WorkspaceMemberships");
                 });
 
+            modelBuilder.Entity("Tahdeera.Domain.Entities.AttendanceRecord", b =>
+                {
+                    b.Navigation("HistoryEntries");
+
+                    b.Navigation("OutboxMessages");
+                });
+
             modelBuilder.Entity("Tahdeera.Domain.Entities.Grade", b =>
                 {
                     b.Navigation("AcademicHistories");
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.Group", b =>
+                {
+                    b.Navigation("Delegations");
+
+                    b.Navigation("EnrolledStudents");
+
+                    b.Navigation("Sessions");
+
+                    b.Navigation("WorkspaceAccesses");
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.GroupStudent", b =>
+                {
+                    b.Navigation("StatusHistory");
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.Session", b =>
+                {
+                    b.Navigation("AttendanceRecords");
                 });
 
             modelBuilder.Entity("Tahdeera.Domain.Entities.Student", b =>
                 {
                     b.Navigation("AcademicHistories");
 
+                    b.Navigation("AttendanceRecords");
+
                     b.Navigation("Credentials");
+
+                    b.Navigation("GroupEnrollments");
+
+                    b.Navigation("OutboxMessages");
 
                     b.Navigation("WorkspaceEnrollments");
                 });
@@ -1710,9 +2937,17 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Tahdeera.Domain.Entities.Workspace", b =>
                 {
+                    b.Navigation("AttendanceRecords");
+
+                    b.Navigation("Groups");
+
                     b.Navigation("Members");
 
+                    b.Navigation("OutboxMessages");
+
                     b.Navigation("Subscriptions");
+
+                    b.Navigation("WorkspaceAccesses");
                 });
 
             modelBuilder.Entity("Tahdeera.Domain.Entities.WorkspaceSubscription", b =>
