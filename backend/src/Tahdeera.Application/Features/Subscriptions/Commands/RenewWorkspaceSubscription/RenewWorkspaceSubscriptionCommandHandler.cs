@@ -1,5 +1,5 @@
+using Mapster;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Tahdeera.Application.Common.Interfaces;
 using Tahdeera.Application.Features.Subscriptions.DTOs;
 using Tahdeera.Domain.Common;
@@ -10,20 +10,17 @@ namespace Tahdeera.Application.Features.Subscriptions.Commands.RenewWorkspaceSub
 
 public class RenewWorkspaceSubscriptionCommandHandler : IRequestHandler<RenewWorkspaceSubscriptionCommand, Result<RenewSubscriptionResultDto>>
 {
-    private readonly ITahdeeraDbContext _dbContext;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ICurrentUserService _currentUserService;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IAuditLogService _auditLogService;
 
     public RenewWorkspaceSubscriptionCommandHandler(
-        ITahdeeraDbContext dbContext,
         IUnitOfWork unitOfWork,
         ICurrentUserService currentUserService,
         IDateTimeProvider dateTimeProvider,
         IAuditLogService auditLogService)
     {
-        _dbContext = dbContext;
         _unitOfWork = unitOfWork;
         _currentUserService = currentUserService;
         _dateTimeProvider = dateTimeProvider;
@@ -45,10 +42,10 @@ public class RenewWorkspaceSubscriptionCommandHandler : IRequestHandler<RenewWor
             return Error.Forbidden("ROLE_FORBIDDEN", "لا تملك الصلاحية المطلوبة لتنفيذ هذا الإجراء.");
         }
 
-        var subscription = await _dbContext.WorkspaceSubscriptions
-            .Where(s => s.WorkspaceId == request.WorkspaceId)
-            .OrderByDescending(s => s.EndsAt)
-            .FirstOrDefaultAsync(cancellationToken);
+        var subscriptions = await _unitOfWork.WorkspaceSubscriptions
+            .FindAsync(s => s.WorkspaceId == request.WorkspaceId, cancellationToken);
+
+        var subscription = subscriptions.OrderByDescending(s => s.EndsAt).FirstOrDefault();
 
         if (subscription == null)
         {
@@ -111,14 +108,11 @@ public class RenewWorkspaceSubscriptionCommandHandler : IRequestHandler<RenewWor
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        var resultDto = new RenewSubscriptionResultDto(
-            subscription.Id,
-            payment.Id,
-            subscription.Status,
-            subscription.StartsAt,
-            subscription.EndsAt,
-            subscription.AgreedPrice,
-            now);
+        var resultDto = subscription.Adapt<RenewSubscriptionResultDto>() with
+        {
+            PaymentId = payment.Id,
+            RenewedAt = now
+        };
 
         return Result<RenewSubscriptionResultDto>.Success(resultDto);
     }

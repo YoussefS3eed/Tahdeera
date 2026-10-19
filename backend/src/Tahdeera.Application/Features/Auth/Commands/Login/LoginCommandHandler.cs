@@ -1,3 +1,4 @@
+using Mapster;
 using MediatR;
 using System.Text.RegularExpressions;
 using Tahdeera.Application.Common.Interfaces;
@@ -117,15 +118,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<AuthResu
                 subSummary));
         }
 
-        var userDto = new UserProfileDto(
-            user.Id,
-            user.Username,
-            user.NormalizedEmail,
-            user.DisplayName,
-            user.Phone,
-            user.PreferredLanguage,
-            user.PreferredTheme,
-            user.IsPlatformAdmin);
+        var userDto = user.Adapt<UserProfileDto>();
 
         return Result.Success(new AuthResultDto(
             accessToken,

@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
+using System.Diagnostics;
+using Tahdeera.Application.Resources;
 using Tahdeera.Domain.Common;
 
 namespace Tahdeera.API.Controllers;
@@ -24,17 +27,47 @@ public abstract class ApiControllerBase : ControllerBase
             _ => StatusCodes.Status400BadRequest
         };
 
+        var localizer = HttpContext.RequestServices.GetService<IStringLocalizer<DomainMessages>>();
+
+        string title = result.Error.Code;
+        string detail = result.Error.Description;
+
+        if (localizer != null)
+        {
+            var localizedTitle = localizer[$"{result.Error.Code}_Title"];
+            if (!localizedTitle.ResourceNotFound && !string.IsNullOrWhiteSpace(localizedTitle.Value))
+            {
+                title = localizedTitle.Value;
+            }
+
+            var localizedDetail = localizer[$"{result.Error.Code}_Detail"];
+            if (!localizedDetail.ResourceNotFound && !string.IsNullOrWhiteSpace(localizedDetail.Value))
+            {
+                detail = localizedDetail.Value;
+            }
+            else
+            {
+                var localizedGeneral = localizer[result.Error.Code];
+                if (!localizedGeneral.ResourceNotFound && !string.IsNullOrWhiteSpace(localizedGeneral.Value))
+                {
+                    detail = localizedGeneral.Value;
+                }
+            }
+        }
+
+        var traceId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+
         var problemDetails = new ProblemDetails
         {
             Status = statusCode,
-            Title = result.Error.Code,
-            Detail = result.Error.Description,
+            Title = title,
+            Detail = detail,
             Type = $"https://tahdeera.app/errors/{result.Error.Code.ToLowerInvariant().Replace('_', '-')}",
             Instance = HttpContext.Request.Path
         };
 
         problemDetails.Extensions["errorCode"] = result.Error.Code;
-        problemDetails.Extensions["traceId"] = HttpContext.TraceIdentifier;
+        problemDetails.Extensions["traceId"] = traceId;
 
         return StatusCode(statusCode, problemDetails);
     }

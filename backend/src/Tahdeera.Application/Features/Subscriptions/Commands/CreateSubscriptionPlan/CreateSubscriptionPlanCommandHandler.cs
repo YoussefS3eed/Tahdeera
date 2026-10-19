@@ -10,6 +10,7 @@ namespace Tahdeera.Application.Features.Subscriptions.Commands.CreateSubscriptio
 
 public class CreateSubscriptionPlanCommandHandler : IRequestHandler<CreateSubscriptionPlanCommand, Result<SubscriptionPlanDto>>
 {
+    private readonly ISubscriptionPlanRepository _subscriptionPlanRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IAuditLogService _auditLogService;
     private readonly ICurrentUserService _currentUserService;
@@ -18,7 +19,21 @@ public class CreateSubscriptionPlanCommandHandler : IRequestHandler<CreateSubscr
         IUnitOfWork unitOfWork,
         IAuditLogService auditLogService,
         ICurrentUserService currentUserService)
+        : this(
+            unitOfWork.SubscriptionPlans,
+            unitOfWork,
+            auditLogService,
+            currentUserService)
     {
+    }
+
+    public CreateSubscriptionPlanCommandHandler(
+        ISubscriptionPlanRepository subscriptionPlanRepository,
+        IUnitOfWork unitOfWork,
+        IAuditLogService auditLogService,
+        ICurrentUserService currentUserService)
+    {
+        _subscriptionPlanRepository = subscriptionPlanRepository;
         _unitOfWork = unitOfWork;
         _auditLogService = auditLogService;
         _currentUserService = currentUserService;
@@ -27,7 +42,7 @@ public class CreateSubscriptionPlanCommandHandler : IRequestHandler<CreateSubscr
     public async Task<Result<SubscriptionPlanDto>> Handle(CreateSubscriptionPlanCommand request, CancellationToken cancellationToken)
     {
         var codeNormalized = request.Code.Trim().ToUpperInvariant();
-        var exists = await _unitOfWork.SubscriptionPlans.ExistsByCodeAsync(codeNormalized, cancellationToken);
+        var exists = await _subscriptionPlanRepository.ExistsByCodeAsync(codeNormalized, cancellationToken);
 
         if (exists)
         {
@@ -36,7 +51,7 @@ public class CreateSubscriptionPlanCommandHandler : IRequestHandler<CreateSubscr
 
         var plan = request.Adapt<SubscriptionPlan>();
 
-        await _unitOfWork.SubscriptionPlans.AddAsync(plan, cancellationToken);
+        await _subscriptionPlanRepository.AddAsync(plan, cancellationToken);
 
         await _auditLogService.LogAsync(
             _currentUserService.UserId,

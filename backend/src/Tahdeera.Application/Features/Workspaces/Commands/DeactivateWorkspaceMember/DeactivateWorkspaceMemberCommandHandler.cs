@@ -1,3 +1,4 @@
+using Mapster;
 using MediatR;
 using Tahdeera.Application.Common.Interfaces;
 using Tahdeera.Application.Features.Workspaces.DTOs;
@@ -90,6 +91,6 @@ public class DeactivateWorkspaceMemberCommandHandler : IRequestHandler<Deactivat
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result<DeactivateWorkspaceMemberResultDto>.Success(
-            new DeactivateWorkspaceMemberResultDto(member.Id, false, member.LeftAt!.Value));
+            member.Adapt<DeactivateWorkspaceMemberResultDto>());
     }
 }

@@ -13,8 +13,16 @@ public class UnitOfWork : IUnitOfWork
     private IGenericRepository<WorkspaceMember>? _workspaceMembers;
     private IGenericRepository<WorkspaceSubscription>? _workspaceSubscriptions;
     private IGenericRepository<SubscriptionPayment>? _subscriptionPayments;
-    private IGenericRepository<AuditLog>? _auditLogs;
+    private IAuditLogRepository? _auditLogs;
     private IGenericRepository<RefreshToken>? _refreshTokens;
+
+    // Milestone B2 domain repositories
+    private IStudentRepository? _students;
+    private IWorkspaceStudentRepository? _workspaceStudents;
+    private IGenericRepository<StudentAcademicHistory>? _studentAcademicHistories;
+    private IStudentCredentialRepository? _studentCredentials;
+    private IGradeRepository? _grades;
+    private IAcademicYearRepository? _academicYears;
 
     public UnitOfWork(TahdeeraDbContext context)
     {
@@ -39,11 +47,30 @@ public class UnitOfWork : IUnitOfWork
     public IGenericRepository<SubscriptionPayment> SubscriptionPayments =>
         _subscriptionPayments ??= new GenericRepository<SubscriptionPayment>(_context);
 
-    public IGenericRepository<AuditLog> AuditLogs =>
-        _auditLogs ??= new GenericRepository<AuditLog>(_context);
+    public IAuditLogRepository AuditLogs =>
+        _auditLogs ??= new AuditLogRepository(_context);
 
     public IGenericRepository<RefreshToken> RefreshTokens =>
         _refreshTokens ??= new GenericRepository<RefreshToken>(_context);
+
+    // Milestone B2 domain repositories
+    public IStudentRepository Students =>
+        _students ??= new StudentRepository(_context);
+
+    public IWorkspaceStudentRepository WorkspaceStudents =>
+        _workspaceStudents ??= new WorkspaceStudentRepository(_context);
+
+    public IGenericRepository<StudentAcademicHistory> StudentAcademicHistories =>
+        _studentAcademicHistories ??= new GenericRepository<StudentAcademicHistory>(_context);
+
+    public IStudentCredentialRepository StudentCredentials =>
+        _studentCredentials ??= new StudentCredentialRepository(_context);
+
+    public IGradeRepository Grades =>
+        _grades ??= new GradeRepository(_context);
+
+    public IAcademicYearRepository AcademicYears =>
+        _academicYears ??= new AcademicYearRepository(_context);
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

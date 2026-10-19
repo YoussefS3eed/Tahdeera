@@ -12,8 +12,20 @@
   <data name="UNAUTHORIZED_WORKSPACE_ACCESS" xml:space="preserve">
     <value>ليس لديك صلاحية الوصول إلى مساحة العمل هذه.</value>
   </data>
+  <data name="UNAUTHORIZED_WORKSPACE_ACCESS_Title" xml:space="preserve">
+    <value>غير مصرح بالوصول إلى مساحة العمل</value>
+  </data>
+  <data name="UNAUTHORIZED_WORKSPACE_ACCESS_Detail" xml:space="preserve">
+    <value>ليس لديك صلاحية الوصول إلى هذه المساحة التعليمية.</value>
+  </data>
   <data name="WORKSPACE_SUSPENDED" xml:space="preserve">
     <value>تم إيقاف حساب السنتر إدارياً. يرجى التواصل مع إدارة المنصة (01272785618 / 01019482687).</value>
+  </data>
+  <data name="WORKSPACE_SUSPENDED_Title" xml:space="preserve">
+    <value>السنتر موقوف</value>
+  </data>
+  <data name="WORKSPACE_SUSPENDED_Detail" xml:space="preserve">
+    <value>تم إيقاف السنتر بسبب انتهاء الاشتراك أو بقرار إداري. لا يمكن إجراء عمليات.</value>
   </data>
   <data name="SUBSCRIPTION_EXPIRED" xml:space="preserve">
     <value>انتهت مدة اشتراكك في النظام. يرجى التواصل لتجديد الاشتراك (01272785618 / 01019482687).</value>
@@ -36,6 +48,12 @@
   <data name="INTERNAL_SERVER_ERROR" xml:space="preserve">
     <value>حدث خطأ غير متوقع، يرجى المحاولة لاحقاً.</value>
   </data>
+  <data name="INTERNAL_SERVER_ERROR_Title" xml:space="preserve">
+    <value>خطأ غير متوقع في النظام</value>
+  </data>
+  <data name="INTERNAL_SERVER_ERROR_Detail" xml:space="preserve">
+    <value>حدث خطأ أثناء معالجة الطلب. يرجى المحاولة لاحقاً مع تزويد الدعم الفني برمز التتبع.</value>
+  </data>
   <data name="MEMBER_NOT_FOUND" xml:space="preserve">
     <value>عضو طاقم العمل المطلوب غير موجود في مساحة العمل هذه.</value>
   </data>
@@ -48,25 +66,136 @@
   <data name="QUOTA_MAX_STUDENTS_REACHED" xml:space="preserve">
     <value>تم الوصول إلى الحد الأقصى لعدد الطلاب المسموح به في باقة اشتراكك الحالية. يرجى ترقية الباقة لإضافة المزيد من الطلاب.</value>
   </data>
+  <data name="QUOTA_MAX_STUDENTS_REACHED_Title" xml:space="preserve">
+    <value>تم بلوغ الحد الأقصى للطلاب</value>
+  </data>
+  <data name="QUOTA_MAX_STUDENTS_REACHED_Detail" xml:space="preserve">
+    <value>تم الوصول إلى الحد الأقصى المسموح به للطلاب في باقتك الحالية. يرجى ترقية الاشتراك.</value>
+  </data>
   <data name="CREDENTIAL_TOKEN_ALREADY_EXISTS" xml:space="preserve">
     <value>هذا الكارت مسجل بالفعل في النظام لبطاقة أخرى. يرجى مسح كارت جديد فارغ.</value>
+  </data>
+  <data name="CREDENTIAL_TOKEN_ALREADY_EXISTS_Title" xml:space="preserve">
+    <value>الكارت أو الرمز مستخدم بالفعل</value>
+  </data>
+  <data name="CREDENTIAL_TOKEN_ALREADY_EXISTS_Detail" xml:space="preserve">
+    <value>هذا الكارت أو الرمز الرقمي مخصص لطالب آخر بالفعل في النظام ولا يمكن إعادة تعيينه لطالب جديد.</value>
   </data>
   <data name="STUDENT_ENROLLMENT_VERIFICATION_FAILED" xml:space="preserve">
     <value>تعذر التحقق من بيانات الطالب. كود الطالب أو رقم هاتف ولي الأمر غير متطابق.</value>
   </data>
+  <data name="STUDENT_ENROLLMENT_VERIFICATION_FAILED_Title" xml:space="preserve">
+    <value>فشل التحقق من بيانات القيد</value>
+  </data>
+  <data name="STUDENT_ENROLLMENT_VERIFICATION_FAILED_Detail" xml:space="preserve">
+    <value>تعذر التحقق من كود الطالب أو وسيلة التأكيد المدخلة. يرجى مراجعة البيانات والمحاولة مجدداً.</value>
+  </data>
   <data name="INVALID_OR_REVOKED_CARD" xml:space="preserve">
     <value>هذا الكارت غير صالح أو تم إلغاؤه مسبقاً.</value>
+  </data>
+  <data name="INVALID_OR_REVOKED_CARD_Title" xml:space="preserve">
+    <value>كارت غير صالح أو ملغي</value>
+  </data>
+  <data name="INVALID_OR_REVOKED_CARD_Detail" xml:space="preserve">
+    <value>الكارت أو الرمز الممسوح غير مسجل بالنظام أو تم إلغاؤه مسبقاً.</value>
   </data>
   <data name="STUDENT_ALREADY_ENROLLED_IN_WORKSPACE" xml:space="preserve">
     <value>هذا الطالب مسجل بالفعل في هذه المساحة التعليمية.</value>
   </data>
+  <data name="STUDENT_ALREADY_ENROLLED_IN_WORKSPACE_Title" xml:space="preserve">
+    <value>الطالب مسجل مسبقاً في السنتر</value>
+  </data>
+  <data name="STUDENT_ALREADY_ENROLLED_IN_WORKSPACE_Detail" xml:space="preserve">
+    <value>الطالب مسجل بالفعل في هذا السنتر. لا يمكن إعادة قيده مرتين.</value>
+  </data>
   <data name="STUDENT_NOT_FOUND_IN_WORKSPACE" xml:space="preserve">
     <value>الطالب غير مسجل في هذه المساحة التعليمية.</value>
+  </data>
+  <data name="STUDENT_NOT_FOUND_IN_WORKSPACE_Title" xml:space="preserve">
+    <value>الطالب غير موجود بالسنتر</value>
+  </data>
+  <data name="STUDENT_NOT_FOUND_IN_WORKSPACE_Detail" xml:space="preserve">
+    <value>لم يتم العثور على الطالب في هذا السنتر أو تم حذفه.</value>
   </data>
   <data name="GRADE_REQUIRED_FOR_NEW_ACADEMIC_YEAR" xml:space="preserve">
     <value>يجب تحديد المرحلة الدراسية للسنة الدراسية الجديدة لنقل الطالب.</value>
   </data>
+  <data name="GRADE_REQUIRED_FOR_NEW_ACADEMIC_YEAR_Title" xml:space="preserve">
+    <value>تحديد الصف الدراسي مطلوب</value>
+  </data>
+  <data name="GRADE_REQUIRED_FOR_NEW_ACADEMIC_YEAR_Detail" xml:space="preserve">
+    <value>لم يتم تسجيل صف دراسي للطالب في العام الحالي. يجب اختيار الصف الدراسي لإتمام القيد.</value>
+  </data>
   <data name="RATE_LIMIT_EXCEEDED" xml:space="preserve">
     <value>تم تجاوز الحد المسموح به للمحاولات. يرجى الانتظار والمحاولة مرة أخرى لاحقاً.</value>
+  </data>
+  <data name="RATE_LIMIT_EXCEEDED_Title" xml:space="preserve">
+    <value>تم تجاوز الحد المسموح به للمحاولات</value>
+  </data>
+  <data name="RATE_LIMIT_EXCEEDED_Detail" xml:space="preserve">
+    <value>تم تجاوز الحد المسموح به للمحاولات. يرجى الانتظار والمحاولة مرة أخرى لاحقاً.</value>
+  </data>
+  <data name="ACTIVE_ACADEMIC_YEAR_NOT_CONFIGURED" xml:space="preserve">
+    <value>لم يتم تهيئة عام دراسي نشط في النظام حالياً. يرجى مراجعة إدارة المنصة.</value>
+  </data>
+  <data name="ACTIVE_ACADEMIC_YEAR_NOT_CONFIGURED_Title" xml:space="preserve">
+    <value>العام الدراسي غير محدد</value>
+  </data>
+  <data name="ACTIVE_ACADEMIC_YEAR_NOT_CONFIGURED_Detail" xml:space="preserve">
+    <value>لا يوجد عام دراسي حالي نشط في النظام. يرجى التواصل مع مسؤول النظام.</value>
+  </data>
+  <data name="GUARDIAN_PHONE_ALREADY_EXISTS_CONFIRM_SIBLING" xml:space="preserve">
+    <value>رقم هاتف ولي الأمر مسجل بالفعل لطالب آخر في هذا المركز. يرجى تأكيد تسجيل أخ/أخت للمتابعة.</value>
+  </data>
+  <data name="GUARDIAN_PHONE_ALREADY_EXISTS_CONFIRM_SIBLING_Title" xml:space="preserve">
+    <value>رقم ولي الأمر مسجل مسبقاً</value>
+  </data>
+  <data name="GUARDIAN_PHONE_ALREADY_EXISTS_CONFIRM_SIBLING_Detail" xml:space="preserve">
+    <value>رقم هاتف ولي الأمر مسجل لطالب آخر في هذا السنتر. يرجى تأكيد تسجيل طالب شقيق.</value>
+  </data>
+  <data name="CREDENTIAL_NOT_FOUND" xml:space="preserve">
+    <value>لم يتم العثور على الكارت أو الرمز المطلوب.</value>
+  </data>
+  <data name="CREDENTIAL_NOT_FOUND_Title" xml:space="preserve">
+    <value>الكارت غير موجود</value>
+  </data>
+  <data name="CREDENTIAL_NOT_FOUND_Detail" xml:space="preserve">
+    <value>لم يتم العثور على الكارت أو الرمز المطلوب.</value>
+  </data>
+  <data name="CREDENTIAL_ALREADY_REVOKED" xml:space="preserve">
+    <value>تم إلغاء تفعيل هذا الكارت أو الرمز مسبقاً.</value>
+  </data>
+  <data name="CREDENTIAL_ALREADY_REVOKED_Title" xml:space="preserve">
+    <value>الكارت ملغي بالفعل</value>
+  </data>
+  <data name="CREDENTIAL_ALREADY_REVOKED_Detail" xml:space="preserve">
+    <value>تم إلغاء تفعيل هذا الكارت أو الرمز مسبقاً.</value>
+  </data>
+  <data name="INVALID_STUDENT_STATUS" xml:space="preserve">
+    <value>الحالة المدخلة للطالب غير معتمدة في النظام (الحالات المقبولة: نشط، موقوف، محظور، مؤرشف).</value>
+  </data>
+  <data name="INVALID_STUDENT_STATUS_Title" xml:space="preserve">
+    <value>حالة الطالب غير صالحة</value>
+  </data>
+  <data name="INVALID_STUDENT_STATUS_Detail" xml:space="preserve">
+    <value>الحالة المدخلة للطالب غير معتمدة في النظام (الحالات المقبولة: نشط، موقوف، محظور، مؤرشف).</value>
+  </data>
+  <data name="INVALID_PHONE_NUMBER" xml:space="preserve">
+    <value>يرجى إدخال رقم هاتف محمول مصري صحيح يبدأ بـ 01 ويتكون من 11 رقماً (أو بصيغة E.164 الدولية).</value>
+  </data>
+  <data name="INVALID_PHONE_NUMBER_Title" xml:space="preserve">
+    <value>رقم هاتف غير صحيح</value>
+  </data>
+  <data name="INVALID_PHONE_NUMBER_Detail" xml:space="preserve">
+    <value>يرجى إدخال رقم هاتف محمول مصري صحيح يبدأ بـ 01 ويتكون من 11 رقماً (أو بصيغة E.164 الدولية).</value>
+  </data>
+  <data name="INSUFFICIENT_PERMISSIONS" xml:space="preserve">
+    <value>ليس لديك الصلاحية المطلوبة لتنفيذ هذا الإجراء في السنتر.</value>
+  </data>
+  <data name="INSUFFICIENT_PERMISSIONS_Title" xml:space="preserve">
+    <value>صلاحيات غير كافية</value>
+  </data>
+  <data name="INSUFFICIENT_PERMISSIONS_Detail" xml:space="preserve">
+    <value>ليس لديك الصلاحية المطلوبة لتنفيذ هذا الإجراء في السنتر.</value>
   </data>
 </root>

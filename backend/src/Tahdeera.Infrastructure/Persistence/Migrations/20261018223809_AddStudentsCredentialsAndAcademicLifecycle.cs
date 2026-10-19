@@ -1,4 +1,3 @@
-﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -7,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Tahdeera.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class M2_Students_Credentials_Academic : Migration
+    public partial class AddStudentsCredentialsAndAcademicLifecycle : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

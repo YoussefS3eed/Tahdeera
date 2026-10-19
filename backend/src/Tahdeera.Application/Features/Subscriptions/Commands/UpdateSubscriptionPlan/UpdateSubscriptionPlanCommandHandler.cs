@@ -9,6 +9,7 @@ namespace Tahdeera.Application.Features.Subscriptions.Commands.UpdateSubscriptio
 
 public class UpdateSubscriptionPlanCommandHandler : IRequestHandler<UpdateSubscriptionPlanCommand, Result<SubscriptionPlanDto>>
 {
+    private readonly ISubscriptionPlanRepository _subscriptionPlanRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IAuditLogService _auditLogService;
     private readonly ICurrentUserService _currentUserService;
@@ -17,7 +18,21 @@ public class UpdateSubscriptionPlanCommandHandler : IRequestHandler<UpdateSubscr
         IUnitOfWork unitOfWork,
         IAuditLogService auditLogService,
         ICurrentUserService currentUserService)
+        : this(
+            unitOfWork.SubscriptionPlans,
+            unitOfWork,
+            auditLogService,
+            currentUserService)
     {
+    }
+
+    public UpdateSubscriptionPlanCommandHandler(
+        ISubscriptionPlanRepository subscriptionPlanRepository,
+        IUnitOfWork unitOfWork,
+        IAuditLogService auditLogService,
+        ICurrentUserService currentUserService)
+    {
+        _subscriptionPlanRepository = subscriptionPlanRepository;
         _unitOfWork = unitOfWork;
         _auditLogService = auditLogService;
         _currentUserService = currentUserService;
@@ -25,7 +40,7 @@ public class UpdateSubscriptionPlanCommandHandler : IRequestHandler<UpdateSubscr
 
     public async Task<Result<SubscriptionPlanDto>> Handle(UpdateSubscriptionPlanCommand request, CancellationToken cancellationToken)
     {
-        var plan = await _unitOfWork.SubscriptionPlans.GetByIdAsync(request.Id, cancellationToken);
+        var plan = await _subscriptionPlanRepository.GetByIdAsync(request.Id, cancellationToken);
 
         if (plan == null)
         {
@@ -35,7 +50,7 @@ public class UpdateSubscriptionPlanCommandHandler : IRequestHandler<UpdateSubscr
         // Apply in-place update using Mapster
         request.Adapt(plan);
         plan.UpdatedAt = DateTimeOffset.UtcNow;
-        _unitOfWork.SubscriptionPlans.Update(plan);
+        _subscriptionPlanRepository.Update(plan);
 
         await _auditLogService.LogAsync(
             _currentUserService.UserId,

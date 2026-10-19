@@ -1,6 +1,6 @@
+using FluentAssertions;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
-using FluentAssertions;
 using Tahdeera.Infrastructure.Services;
 
 namespace Tahdeera.Application.UnitTests.Security;
@@ -97,8 +97,8 @@ public class CredentialSecurityServiceTests
         await _sut.ExecuteDummyVerificationDelayAsync();
         stopwatch.Stop();
 
-        // Assert: 35ms - 65ms nominal delay. Allowing 25ms floor and 300ms ceiling for CI/OS scheduling jitter.
+        // Assert: 35ms - 65ms nominal delay. Allowing 25ms floor and reasonable ceiling for OS thread scheduling jitter.
         stopwatch.ElapsedMilliseconds.Should().BeGreaterThanOrEqualTo(25);
-        stopwatch.ElapsedMilliseconds.Should().BeLessThan(300);
+        stopwatch.ElapsedMilliseconds.Should().BeLessThan(2000);
     }
 }

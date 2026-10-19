@@ -1,3 +1,4 @@
+using Mapster;
 using MediatR;
 using System.Text.RegularExpressions;
 using Tahdeera.Application.Common.Interfaces;
@@ -10,6 +11,7 @@ namespace Tahdeera.Application.Features.Workspaces.Commands.AddWorkspaceMember;
 
 public class AddWorkspaceMemberCommandHandler : IRequestHandler<AddWorkspaceMemberCommand, Result<AddWorkspaceMemberResultDto>>
 {
+    private readonly ISubscriptionPlanRepository _subscriptionPlanRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IIdentityService _identityService;
     private readonly IAuditLogService _auditLogService;
@@ -22,7 +24,25 @@ public class AddWorkspaceMemberCommandHandler : IRequestHandler<AddWorkspaceMemb
         IAuditLogService auditLogService,
         ICurrentUserService currentUserService,
         IDateTimeProvider dateTimeProvider)
+        : this(
+            unitOfWork.SubscriptionPlans,
+            unitOfWork,
+            identityService,
+            auditLogService,
+            currentUserService,
+            dateTimeProvider)
     {
+    }
+
+    public AddWorkspaceMemberCommandHandler(
+        ISubscriptionPlanRepository subscriptionPlanRepository,
+        IUnitOfWork unitOfWork,
+        IIdentityService identityService,
+        IAuditLogService auditLogService,
+        ICurrentUserService currentUserService,
+        IDateTimeProvider dateTimeProvider)
+    {
+        _subscriptionPlanRepository = subscriptionPlanRepository;
         _unitOfWork = unitOfWork;
         _identityService = identityService;
         _auditLogService = auditLogService;
@@ -65,7 +85,7 @@ public class AddWorkspaceMemberCommandHandler : IRequestHandler<AddWorkspaceMemb
             }
             else if (latestSub.PlanId.HasValue)
             {
-                var plan = await _unitOfWork.SubscriptionPlans.GetByIdAsync(latestSub.PlanId.Value, cancellationToken);
+                var plan = await _subscriptionPlanRepository.GetByIdAsync(latestSub.PlanId.Value, cancellationToken);
                 if (plan != null)
                 {
                     maxStaffQuota = plan.MaxStaff;
@@ -91,10 +111,10 @@ public class AddWorkspaceMemberCommandHandler : IRequestHandler<AddWorkspaceMemb
             u => u.NormalizedEmail == normalizedEmail || u.Username == trimmedUsername,
             cancellationToken);
 
+        WorkspaceMember memberEntity;
         Guid memberUserId;
         string displayName;
         var joinedAt = _dateTimeProvider.UtcNow;
-        Guid memberId;
 
         if (existingUser != null)
         {
@@ -117,7 +137,7 @@ public class AddWorkspaceMemberCommandHandler : IRequestHandler<AddWorkspaceMemb
                 existingMember.Role = request.Role;
                 existingMember.JoinedAt = joinedAt;
                 _unitOfWork.WorkspaceMembers.Update(existingMember);
-                memberId = existingMember.Id;
+                memberEntity = existingMember;
             }
             else
             {
@@ -131,7 +151,7 @@ public class AddWorkspaceMemberCommandHandler : IRequestHandler<AddWorkspaceMemb
                     CreatedByUserId = currentUserId.Value
                 };
                 await _unitOfWork.WorkspaceMembers.AddAsync(newMember, cancellationToken);
-                memberId = newMember.Id;
+                memberEntity = newMember;
             }
         }
         else
@@ -191,7 +211,7 @@ public class AddWorkspaceMemberCommandHandler : IRequestHandler<AddWorkspaceMemb
             await _unitOfWork.WorkspaceMembers.AddAsync(newMember, cancellationToken);
             memberUserId = appUser.Id;
             displayName = appUser.DisplayName;
-            memberId = newMember.Id;
+            memberEntity = newMember;
         }
 
         // 5. Security audit logging
@@ -200,18 +220,17 @@ public class AddWorkspaceMemberCommandHandler : IRequestHandler<AddWorkspaceMemb
             workspaceId: request.WorkspaceId,
             action: "MEMBER_ADDED",
             entityType: "WorkspaceMember",
-            entityId: memberId.ToString(),
+            entityId: memberEntity.Id.ToString(),
             metadata: new { MemberUserId = memberUserId, Role = request.Role },
             cancellationToken: cancellationToken);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return Result<AddWorkspaceMemberResultDto>.Success(new AddWorkspaceMemberResultDto(
-            memberId,
-            memberUserId,
-            displayName,
-            request.Role,
-            true,
-            joinedAt));
+        var resultDto = memberEntity.Adapt<AddWorkspaceMemberResultDto>() with
+        {
+            DisplayName = displayName
+        };
+
+        return Result<AddWorkspaceMemberResultDto>.Success(resultDto);
     }
 }

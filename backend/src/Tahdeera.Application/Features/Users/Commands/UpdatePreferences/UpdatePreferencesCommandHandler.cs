@@ -1,3 +1,4 @@
+using Mapster;
 using MediatR;
 using Tahdeera.Application.Common.Interfaces;
 using Tahdeera.Application.Features.Auth.DTOs;
@@ -42,16 +43,6 @@ public class UpdatePreferencesCommandHandler : IRequestHandler<UpdatePreferences
         _unitOfWork.AppUsers.Update(user);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        var userDto = new UserProfileDto(
-            user.Id,
-            user.Username,
-            user.NormalizedEmail,
-            user.DisplayName,
-            user.Phone,
-            user.PreferredLanguage,
-            user.PreferredTheme,
-            user.IsPlatformAdmin);
-
-        return Result.Success(userDto);
+        return Result.Success(user.Adapt<UserProfileDto>());
     }
 }

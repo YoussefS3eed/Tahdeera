@@ -1,9 +1,8 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using System.Diagnostics;
 using System.Security.Claims;
 using System.Threading.RateLimiting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.Extensions.Localization;
 using Tahdeera.Application.Resources;
 
 namespace Tahdeera.API.Extensions;

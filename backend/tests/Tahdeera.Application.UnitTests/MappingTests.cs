@@ -1,10 +1,14 @@
 using FluentAssertions;
 using Mapster;
-using Tahdeera.Application.Common.Mappings;
+using Tahdeera.Application.Features.Credentials.DTOs;
+using Tahdeera.Application.Features.ReferenceData.DTOs;
+using Tahdeera.Application.Features.Students.DTOs;
 using Tahdeera.Application.Features.Subscriptions.Commands.CreateSubscriptionPlan;
 using Tahdeera.Application.Features.Subscriptions.Commands.UpdateSubscriptionPlan;
 using Tahdeera.Application.Features.Subscriptions.DTOs;
+using Tahdeera.Application.UnitTests.Common;
 using Tahdeera.Domain.Entities;
+using Tahdeera.Domain.Enums;
 using Tahdeera.Domain.ValueObjects;
 
 namespace Tahdeera.Application.UnitTests;
@@ -13,8 +17,7 @@ public class MappingTests
 {
     public MappingTests()
     {
-        var config = TypeAdapterConfig.GlobalSettings;
-        new MappingConfig().Register(config);
+        TestDbContextFactory.EnsureMappingsInitialized();
     }
 
     [Fact]
@@ -139,5 +142,133 @@ public class MappingTests
         plan.MaxBranches.Should().Be(2);
         plan.IsActive.Should().BeFalse();
         plan.Features.WhatsappNotifications.Should().BeTrue();
+    }
+
+    [Fact]
+    public void Map_Grade_To_GradeDto_ShouldMapCorrectly()
+    {
+        // Arrange
+        var grade = new Grade
+        {
+            Id = 1,
+            Code = "PRI_1",
+            NameAr = "الصف الأول الابتدائي",
+            NameEn = "Primary 1",
+            SortOrder = 1,
+            IsActive = true
+        };
+
+        // Act
+        var dto = grade.Adapt<GradeDto>();
+
+        // Assert
+        dto.Id.Should().Be(1);
+        dto.Code.Should().Be("PRI_1");
+        dto.NameAr.Should().Be("الصف الأول الابتدائي");
+        dto.NameEn.Should().Be("Primary 1");
+        dto.Stage.Should().Be("Primary");
+        dto.SortOrder.Should().Be(1);
+    }
+
+    [Fact]
+    public void Map_AcademicYear_To_AcademicYearDto_ShouldMapCorrectly()
+    {
+        // Arrange
+        var yearId = Guid.NewGuid();
+        var year = new AcademicYear
+        {
+            Id = yearId,
+            Name = "2026/2027",
+            StartsOn = new DateOnly(2026, 9, 1),
+            EndsOn = new DateOnly(2027, 6, 30),
+            IsCurrent = true
+        };
+
+        // Act
+        var dto = year.Adapt<AcademicYearDto>();
+
+        // Assert
+        dto.Id.Should().Be(yearId);
+        dto.NameAr.Should().Be("2026/2027");
+        dto.NameEn.Should().Be("2026/2027");
+        dto.StartsOn.Should().Be(new DateOnly(2026, 9, 1));
+        dto.EndsOn.Should().Be(new DateOnly(2027, 6, 30));
+        dto.IsCurrent.Should().BeTrue();
+    }
+
+    [Fact]
+    public void Map_StudentCredential_To_CredentialDetailDto_ShouldMapCorrectly()
+    {
+        // Arrange
+        var credId = Guid.NewGuid();
+        var issuerId = Guid.NewGuid();
+        var issuer = new AppUser { Id = issuerId, DisplayName = "Staff User" };
+        var cred = new StudentCredential
+        {
+            Id = credId,
+            CredentialType = CredentialType.Nfc,
+            CardUidDisplay = "CARD-1234",
+            Label = "Main Card",
+            IssuedAt = DateTimeOffset.UtcNow,
+            IssuedByUser = issuer,
+            IssuedByUserId = issuerId,
+            RevokedAt = null
+        };
+
+        // Act
+        var dto = cred.Adapt<CredentialDetailDto>();
+
+        // Assert
+        dto.Id.Should().Be(credId);
+        dto.CredentialType.Should().Be("Nfc");
+        dto.CardUidDisplay.Should().Be("CARD-1234");
+        dto.Label.Should().Be("Main Card");
+        dto.IssuedByUserName.Should().Be("Staff User");
+        dto.IsActive.Should().BeTrue();
+        dto.RevokedAt.Should().BeNull();
+    }
+
+    [Fact]
+    public void Map_StudentCredential_To_CredentialSummaryDto_ShouldMapCorrectly()
+    {
+        // Arrange
+        var credId = Guid.NewGuid();
+        var cred = new StudentCredential
+        {
+            Id = credId,
+            CredentialType = CredentialType.Qr,
+            CardUidDisplay = "QR-5678",
+            IssuedAt = DateTimeOffset.UtcNow,
+            RevokedAt = null
+        };
+
+        // Act
+        var dto = cred.Adapt<CredentialSummaryDto>();
+
+        // Assert
+        dto.CredentialId.Should().Be(credId);
+        dto.CredentialType.Should().Be("Qr");
+        dto.CardUidDisplay.Should().Be("QR-5678");
+        dto.IsActive.Should().BeTrue();
+    }
+
+    [Fact]
+    public void Map_AuditLog_To_StudentAuditLogItemDto_ShouldMapCorrectly()
+    {
+        // Arrange
+        var user = new AppUser { DisplayName = "Admin User" };
+        var log = new AuditLog
+        {
+            Action = "Student.Created",
+            OccurredAt = DateTimeOffset.UtcNow,
+            ActorUser = user
+        };
+
+        // Act
+        var dto = log.Adapt<StudentAuditLogItemDto>();
+
+        // Assert
+        dto.Action.Should().Be("Student.Created");
+        dto.ActorName.Should().Be("Admin User");
     }
 }

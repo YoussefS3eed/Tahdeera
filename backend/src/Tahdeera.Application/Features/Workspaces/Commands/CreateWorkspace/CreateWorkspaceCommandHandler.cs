@@ -1,3 +1,4 @@
+using Mapster;
 using MediatR;
 using Tahdeera.Application.Common.Interfaces;
 using Tahdeera.Application.Features.Workspaces.DTOs;
@@ -9,6 +10,8 @@ namespace Tahdeera.Application.Features.Workspaces.Commands.CreateWorkspace;
 
 public class CreateWorkspaceCommandHandler : IRequestHandler<CreateWorkspaceCommand, Result<CreateWorkspaceResultDto>>
 {
+    private readonly ISubscriptionPlanRepository _subscriptionPlanRepository;
+    private readonly IWorkspaceRepository _workspaceRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IIdentityService _identityService;
     private readonly IAuditLogService _auditLogService;
@@ -19,7 +22,26 @@ public class CreateWorkspaceCommandHandler : IRequestHandler<CreateWorkspaceComm
         IIdentityService identityService,
         IAuditLogService auditLogService,
         ICurrentUserService currentUserService)
+        : this(
+            unitOfWork.SubscriptionPlans,
+            unitOfWork.Workspaces,
+            unitOfWork,
+            identityService,
+            auditLogService,
+            currentUserService)
     {
+    }
+
+    public CreateWorkspaceCommandHandler(
+        ISubscriptionPlanRepository subscriptionPlanRepository,
+        IWorkspaceRepository workspaceRepository,
+        IUnitOfWork unitOfWork,
+        IIdentityService identityService,
+        IAuditLogService auditLogService,
+        ICurrentUserService currentUserService)
+    {
+        _subscriptionPlanRepository = subscriptionPlanRepository;
+        _workspaceRepository = workspaceRepository;
         _unitOfWork = unitOfWork;
         _identityService = identityService;
         _auditLogService = auditLogService;
@@ -29,7 +51,7 @@ public class CreateWorkspaceCommandHandler : IRequestHandler<CreateWorkspaceComm
     public async Task<Result<CreateWorkspaceResultDto>> Handle(CreateWorkspaceCommand request, CancellationToken cancellationToken)
     {
         // 1. Verify subscription plan exists
-        var plan = await _unitOfWork.SubscriptionPlans
+        var plan = await _subscriptionPlanRepository
             .GetByIdAsync(request.Subscription.PlanId, cancellationToken);
 
         if (plan == null)
@@ -91,7 +113,7 @@ public class CreateWorkspaceCommandHandler : IRequestHandler<CreateWorkspaceComm
             IsActive = true,
             CreatedByUserId = _currentUserService.UserId
         };
-        await _unitOfWork.Workspaces.AddAsync(workspace, cancellationToken);
+        await _workspaceRepository.AddAsync(workspace, cancellationToken);
 
         // 6. Create WorkspaceMember (Owner)
         var member = new WorkspaceMember
@@ -152,13 +174,13 @@ public class CreateWorkspaceCommandHandler : IRequestHandler<CreateWorkspaceComm
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return Result.Success(new CreateWorkspaceResultDto(
-            workspace.Id,
-            workspace.Name,
-            workspace.Kind,
-            user.Id,
-            subscription.Id,
-            payment.Id,
-            workspace.CreatedAt));
+        var resultDto = workspace.Adapt<CreateWorkspaceResultDto>() with
+        {
+            OwnerUserId = user.Id,
+            SubscriptionId = subscription.Id,
+            PaymentId = payment.Id
+        };
+
+        return Result.Success(resultDto);
     }
 }

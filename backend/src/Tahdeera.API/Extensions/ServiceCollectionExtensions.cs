@@ -1,4 +1,6 @@
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
+using Tahdeera.API.Security;
 using Tahdeera.Application;
 using Tahdeera.Infrastructure;
 
@@ -78,7 +80,9 @@ public static class ServiceCollectionExtensions
         // 5. Localization
         services.AddLocalization();
 
-        // 6. Authorization Policies
+        services.AddScoped<IAuthorizationHandler, WorkspacePermissionAuthorizationHandler>();
+
+        // 6. Authorization Policies (Layer 2 & Layer 4 zero-trust RBAC)
         services.AddAuthorization(options =>
         {
             options.AddPolicy("PlatformAdmin", policy =>
@@ -86,6 +90,15 @@ public static class ServiceCollectionExtensions
                     context.User.IsInRole("PlatformAdmin") ||
                     context.User.IsInRole("SuperAdmin") ||
                     context.User.HasClaim(c => c.Type == "is_platform_admin" && c.Value.Equals("true", StringComparison.OrdinalIgnoreCase))));
+
+            options.AddPolicy(Tahdeera.Application.Common.Security.Permissions.StudentsManage, policy =>
+                policy.Requirements.Add(new WorkspacePermissionRequirement(Tahdeera.Application.Common.Security.Permissions.StudentsManage)));
+
+            options.AddPolicy(Tahdeera.Application.Common.Security.Permissions.StudentsView, policy =>
+                policy.Requirements.Add(new WorkspacePermissionRequirement(Tahdeera.Application.Common.Security.Permissions.StudentsView)));
+
+            options.AddPolicy(Tahdeera.Application.Common.Security.Permissions.CredentialsManage, policy =>
+                policy.Requirements.Add(new WorkspacePermissionRequirement(Tahdeera.Application.Common.Security.Permissions.CredentialsManage)));
         });
 
         // 7. Application + Infrastructure layers

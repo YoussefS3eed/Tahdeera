@@ -84,6 +84,12 @@ public static class DependencyInjection
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddScoped<ISubscriptionPlanRepository, SubscriptionPlanRepository>();
         services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
+        services.AddScoped<IStudentRepository, StudentRepository>();
+        services.AddScoped<IWorkspaceStudentRepository, WorkspaceStudentRepository>();
+        services.AddScoped<IStudentCredentialRepository, StudentCredentialRepository>();
+        services.AddScoped<IGradeRepository, GradeRepository>();
+        services.AddScoped<IAcademicYearRepository, AcademicYearRepository>();
+        services.AddScoped<IAuditLogRepository, AuditLogRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;

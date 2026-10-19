@@ -4,43 +4,61 @@
     <value>Invalid username or password.</value>
   </data>
   <data name="AUTH_USER_INACTIVE" xml:space="preserve">
-    <value>This account has been deactivated. Please contact administration.</value>
+    <value>This account has been deactivated. Please contact support.</value>
   </data>
   <data name="AUTH_REFRESH_TOKEN_INVALID" xml:space="preserve">
     <value>Refresh token is invalid or expired.</value>
   </data>
   <data name="UNAUTHORIZED_WORKSPACE_ACCESS" xml:space="preserve">
-    <value>You do not have permission to access this workspace.</value>
+    <value>You do not have access to this workspace.</value>
+  </data>
+  <data name="UNAUTHORIZED_WORKSPACE_ACCESS_Title" xml:space="preserve">
+    <value>Unauthorized Workspace Access</value>
+  </data>
+  <data name="UNAUTHORIZED_WORKSPACE_ACCESS_Detail" xml:space="preserve">
+    <value>You do not have an active membership in this workspace.</value>
   </data>
   <data name="WORKSPACE_SUSPENDED" xml:space="preserve">
-    <value>This workspace has been administratively suspended. Please contact platform support (01272785618 / 01019482687).</value>
+    <value>The workspace account has been suspended administratively. Please contact platform support (01272785618 / 01019482687).</value>
+  </data>
+  <data name="WORKSPACE_SUSPENDED_Title" xml:space="preserve">
+    <value>Workspace Suspended</value>
+  </data>
+  <data name="WORKSPACE_SUSPENDED_Detail" xml:space="preserve">
+    <value>Workspace is suspended due to subscription expiry or administrative action. Operations are blocked.</value>
   </data>
   <data name="SUBSCRIPTION_EXPIRED" xml:space="preserve">
-    <value>Your subscription has expired. Please contact support to renew and restore service (01272785618 / 01019482687).</value>
+    <value>Your subscription has expired. Please contact support to renew (01272785618 / 01019482687).</value>
   </data>
   <data name="ROLE_FORBIDDEN" xml:space="preserve">
-    <value>You do not have the required role to perform this action.</value>
+    <value>You do not have permission to perform this action.</value>
   </data>
   <data name="QUOTA_MAX_STAFF_REACHED" xml:space="preserve">
-    <value>You have reached the maximum number of staff members allowed by your package.</value>
+    <value>Maximum staff quota reached for your current subscription plan.</value>
   </data>
   <data name="USER_ALREADY_EXISTS" xml:space="preserve">
-    <value>Email or username is already in use.</value>
+    <value>Email or username is already taken.</value>
   </data>
   <data name="WORKSPACE_NOT_FOUND" xml:space="preserve">
-    <value>The requested workspace was not found.</value>
+    <value>Workspace not found.</value>
   </data>
   <data name="VALIDATION_ERROR" xml:space="preserve">
-    <value>Please correct the following input errors.</value>
+    <value>Please correct the input errors.</value>
   </data>
   <data name="INTERNAL_SERVER_ERROR" xml:space="preserve">
     <value>An unexpected error occurred, please try again later.</value>
   </data>
+  <data name="INTERNAL_SERVER_ERROR_Title" xml:space="preserve">
+    <value>Internal Server Error</value>
+  </data>
+  <data name="INTERNAL_SERVER_ERROR_Detail" xml:space="preserve">
+    <value>An unexpected error occurred while processing your request. Please try again later with your trace ID.</value>
+  </data>
   <data name="MEMBER_NOT_FOUND" xml:space="preserve">
-    <value>The requested staff member was not found in this workspace.</value>
+    <value>Staff member not found in this workspace.</value>
   </data>
   <data name="CANNOT_DEACTIVATE_OWNER" xml:space="preserve">
-    <value>Cannot deactivate the workspace owner.</value>
+    <value>Workspace owner cannot be deactivated.</value>
   </data>
   <data name="USER_ALREADY_MEMBER" xml:space="preserve">
     <value>The user is already an active member of this workspace.</value>
@@ -48,25 +66,136 @@
   <data name="QUOTA_MAX_STUDENTS_REACHED" xml:space="preserve">
     <value>Maximum student quota reached for your current subscription plan. Please upgrade your plan to enroll more students.</value>
   </data>
+  <data name="QUOTA_MAX_STUDENTS_REACHED_Title" xml:space="preserve">
+    <value>Maximum Students Quota Reached</value>
+  </data>
+  <data name="QUOTA_MAX_STUDENTS_REACHED_Detail" xml:space="preserve">
+    <value>You have reached the maximum student limit for your subscription plan. Please upgrade your plan.</value>
+  </data>
   <data name="CREDENTIAL_TOKEN_ALREADY_EXISTS" xml:space="preserve">
     <value>This credential token is already registered in the system. Please scan a new, unassigned card.</value>
+  </data>
+  <data name="CREDENTIAL_TOKEN_ALREADY_EXISTS_Title" xml:space="preserve">
+    <value>Credential Token Already Exists</value>
+  </data>
+  <data name="CREDENTIAL_TOKEN_ALREADY_EXISTS_Detail" xml:space="preserve">
+    <value>This physical card or digital QR token is already assigned to another student and cannot be reassigned.</value>
   </data>
   <data name="STUDENT_ENROLLMENT_VERIFICATION_FAILED" xml:space="preserve">
     <value>Student verification failed. Student code or guardian phone number does not match.</value>
   </data>
+  <data name="STUDENT_ENROLLMENT_VERIFICATION_FAILED_Title" xml:space="preserve">
+    <value>Enrollment Verification Failed</value>
+  </data>
+  <data name="STUDENT_ENROLLMENT_VERIFICATION_FAILED_Detail" xml:space="preserve">
+    <value>Verification failed for the provided student code or secondary factor. Please check details and try again.</value>
+  </data>
   <data name="INVALID_OR_REVOKED_CARD" xml:space="preserve">
     <value>This credential is invalid or has been revoked.</value>
+  </data>
+  <data name="INVALID_OR_REVOKED_CARD_Title" xml:space="preserve">
+    <value>Invalid or Revoked Credential</value>
+  </data>
+  <data name="INVALID_OR_REVOKED_CARD_Detail" xml:space="preserve">
+    <value>The scanned card or token is invalid, unrecognized, or has been revoked.</value>
   </data>
   <data name="STUDENT_ALREADY_ENROLLED_IN_WORKSPACE" xml:space="preserve">
     <value>This student is already enrolled in this workspace.</value>
   </data>
+  <data name="STUDENT_ALREADY_ENROLLED_IN_WORKSPACE_Title" xml:space="preserve">
+    <value>Student Already Enrolled</value>
+  </data>
+  <data name="STUDENT_ALREADY_ENROLLED_IN_WORKSPACE_Detail" xml:space="preserve">
+    <value>Student is already enrolled in this workspace. Duplicate enrollment is not allowed.</value>
+  </data>
   <data name="STUDENT_NOT_FOUND_IN_WORKSPACE" xml:space="preserve">
     <value>Student not found in this workspace.</value>
+  </data>
+  <data name="STUDENT_NOT_FOUND_IN_WORKSPACE_Title" xml:space="preserve">
+    <value>Student Not Found in Workspace</value>
+  </data>
+  <data name="STUDENT_NOT_FOUND_IN_WORKSPACE_Detail" xml:space="preserve">
+    <value>The requested student was not found in this workspace or has been removed.</value>
   </data>
   <data name="GRADE_REQUIRED_FOR_NEW_ACADEMIC_YEAR" xml:space="preserve">
     <value>Grade selection is required for the new academic year to link or promote student.</value>
   </data>
+  <data name="GRADE_REQUIRED_FOR_NEW_ACADEMIC_YEAR_Title" xml:space="preserve">
+    <value>Grade Required</value>
+  </data>
+  <data name="GRADE_REQUIRED_FOR_NEW_ACADEMIC_YEAR_Detail" xml:space="preserve">
+    <value>Student has no grade recorded for the active academic year. Grade must be specified to complete enrollment.</value>
+  </data>
   <data name="RATE_LIMIT_EXCEEDED" xml:space="preserve">
     <value>Rate limit exceeded. Please wait and try again later.</value>
+  </data>
+  <data name="RATE_LIMIT_EXCEEDED_Title" xml:space="preserve">
+    <value>Rate Limit Exceeded</value>
+  </data>
+  <data name="RATE_LIMIT_EXCEEDED_Detail" xml:space="preserve">
+    <value>Rate limit exceeded. Please wait and try again later.</value>
+  </data>
+  <data name="ACTIVE_ACADEMIC_YEAR_NOT_CONFIGURED" xml:space="preserve">
+    <value>No active academic year is currently configured in the system.</value>
+  </data>
+  <data name="ACTIVE_ACADEMIC_YEAR_NOT_CONFIGURED_Title" xml:space="preserve">
+    <value>Academic Year Not Configured</value>
+  </data>
+  <data name="ACTIVE_ACADEMIC_YEAR_NOT_CONFIGURED_Detail" xml:space="preserve">
+    <value>No active academic year configured in the system. Please contact the administrator.</value>
+  </data>
+  <data name="GUARDIAN_PHONE_ALREADY_EXISTS_CONFIRM_SIBLING" xml:space="preserve">
+    <value>This guardian phone number is already registered for another student in this center. Please confirm sibling registration to proceed.</value>
+  </data>
+  <data name="GUARDIAN_PHONE_ALREADY_EXISTS_CONFIRM_SIBLING_Title" xml:space="preserve">
+    <value>Guardian Phone Already Exists</value>
+  </data>
+  <data name="GUARDIAN_PHONE_ALREADY_EXISTS_CONFIRM_SIBLING_Detail" xml:space="preserve">
+    <value>Guardian phone number is already registered for another student in this center. Please confirm sibling enrollment.</value>
+  </data>
+  <data name="CREDENTIAL_NOT_FOUND" xml:space="preserve">
+    <value>The requested credential was not found in this workspace.</value>
+  </data>
+  <data name="CREDENTIAL_NOT_FOUND_Title" xml:space="preserve">
+    <value>Credential Not Found</value>
+  </data>
+  <data name="CREDENTIAL_NOT_FOUND_Detail" xml:space="preserve">
+    <value>The requested credential was not found in this workspace.</value>
+  </data>
+  <data name="CREDENTIAL_ALREADY_REVOKED" xml:space="preserve">
+    <value>The specified credential has already been revoked.</value>
+  </data>
+  <data name="CREDENTIAL_ALREADY_REVOKED_Title" xml:space="preserve">
+    <value>Credential Already Revoked</value>
+  </data>
+  <data name="CREDENTIAL_ALREADY_REVOKED_Detail" xml:space="preserve">
+    <value>The specified credential has already been revoked.</value>
+  </data>
+  <data name="INVALID_STUDENT_STATUS" xml:space="preserve">
+    <value>Invalid student status provided. Valid statuses are: Active, Suspended, Blocked, Archived.</value>
+  </data>
+  <data name="INVALID_STUDENT_STATUS_Title" xml:space="preserve">
+    <value>Invalid Student Status</value>
+  </data>
+  <data name="INVALID_STUDENT_STATUS_Detail" xml:space="preserve">
+    <value>Invalid student status provided. Valid statuses are: Active, Suspended, Blocked, Archived.</value>
+  </data>
+  <data name="INVALID_PHONE_NUMBER" xml:space="preserve">
+    <value>Please provide a valid Egyptian mobile number starting with 01 (or international E.164 format).</value>
+  </data>
+  <data name="INVALID_PHONE_NUMBER_Title" xml:space="preserve">
+    <value>Invalid Phone Number</value>
+  </data>
+  <data name="INVALID_PHONE_NUMBER_Detail" xml:space="preserve">
+    <value>Please provide a valid Egyptian mobile number starting with 01 (or international E.164 format).</value>
+  </data>
+  <data name="INSUFFICIENT_PERMISSIONS" xml:space="preserve">
+    <value>You do not possess the required permission to perform this action in this workspace.</value>
+  </data>
+  <data name="INSUFFICIENT_PERMISSIONS_Title" xml:space="preserve">
+    <value>Insufficient Permissions</value>
+  </data>
+  <data name="INSUFFICIENT_PERMISSIONS_Detail" xml:space="preserve">
+    <value>You do not possess the required permission to perform this action in this workspace.</value>
   </data>
 </root>
