@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <title>تحضيرة | Tahdeera</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <!-- Zero-FOUC Synchronous Inline Hydration Script (Constitution Principle 3) -->
+  <script>
+    (function() {
+      try {
+        var storedLang = localStorage.getItem('tahdeera_lang') || 'ar';
+        var storedTheme = localStorage.getItem('tahdeera_theme') || 'light';
+        var effectiveTheme = storedTheme;
+
+        if (storedTheme === 'system') {
+          var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          effectiveTheme = prefersDark ? 'dark' : 'light';
+        }
+
+        var docEl = document.documentElement;
+        docEl.setAttribute('lang', storedLang);
+        docEl.setAttribute('dir', storedLang === 'ar' ? 'rtl' : 'ltr');
+        docEl.setAttribute('data-theme', effectiveTheme);
+      } catch (e) {
+        console.error('Zero-FOUC hydration error', e);
+      }
+    })();
+  </script>
+</head>
+<body>
+  <app-root></app-root>
+</body>
+</html>

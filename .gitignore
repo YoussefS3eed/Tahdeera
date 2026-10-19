@@ -15,6 +15,7 @@
 # Frontend / Node
 node_modules/
 dist/
+.angular/
 .next/
 out/
 build/

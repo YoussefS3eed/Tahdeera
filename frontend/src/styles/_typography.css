@@ -1,0 +1,56 @@
+/* ==========================================================================
+   Tahdeera (تحضيرة) — Typography & Font System
+   Strict adherence to DESIGN_SYSTEM.md and Constitution Principle 1 & 8
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --font-sans: 'IBM Plex Sans Arabic', 'Inter', 'Noto Sans Arabic', system-ui, -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  background-color: var(--bg-page);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Arabic typography line-heights (prevent ascender/descender clipping) */
+[lang="ar"],
+:root[dir="rtl"] {
+  line-height: 1.65;
+}
+
+[lang="ar"] h1, [lang="ar"] h2, [lang="ar"] h3,
+[lang="ar"] h4, [lang="ar"] h5, [lang="ar"] h6,
+:root[dir="rtl"] h1, :root[dir="rtl"] h2, :root[dir="rtl"] h3,
+:root[dir="rtl"] h4, :root[dir="rtl"] h5, :root[dir="rtl"] h6 {
+  line-height: 1.45;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* English typography line-heights */
+[lang="en"],
+:root[dir="ltr"] {
+  line-height: 1.5;
+}
+
+[lang="en"] h1, [lang="en"] h2, [lang="en"] h3,
+[lang="en"] h4, [lang="en"] h5, [lang="en"] h6,
+:root[dir="ltr"] h1, :root[dir="ltr"] h2, :root[dir="ltr"] h3,
+:root[dir="ltr"] h4, :root[dir="ltr"] h5, :root[dir="ltr"] h6 {
+  line-height: 1.25;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* Monospace font utility */
+.font-mono {
+  font-family: var(--font-mono);
+}

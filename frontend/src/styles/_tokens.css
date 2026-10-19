@@ -1,0 +1,109 @@
+/* ==========================================================================
+   Tahdeera (تحضيرة) — Authoritative Semantic Design Tokens
+   Strict adherence to DESIGN_SYSTEM.md and Constitution Principle 2
+   ========================================================================== */
+
+:root,
+[data-theme="light"] {
+  /* Surfaces */
+  --bg-page: #F4F7FB;
+  --bg-surface: #FFFFFF;
+  --bg-elevated: #F8FAFC;
+  --bg-sidebar: #081E3F;
+
+  /* Text & Contrast (WCAG AA Compliant) */
+  --text-primary: #0F172A;      /* >= 11:1 */
+  --text-secondary: #475569;    /* >= 6:1 */
+  --text-muted: #64748B;        /* >= 4.5:1 */
+
+  /* Borders */
+  --border-subtle: #E2E8F0;
+  --border-strong: #CBD5E1;
+
+  /* Brand Colors */
+  --brand-primary: #2563EB;
+  --brand-primary-hover: #1D4ED8;
+  --brand-accent: #F59E0B;
+
+  /* Focus & Accessibility */
+  --focus-ring: rgba(37, 99, 235, 0.35);
+
+  /* Status Tokens: Present */
+  --status-present-bg: #ECFDF5;
+  --status-present-text: #047857;
+  --status-present-border: #A7F3D0;
+
+  /* Status Tokens: Late */
+  --status-late-bg: #FFFBEB;
+  --status-late-text: #B45309;
+  --status-late-border: #FDE68A;
+
+  /* Status Tokens: Absent */
+  --status-absent-bg: #FEF2F2;
+  --status-absent-text: #B91C1C;
+  --status-absent-border: #FECACA;
+
+  /* Status Tokens: Excused */
+  --status-excused-bg: #F3E8FF;
+  --status-excused-text: #6B21A8;
+  --status-excused-border: #D8B4FE;
+
+  /* Status Tokens: Waiting / Voided */
+  --status-waiting-bg: #F1F5F9;
+  --status-waiting-text: #334155;
+  --status-waiting-border: #CBD5E1;
+
+  /* Layout Constants */
+  --sidebar-w: 260px;
+  --header-h: 64px;
+}
+
+[data-theme="dark"] {
+  /* Surfaces */
+  --bg-page: #0B1120;
+  --bg-surface: #111C33;
+  --bg-elevated: #172542;
+  --bg-sidebar: #061329;
+
+  /* Text & Contrast (WCAG AA Compliant) */
+  --text-primary: #F1F5F9;
+  --text-secondary: #CBD5E1;
+  --text-muted: #94A3B8;
+
+  /* Borders */
+  --border-subtle: #1E293B;
+  --border-strong: #334155;
+
+  /* Brand Colors */
+  --brand-primary: #3B82F6;
+  --brand-primary-hover: #60A5FA;
+  --brand-accent: #FBBF24;
+
+  /* Focus & Accessibility */
+  --focus-ring: rgba(96, 165, 250, 0.45);
+
+  /* Status Tokens: Present */
+  --status-present-bg: rgba(16, 185, 129, 0.16);
+  --status-present-text: #6EE7B7;
+  --status-present-border: rgba(16, 185, 129, 0.35);
+
+  /* Status Tokens: Late */
+  --status-late-bg: rgba(245, 158, 11, 0.16);
+  --status-late-text: #FCD34D;
+  --status-late-border: rgba(245, 158, 11, 0.35);
+
+  /* Status Tokens: Absent */
+  --status-absent-bg: rgba(239, 68, 68, 0.16);
+  --status-absent-text: #FCA5A5;
+  --status-absent-border: rgba(239, 68, 68, 0.35);
+
+  /* Status Tokens: Excused */
+  --status-excused-bg: rgba(168, 85, 247, 0.16);
+  --status-excused-text: #D8B4FE;
+  --status-excused-border: rgba(168, 85, 247, 0.35);
+
+  /* Status Tokens: Waiting / Voided */
+  --status-waiting-bg: rgba(148, 163, 184, 0.14);
+  --status-waiting-text: #CBD5E1;
+  --status-waiting-border: rgba(148, 163, 184, 0.35);
+}

@@ -1,0 +1,59 @@
+{
+  "brand": {
+    "name": "Tahdeera",
+    "tagline": "Smart Attendance & Tutoring Center Management"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading...",
+    "search": "Search...",
+    "status": "Status",
+    "connected": "Connected",
+    "offline": "Offline",
+    "syncing": "Syncing...",
+    "actions": "Actions",
+    "close": "Close",
+    "refresh": "Refresh",
+    "welcome": "Welcome to Tahdeera Platform"
+  },
+  "theme": {
+    "light": "Light Mode",
+    "dark": "Dark Mode",
+    "system": "System Mode"
+  },
+  "lang": {
+    "ar": "العربية",
+    "en": "English"
+  },
+  "status": {
+    "present": "Present",
+    "late": "Late",
+    "absent": "Absent",
+    "excused": "Excused",
+    "waiting": "Waiting",
+    "voided": "Voided"
+  },
+  "harness": {
+    "title": "Tahdeera Frontend Foundation Test Harness (Milestone F1)",
+    "subtitle": "Operational Verification Cockpit for UI Tokens & Client Services",
+    "ready": "Ready",
+    "suspended": "Suspended",
+    "localization_title": "1. Localization & Direction Mirroring (RTL/LTR)",
+    "theming_title": "2. Zero-FOUC Theming Engine",
+    "audio_title": "3. Native Web Audio Synthesizer Test Board",
+    "storage_title": "4. Dexie.js Local Database Inspector (TahdeeraLocalDb)",
+    "nfc_title": "5. Simulated Hardware NFC Wedge Scan",
+    "api_title": "6. Mock API & RFC 9457 Error Verification",
+    "welcome_sample": "Welcome to Tahdeera — Leading Tutoring Attendance System",
+    "sample_phone": "01012345678",
+    "sample_code": "ST-1042",
+    "play_present": "Play Present Tone (880Hz + 1175Hz)",
+    "play_late": "Play Late Tone (587Hz)",
+    "play_duplicate": "Play Duplicate Tone (330Hz)",
+    "play_error": "Play Error/Unregistered Tone (180Hz)"
+  }
+}

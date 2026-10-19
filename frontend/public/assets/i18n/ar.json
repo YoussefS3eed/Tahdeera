@@ -1,0 +1,59 @@
+{
+  "brand": {
+    "name": "تحضيرة",
+    "tagline": "منظومة الحضور الذكي وإدارة السناتر التعليمية"
+  },
+  "common": {
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "confirm": "تأكيد",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "loading": "جاري التحميل...",
+    "search": "بحث...",
+    "status": "الحالة",
+    "connected": "متصل",
+    "offline": "غير متصل",
+    "syncing": "جاري المزامنة...",
+    "actions": "إجراءات",
+    "close": "إغلاق",
+    "refresh": "تحديث",
+    "welcome": "مرحباً بكم في منصة تحضيرة"
+  },
+  "theme": {
+    "light": "الوضع المضيء",
+    "dark": "الوضع الليلي",
+    "system": "حسب النظام"
+  },
+  "lang": {
+    "ar": "العربية",
+    "en": "English"
+  },
+  "status": {
+    "present": "حاضر",
+    "late": "متأخر",
+    "absent": "غائب",
+    "excused": "معذور",
+    "waiting": "في الانتظار",
+    "voided": "ملغي"
+  },
+  "harness": {
+    "title": "منصة اختبار البنية التحتية التأسيسية (Milestone F1)",
+    "subtitle": "لوحة التحقق التشغيلية لروابط الواجهة وخدمات المتصفح المحلية",
+    "ready": "جاهز",
+    "suspended": "معلق",
+    "localization_title": "1. التعريب وعكس الاتجاه (RTL/LTR)",
+    "theming_title": "2. محرك السمات ومكافحة الوميض (Zero-FOUC)",
+    "audio_title": "3. لوحة اختبار النغمات الصوتية التخليقية (Web Audio)",
+    "storage_title": "4. فحص قاعدة البيانات المحلية Dexie.js (TahdeeraLocalDb)",
+    "nfc_title": "5. محاكاة قارئ NFC السلكي (Hardware Wedge)",
+    "api_title": "6. محاكي الـ API وأخطاء RFC 9457",
+    "welcome_sample": "مرحباً بكم في تحضيرة — نظام الحضور الأول للسناتر",
+    "sample_phone": "01012345678",
+    "sample_code": "ST-1042",
+    "play_present": "تشغيل نغمة حاضر (880Hz + 1175Hz)",
+    "play_late": "تشغيل نغمة متأخر (587Hz)",
+    "play_duplicate": "تشغيل نغمة مكرر (330Hz)",
+    "play_error": "تشغيل نغمة خطأ/غير مسجل (180Hz)"
+  }
+}

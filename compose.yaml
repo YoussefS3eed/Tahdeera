@@ -1,0 +1,93 @@
+services:
+  postgres:
+    image: postgres:18-alpine
+    container_name: tahdeera-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-tahdeera}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-SetSecurePassword}
+      TZ: UTC
+    ports:
+      - "5433:5432"
+    volumes:
+      - tahdeera_pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-tahdeera}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tahdeera-net
+
+  rabbitmq:
+    image: rabbitmq:4-management-alpine
+    container_name: tahdeera-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-tahdeera_mq}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-SetSecurePassword}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - tahdeera_mqdata:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tahdeera-net
+
+  backend-api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: tahdeera-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=${POSTGRES_DB:-tahdeera};Username=${POSTGRES_USER:-postgres};Password=${POSTGRES_PASSWORD:-SetSecurePassword}
+      RabbitMq__Host: rabbitmq
+      RabbitMq__Port: 5672
+      RabbitMq__Username: ${RABBITMQ_USER:-tahdeera_mq}
+      RabbitMq__Password: ${RABBITMQ_PASSWORD:-SetSecurePassword}
+      Jwt__Issuer: ${JWT_ISSUER:-https://api.tahdeera.app}
+      Jwt__Audience: ${JWT_AUDIENCE:-https://tahdeera.app}
+      Jwt__SigningKey: ${JWT_SIGNING_KEY:-SuperSecretJwtSigningKeyWith256BitsMinimumLengthForDevelopmentOnly!}
+    ports:
+      - "5080:8080"
+    networks:
+      - tahdeera-net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: tahdeera-web
+    restart: unless-stopped
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+    networks:
+      - tahdeera-net
+
+networks:
+  tahdeera-net:
+    driver: bridge
+
+volumes:
+  tahdeera_pgdata:
+  tahdeera_mqdata:

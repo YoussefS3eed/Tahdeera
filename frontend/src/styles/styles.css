@@ -1,0 +1,30 @@
+/* ==========================================================================
+   Tahdeera (تحضيرة) — Global Styles Entrypoint
+   ========================================================================== */
+
+@import './_tokens.css';
+@import './_typography.css';
+@import './_layout.css';
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+a {
+  color: var(--brand-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--brand-primary-hover);
+  text-decoration: underline;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
