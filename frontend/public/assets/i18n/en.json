@@ -37,6 +37,16 @@
     "waiting": "Waiting",
     "voided": "Voided"
   },
+  "stubs": {
+    "auth_required_title": "Authentication Required",
+    "auth_required_desc": "You must be signed in to access the requested resource.",
+    "forbidden_title": "Access Forbidden",
+    "forbidden_desc": "Your current user role is not authorized to access this page.",
+    "lockout_title": "Workspace Access Restricted",
+    "lockout_desc": "This workspace subscription is expired or suspended. Please contact technical support to renew. All your data is safely preserved.",
+    "support_phone": "Technical Support: 01272785618 / 01019482687",
+    "return_to_harness": "Return to Test Harness"
+  },
   "harness": {
     "title": "Tahdeera Frontend Foundation Test Harness (Milestone F1)",
     "subtitle": "Operational Verification Cockpit for UI Tokens & Client Services",
@@ -48,12 +58,24 @@
     "storage_title": "4. Dexie.js Local Database Inspector (TahdeeraLocalDb)",
     "nfc_title": "5. Simulated Hardware NFC Wedge Scan",
     "api_title": "6. Mock API & RFC 9457 Error Verification",
+    "wcag_title": "7. Accessibility & Interaction States (WCAG AA & Skeletons)",
+    "guards_title": "8. Route Protection & Authorization Guards",
     "welcome_sample": "Welcome to Tahdeera — Leading Tutoring Attendance System",
     "sample_phone": "01012345678",
     "sample_code": "ST-1042",
     "play_present": "Play Present Tone (880Hz + 1175Hz)",
     "play_late": "Play Late Tone (587Hz)",
     "play_duplicate": "Play Duplicate Tone (330Hz)",
-    "play_error": "Play Error/Unregistered Tone (180Hz)"
+    "play_error": "Play Error/Unregistered Tone (180Hz)",
+    "seed_students": "Seed Mock Data (15 Students)",
+    "simulate_offline_scan": "Simulate Offline Scan (Offline Queue)",
+    "clear_workspace": "Clear Workspace Cache",
+    "fetch_students_p1": "Fetch Students (Page 1)",
+    "fetch_students_p2": "Fetch Students (Page 2)",
+    "trigger_409": "Trigger 409 Conflict Simulation",
+    "open_modal": "Open Focus Trap Dialog Test",
+    "test_login_guard": "Test Login Guard (/login)",
+    "test_forbidden_guard": "Test Role Guard (/workspace/forbidden)",
+    "test_lockout_guard": "Test Lockout Guard (/workspace/lockout)"
   }
 }

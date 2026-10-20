@@ -1,6 +1,6 @@
 /**
  * Core Barrel Exports
- * Milestone F1 Phase 3, 4, 5 & 6 Services, Enums, Models & Pipes
+ * Milestone F1 Phase 3, 4, 5, 6 & 7 Services, Enums, Models, Pipes, Interceptors & Guards
  */
 
 // Enums
@@ -21,3 +21,12 @@ export * from './services/nfc-listener.service';
 
 // Pipes
 export * from './pipes/translate.pipe';
+
+// Interceptors
+export * from './interceptors/auth.interceptor';
+export * from './interceptors/mock-api.interceptor';
+
+// Guards
+export * from './guards/auth.guard';
+export * from './guards/role.guard';
+export * from './guards/lockout.guard';

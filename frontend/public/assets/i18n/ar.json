@@ -37,6 +37,16 @@
     "waiting": "في الانتظار",
     "voided": "ملغي"
   },
+  "stubs": {
+    "auth_required_title": "تسجيل الدخول مطلوب",
+    "auth_required_desc": "يجب تسجيل الدخول للوصول إلى هذا المورد المطلوب.",
+    "forbidden_title": "غير مصرح بالوصول",
+    "forbidden_desc": "دورك الحالي لا يمتلك الصلاحيات الكافية للوصول إلى هذه الصفحة.",
+    "lockout_title": "تم تقييد الوصول للمساحة التعليمية",
+    "lockout_desc": "اشتراك هذه المساحة التعليمية منتهي أو معلق. يرجى التواصل مع الدعم الفني للتجديد مع ضمان الحفاظ التام على جميع بياناتك.",
+    "support_phone": "الدعم الفني: 01272785618 / 01019482687",
+    "return_to_harness": "العودة لمنصة الاختبار الرئيسية"
+  },
   "harness": {
     "title": "منصة اختبار البنية التحتية التأسيسية (Milestone F1)",
     "subtitle": "لوحة التحقق التشغيلية لروابط الواجهة وخدمات المتصفح المحلية",
@@ -48,12 +58,24 @@
     "storage_title": "4. فحص قاعدة البيانات المحلية Dexie.js (TahdeeraLocalDb)",
     "nfc_title": "5. محاكاة قارئ NFC السلكي (Hardware Wedge)",
     "api_title": "6. محاكي الـ API وأخطاء RFC 9457",
+    "wcag_title": "7. إمكانية الوصول والتفاعل (WCAG AA & Skeletons)",
+    "guards_title": "8. اختبار حواجز التوجيه والحماية (Route Guards)",
     "welcome_sample": "مرحباً بكم في تحضيرة — نظام الحضور الأول للسناتر",
     "sample_phone": "01012345678",
     "sample_code": "ST-1042",
     "play_present": "تشغيل نغمة حاضر (880Hz + 1175Hz)",
     "play_late": "تشغيل نغمة متأخر (587Hz)",
     "play_duplicate": "تشغيل نغمة مكرر (330Hz)",
-    "play_error": "تشغيل نغمة خطأ/غير مسجل (180Hz)"
+    "play_error": "تشغيل نغمة خطأ/غير مسجل (180Hz)",
+    "seed_students": "إدراج بيانات تجريبية (15 طالب)",
+    "simulate_offline_scan": "محاكاة تسجيل حضور محلياً (Offline Queue)",
+    "clear_workspace": "مسح الذاكرة المؤقتة للمساحة",
+    "fetch_students_p1": "جلب الطلاب (صفحة 1)",
+    "fetch_students_p2": "جلب الطلاب (صفحة 2)",
+    "trigger_409": "محاكاة خطأ 409 (حضور مكرر)",
+    "open_modal": "فتح نافذة تجربة حصر التركيز (Focus Trap)",
+    "test_login_guard": "اختبار حاجز تسجيل الدخول (/login)",
+    "test_forbidden_guard": "اختبار حاجز الصلاحيات (/workspace/forbidden)",
+    "test_lockout_guard": "اختبار حاجز حظر الاشتراك (/workspace/lockout)"
   }
 }

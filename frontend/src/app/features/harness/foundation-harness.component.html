@@ -1,0 +1,333 @@
+<div class="harness-shell">
+  <!-- Top Global Header -->
+  <header class="harness-header">
+    <div class="header-brand">
+      <div class="brand-logo">تحضيرة</div>
+      <div>
+        <h1 class="header-title">{{ 'harness.title' | translate }}</h1>
+        <p class="header-subtitle">{{ 'harness.subtitle' | translate }}</p>
+      </div>
+    </div>
+
+    <!-- Live Telemetry Badges -->
+    <div class="header-telemetry">
+      <span class="telemetry-pill">
+        <span class="status-dot dot-active"></span>
+        <span>Dir: {{ localizationService.direction() | uppercase }}</span>
+      </span>
+      <span class="telemetry-pill">
+        <span class="status-dot dot-active"></span>
+        <span>Theme: {{ themeService.themeMode() | uppercase }}</span>
+      </span>
+      <span class="telemetry-pill" [class.telemetry-pill-active]="nfcService.isListening()">
+        <span class="status-dot" [class.dot-active]="nfcService.isListening()"></span>
+        <span>NFC Wedge: {{ nfcService.isListening() ? 'Active' : 'Off' }}</span>
+      </span>
+      <span class="telemetry-pill">
+        <span class="status-dot" [class.dot-active]="storageService.isStorageAvailable()"></span>
+        <span>Dexie: {{ storageService.isStorageAvailable() ? 'Ready' : 'Restricted' }}</span>
+      </span>
+    </div>
+  </header>
+
+  <!-- Bento Grid Diagnostic Dashboard -->
+  <main class="bento-grid">
+
+    <!-- Card 1: Theming Engine -->
+    <section class="bento-card">
+      <div class="card-header">
+        <h2 class="card-title">{{ 'harness.theming_title' | translate }}</h2>
+      </div>
+      <p class="card-desc">CSS Logical Variables & Zero-FOUC LocalStorage Persistence</p>
+
+      <div class="button-group">
+        <button
+          type="button"
+          class="btn"
+          [class.btn-primary]="themeService.themeMode() === 'light'"
+          (click)="setTheme('light')"
+        >
+          {{ 'theme.light' | translate }}
+        </button>
+        <button
+          type="button"
+          class="btn"
+          [class.btn-primary]="themeService.themeMode() === 'dark'"
+          (click)="setTheme('dark')"
+        >
+          {{ 'theme.dark' | translate }}
+        </button>
+        <button
+          type="button"
+          class="btn"
+          [class.btn-primary]="themeService.themeMode() === 'system'"
+          (click)="setTheme('system')"
+        >
+          {{ 'theme.system' | translate }}
+        </button>
+      </div>
+
+      <div class="card-meta">
+        <span>Active Mode: <strong>{{ themeService.themeMode() }}</strong></span>
+      </div>
+    </section>
+
+    <!-- Card 2: Localization & Direction -->
+    <section class="bento-card">
+      <div class="card-header">
+        <h2 class="card-title">{{ 'harness.localization_title' | translate }}</h2>
+      </div>
+      <p class="card-desc">Pure RTL/LTR Dynamic Mirroring with .ltr-num formatting</p>
+
+      <div class="button-group">
+        <button
+          type="button"
+          class="btn"
+          [class.btn-primary]="localizationService.currentLang() === 'ar'"
+          (click)="setLanguage('ar')"
+        >
+          العربية (RTL)
+        </button>
+        <button
+          type="button"
+          class="btn"
+          [class.btn-primary]="localizationService.currentLang() === 'en'"
+          (click)="setLanguage('en')"
+        >
+          English (LTR)
+        </button>
+      </div>
+
+      <div class="sample-box">
+        <p>{{ 'harness.welcome_sample' | translate }}</p>
+        <div class="sample-meta">
+          <span>Phone: <strong class="ltr-num">01012345678</strong></span>
+          <span>Code: <strong class="ltr-num">ST-1042</strong></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Card 3: Web Audio Synthesis -->
+    <section class="bento-card">
+      <div class="card-header">
+        <h2 class="card-title">{{ 'harness.audio_title' | translate }}</h2>
+      </div>
+      <p class="card-desc">Client-side synthesized frequencies via native Web Audio API</p>
+
+      <div class="button-grid">
+        <button type="button" class="btn btn-tone btn-present" (click)="playTone(ScanOutcome.Present)">
+          {{ 'harness.play_present' | translate }}
+        </button>
+        <button type="button" class="btn btn-tone btn-late" (click)="playTone(ScanOutcome.Late)">
+          {{ 'harness.play_late' | translate }}
+        </button>
+        <button type="button" class="btn btn-tone btn-duplicate" (click)="playTone(ScanOutcome.Duplicate)">
+          {{ 'harness.play_duplicate' | translate }}
+        </button>
+        <button type="button" class="btn btn-tone btn-error" (click)="playTone(ScanOutcome.Error)">
+          {{ 'harness.play_error' | translate }}
+        </button>
+      </div>
+    </section>
+
+    <!-- Card 4: Hardware NFC Scanner & Simulation -->
+    <section class="bento-card">
+      <div class="card-header">
+        <h2 class="card-title">{{ 'harness.nfc_title' | translate }}</h2>
+        <span class="badge" [class.badge-active]="nfcService.isListening()">
+          {{ nfcService.isListening() ? 'Wedge Active' : 'Off' }}
+        </span>
+      </div>
+      <p class="card-desc">Layout-independent KeyboardEvent.code listener with 1500ms duplicate suppression</p>
+
+      <div class="nfc-form">
+        <input
+          type="text"
+          class="form-control ltr-num"
+          [(ngModel)]="simulatedCardUid"
+          placeholder="Card UID (e.g. 04A27C19)"
+        />
+        <button type="button" class="btn btn-primary" (click)="simulateCardScan()">
+          Simulate Scan
+        </button>
+      </div>
+
+      <div class="nfc-telemetry">
+        <span>Last UID: <strong class="ltr-num">{{ nfcService.lastScannedUid() || 'None' }}</strong></span>
+        <span>Recent Scans: {{ recentScans().length }}</span>
+      </div>
+
+      @if (recentScans().length > 0) {
+        <div class="scan-log-table">
+          <table>
+            <thead>
+              <tr>
+                <th>UID</th>
+                <th>Timestamp</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (scan of recentScans().slice(0, 4); track scan.timestamp) {
+                <tr>
+                  <td class="ltr-num">{{ scan.uid }}</td>
+                  <td>{{ scan.timestamp | date:'HH:mm:ss.SSS' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+
+    <!-- Card 5: Dexie Offline Database -->
+    <section class="bento-card">
+      <div class="card-header">
+        <h2 class="card-title">{{ 'harness.storage_title' | translate }}</h2>
+        <span class="badge badge-success">Dexie v4</span>
+      </div>
+      <p class="card-desc">Transactional IndexedDB with FIFO Sync Queue & Workspace Isolation</p>
+
+      <div class="storage-metrics">
+        <div class="metric-pill">
+          <span class="metric-label">Cached Students</span>
+          <span class="metric-value">{{ cachedStudentCount() }}</span>
+        </div>
+        <div class="metric-pill">
+          <span class="metric-label">Pending Sync</span>
+          <span class="metric-value">{{ storageService.pendingSyncCount() }}</span>
+        </div>
+      </div>
+
+      <div class="device-guid-box">
+        <span class="guid-label">Device GUID:</span>
+        <code class="ltr-num">{{ deviceGuid() }}</code>
+      </div>
+
+      <div class="button-group">
+        <button type="button" class="btn btn-outline" (click)="seedMockStudents()">
+          {{ 'harness.seed_students' | translate }}
+        </button>
+        <button type="button" class="btn btn-outline" (click)="simulateOfflineAttendance()">
+          {{ 'harness.simulate_offline_scan' | translate }}
+        </button>
+        <button type="button" class="btn btn-danger-outline" (click)="clearWorkspaceCache()">
+          {{ 'harness.clear_workspace' | translate }}
+        </button>
+      </div>
+    </section>
+
+    <!-- Card 6: Standalone Mock API Layer -->
+    <section class="bento-card">
+      <div class="card-header">
+        <h2 class="card-title">{{ 'harness.api_title' | translate }}</h2>
+        <span class="badge" [class.badge-loading]="isApiLoading()">
+          {{ isApiLoading() ? 'Requesting...' : (apiLatency() ? apiLatency() + 'ms' : 'Ready') }}
+        </span>
+      </div>
+      <p class="card-desc">150–250ms Simulated Latency, Pagination & RFC 9457 Problem Details</p>
+
+      <div class="button-group">
+        <button type="button" class="btn btn-outline" [disabled]="isApiLoading()" (click)="fetchStudents(1)">
+          {{ 'harness.fetch_students_p1' | translate }}
+        </button>
+        <button type="button" class="btn btn-outline" [disabled]="isApiLoading()" (click)="fetchStudents(2)">
+          {{ 'harness.fetch_students_p2' | translate }}
+        </button>
+        <button type="button" class="btn btn-danger-outline" [disabled]="isApiLoading()" (click)="triggerConflict()">
+          {{ 'harness.trigger_409' | translate }}
+        </button>
+      </div>
+
+      @if (apiResult()) {
+        <pre class="telemetry-json"><code>{{ apiResult() }}</code></pre>
+      }
+
+      @if (apiError()) {
+        <div class="error-box">
+          <div class="error-header">
+            <strong>HTTP {{ apiError()?.status }}: {{ apiError()?.title }}</strong>
+            <span class="badge badge-error">{{ apiError()?.errorCode }}</span>
+          </div>
+          <p class="error-detail">{{ apiError()?.detail }}</p>
+          <code class="error-trace ltr-num">Trace: {{ apiError()?.traceId }}</code>
+        </div>
+      }
+    </section>
+
+    <!-- Card 7: Accessibility & 5 Interaction States -->
+    <section class="bento-card">
+      <div class="card-header">
+        <h2 class="card-title">{{ 'harness.wcag_title' | translate }}</h2>
+      </div>
+      <p class="card-desc">WCAG AA Modal Focus Entrapment & Pulse Skeletons</p>
+
+      <div class="skeleton-showcase">
+        <app-skeleton-loader type="text" width="60%"></app-skeleton-loader>
+        <app-skeleton-loader type="card" width="100%"></app-skeleton-loader>
+      </div>
+
+      <div class="button-group" style="margin-top: 1rem;">
+        <button type="button" class="btn btn-primary" (click)="openModal()">
+          {{ 'harness.open_modal' | translate }}
+        </button>
+      </div>
+    </section>
+
+    <!-- Card 8: Route Protection Guards & Stubs -->
+    <section class="bento-card">
+      <div class="card-header">
+        <h2 class="card-title">{{ 'harness.guards_title' | translate }}</h2>
+        <span class="badge badge-info">CanActivateFn</span>
+      </div>
+      <p class="card-desc">Verification of /login, /workspace/forbidden, and /workspace/lockout Stubs</p>
+
+      <div class="button-grid">
+        <a routerLink="/login" class="btn btn-outline">
+          {{ 'harness.test_login_guard' | translate }}
+        </a>
+        <a routerLink="/workspace/forbidden" class="btn btn-outline">
+          {{ 'harness.test_forbidden_guard' | translate }}
+        </a>
+        <a routerLink="/workspace/lockout" class="btn btn-outline">
+          {{ 'harness.test_lockout_guard' | translate }}
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Accessible Modal with appFocusTrap Directive -->
+  @if (isModalOpen()) {
+    <div class="modal-backdrop" (click)="closeModal()">
+      <div
+        class="modal-dialog"
+        appFocusTrap
+        (escapePressed)="closeModal()"
+        (click)="$event.stopPropagation()"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+      >
+        <div class="modal-header">
+          <h3 id="modal-title" class="modal-title">WCAG 2.1 AA Focus Trap Test</h3>
+          <button type="button" class="close-btn" (click)="closeModal()" aria-label="Close dialog">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <p>Keyboard focus is strictly trapped inside this dialog container. Press <code>Tab</code> and <code>Shift+Tab</code> to verify focus wrapping, or press <code>Escape</code> to close and restore focus.</p>
+          <div style="margin: 1rem 0;">
+            <input type="text" class="form-control" placeholder="Modal Input 1" />
+          </div>
+          <div style="margin: 1rem 0;">
+            <input type="text" class="form-control" placeholder="Modal Input 2" />
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" (click)="closeModal()">{{ 'common.cancel' | translate }}</button>
+          <button type="button" class="btn btn-primary" (click)="closeModal()">{{ 'common.confirm' | translate }}</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>
