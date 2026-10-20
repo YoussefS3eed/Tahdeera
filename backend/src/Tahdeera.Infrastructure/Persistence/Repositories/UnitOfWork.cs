@@ -24,6 +24,17 @@ public class UnitOfWork : IUnitOfWork
     private IGradeRepository? _grades;
     private IAcademicYearRepository? _academicYears;
 
+    // Milestone B3 domain repositories
+    private IGroupRepository? _groups;
+    private ISessionRepository? _sessions;
+    private IAttendanceRecordRepository? _attendanceRecords;
+    private IGenericRepository<GroupStudent>? _groupStudents;
+    private IGenericRepository<GroupStudentStatusHistory>? _groupStudentStatusHistories;
+    private IGenericRepository<GroupAttendanceDelegation>? _groupAttendanceDelegations;
+    private IGenericRepository<GroupWorkspaceAccess>? _groupWorkspaceAccesses;
+    private IGenericRepository<AttendanceHistory>? _attendanceHistories;
+    private IGenericRepository<MessageOutbox>? _messageOutboxes;
+
     public UnitOfWork(TahdeeraDbContext context)
     {
         _context = context;
@@ -71,6 +82,34 @@ public class UnitOfWork : IUnitOfWork
 
     public IAcademicYearRepository AcademicYears =>
         _academicYears ??= new AcademicYearRepository(_context);
+
+    // Milestone B3 domain repositories
+    public IGroupRepository Groups =>
+        _groups ??= new GroupRepository(_context);
+
+    public ISessionRepository Sessions =>
+        _sessions ??= new SessionRepository(_context);
+
+    public IAttendanceRecordRepository AttendanceRecords =>
+        _attendanceRecords ??= new AttendanceRecordRepository(_context);
+
+    public IGenericRepository<GroupStudent> GroupStudents =>
+        _groupStudents ??= new GenericRepository<GroupStudent>(_context);
+
+    public IGenericRepository<GroupStudentStatusHistory> GroupStudentStatusHistories =>
+        _groupStudentStatusHistories ??= new GenericRepository<GroupStudentStatusHistory>(_context);
+
+    public IGenericRepository<GroupAttendanceDelegation> GroupAttendanceDelegations =>
+        _groupAttendanceDelegations ??= new GenericRepository<GroupAttendanceDelegation>(_context);
+
+    public IGenericRepository<GroupWorkspaceAccess> GroupWorkspaceAccesses =>
+        _groupWorkspaceAccesses ??= new GenericRepository<GroupWorkspaceAccess>(_context);
+
+    public IGenericRepository<AttendanceHistory> AttendanceHistories =>
+        _attendanceHistories ??= new GenericRepository<AttendanceHistory>(_context);
+
+    public IGenericRepository<MessageOutbox> MessageOutboxes =>
+        _messageOutboxes ??= new GenericRepository<MessageOutbox>(_context);
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

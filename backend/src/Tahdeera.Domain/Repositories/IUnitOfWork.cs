@@ -21,5 +21,16 @@ public interface IUnitOfWork : IDisposable
     IGradeRepository Grades { get; }
     IAcademicYearRepository AcademicYears { get; }
 
+    // Milestone B3 Repositories
+    IGroupRepository Groups { get; }
+    IGenericRepository<GroupStudent> GroupStudents { get; }
+    IGenericRepository<GroupStudentStatusHistory> GroupStudentStatusHistories { get; }
+    IGenericRepository<GroupAttendanceDelegation> GroupAttendanceDelegations { get; }
+    IGenericRepository<GroupWorkspaceAccess> GroupWorkspaceAccesses { get; }
+    ISessionRepository Sessions { get; }
+    IAttendanceRecordRepository AttendanceRecords { get; }
+    IGenericRepository<AttendanceHistory> AttendanceHistories { get; }
+    IGenericRepository<MessageOutbox> MessageOutboxes { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

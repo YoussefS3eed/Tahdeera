@@ -1,7 +1,9 @@
 using Mapster;
 using Tahdeera.Application.Features.Auth.DTOs;
 using Tahdeera.Application.Features.Credentials.DTOs;
+using Tahdeera.Application.Features.Groups.DTOs;
 using Tahdeera.Application.Features.ReferenceData.DTOs;
+using Tahdeera.Application.Features.Sessions.DTOs;
 using Tahdeera.Application.Features.Students.DTOs;
 using Tahdeera.Application.Features.Subscriptions.Commands.CreateSubscriptionPlan;
 using Tahdeera.Application.Features.Subscriptions.Commands.UpdateSubscriptionPlan;
@@ -116,5 +118,115 @@ public class MappingConfig : IRegister
             .Map(dest => dest.StartsAt, src => src.StartsAt)
             .Map(dest => dest.EndsAt, src => src.EndsAt)
             .Map(dest => dest.AgreedPrice, src => src.AgreedPrice);
+
+        // 18. Group -> GroupDto
+        config.NewConfig<Group, GroupDto>()
+            .Map(dest => dest.Id, src => src.Id)
+            .Map(dest => dest.WorkspaceId, src => src.OwnerWorkspaceId)
+            .Map(dest => dest.AcademicYearId, src => src.AcademicYearId)
+            .Map(dest => dest.GradeId, src => src.GradeId)
+            .Map(dest => dest.SubjectId, src => src.SubjectId)
+            .Map(dest => dest.Name, src => src.Name)
+            .Map(dest => dest.RoomName, src => src.RoomName)
+            .Map(dest => dest.ScheduleSummary, src => src.ScheduleSummary)
+            .Map(dest => dest.LateGraceMinutes, src => src.LateGraceMinutes)
+            .Map(dest => dest.DefaultMonthlyFee, src => src.DefaultMonthlyFee)
+            .Map(dest => dest.ConsecutiveAbsenceThreshold, src => src.ConsecutiveAbsenceThreshold)
+            .Map(dest => dest.AbsenceAction, src => src.AbsenceAction.ToString())
+            .Map(dest => dest.Status, src => src.Status.ToString())
+            .Map(dest => dest.TargetGender, _ => "CoEd")
+            .Map(dest => dest.MaxCapacity, _ => (int?)null)
+            .Map(dest => dest.ActiveStudentCount, src => src.EnrolledStudents.Count(gs => gs.Status == Domain.Enums.GroupStudentStatus.Active))
+            .Map(dest => dest.CreatedAt, src => src.CreatedAt);
+
+        // 19. Group -> GroupDetailDto
+        config.NewConfig<Group, GroupDetailDto>()
+            .Map(dest => dest.Id, src => src.Id)
+            .Map(dest => dest.WorkspaceId, src => src.OwnerWorkspaceId)
+            .Map(dest => dest.AcademicYearId, src => src.AcademicYearId)
+            .Map(dest => dest.AcademicYearName, src => src.AcademicYear != null ? src.AcademicYear.Name : string.Empty)
+            .Map(dest => dest.GradeId, src => src.GradeId)
+            .Map(dest => dest.GradeName, src => src.Grade != null ? src.Grade.NameAr : string.Empty)
+            .Map(dest => dest.SubjectId, src => src.SubjectId)
+            .Map(dest => dest.SubjectName, src => src.Subject != null ? src.Subject.NameAr : null)
+            .Map(dest => dest.Name, src => src.Name)
+            .Map(dest => dest.RoomName, src => src.RoomName)
+            .Map(dest => dest.ScheduleSummary, src => src.ScheduleSummary)
+            .Map(dest => dest.LateGraceMinutes, src => src.LateGraceMinutes)
+            .Map(dest => dest.DefaultMonthlyFee, src => src.DefaultMonthlyFee)
+            .Map(dest => dest.ConsecutiveAbsenceThreshold, src => src.ConsecutiveAbsenceThreshold)
+            .Map(dest => dest.AbsenceAction, src => src.AbsenceAction.ToString())
+            .Map(dest => dest.Status, src => src.Status.ToString())
+            .Map(dest => dest.TargetGender, _ => "CoEd")
+            .Map(dest => dest.MaxCapacity, _ => (int?)null)
+            .Map(dest => dest.ActiveStudentCount, src => src.EnrolledStudents.Count(gs => gs.Status == Domain.Enums.GroupStudentStatus.Active))
+            .Map(dest => dest.TotalSessionsCount, src => src.Sessions.Count)
+            .Map(dest => dest.ActiveDelegate, src => src.Delegations.Where(d => d.RevokedAt == null).Select(d => d.Adapt<GroupDelegationDto>()).FirstOrDefault())
+            .Map(dest => dest.CreatedAt, src => src.CreatedAt);
+
+        // 20. GroupAttendanceDelegation -> GroupDelegationDto
+        config.NewConfig<GroupAttendanceDelegation, GroupDelegationDto>()
+            .Map(dest => dest.Id, src => src.Id)
+            .Map(dest => dest.GroupId, src => src.GroupId)
+            .Map(dest => dest.AssistantUserId, src => src.AssistantUserId)
+            .Map(dest => dest.AssistantName, src => src.AssistantUser != null ? src.AssistantUser.DisplayName : string.Empty)
+            .Map(dest => dest.AssignedAt, src => src.GrantedAt)
+            .Map(dest => dest.RevokedAt, src => src.RevokedAt);
+
+        // 21. GroupWorkspaceAccess -> GroupWorkspaceAccessDto
+        config.NewConfig<GroupWorkspaceAccess, GroupWorkspaceAccessDto>()
+            .Map(dest => dest.Id, src => src.Id)
+            .Map(dest => dest.GroupId, src => src.GroupId)
+            .Map(dest => dest.GranteeWorkspaceId, src => src.WorkspaceId)
+            .Map(dest => dest.GranteeWorkspaceName, src => src.Workspace != null ? src.Workspace.Name : string.Empty)
+            .Map(dest => dest.CanViewRoster, src => src.CanViewRoster)
+            .Map(dest => dest.CanRegisterAttendance, src => src.CanRegisterAttendance)
+            .Map(dest => dest.CanEditAttendance, src => src.CanEditAttendance)
+            .Map(dest => dest.GrantedAt, src => src.GrantedAt)
+            .Map(dest => dest.ExpiresAt, _ => (DateTimeOffset?)null);
+
+        // 22. GroupStudent -> GroupStudentEnrollmentDto
+        config.NewConfig<GroupStudent, GroupStudentEnrollmentDto>()
+            .Map(dest => dest.GroupStudentId, src => src.Id)
+            .Map(dest => dest.GroupId, src => src.GroupId)
+            .Map(dest => dest.StudentId, src => src.StudentId)
+            .Map(dest => dest.StudentName, src => src.Student != null ? src.Student.FullName : string.Empty)
+            .Map(dest => dest.StudentCode, src => src.Student != null ? src.Student.StudentCode : string.Empty)
+            .Map(dest => dest.Status, src => src.Status.ToString())
+            .Map(dest => dest.JoinedAt, src => src.JoinedAt);
+
+        // 23. Session -> SessionDto
+        config.NewConfig<Session, SessionDto>()
+            .Map(dest => dest.Id, src => src.Id)
+            .Map(dest => dest.GroupId, src => src.GroupId)
+            .Map(dest => dest.WorkspaceId, src => src.Group != null ? src.Group.OwnerWorkspaceId : Guid.Empty)
+            .Map(dest => dest.StartsAt, src => src.StartsAt)
+            .Map(dest => dest.EndsAt, src => src.EndsAt)
+            .Map(dest => dest.LateGraceMinutes, src => src.LateGraceMinutes)
+            .Map(dest => dest.RoomName, src => src.Group != null ? src.Group.RoomName : null)
+            .Map(dest => dest.Topic, _ => (string?)null)
+            .Map(dest => dest.Status, src => src.Status.ToString())
+            .Map(dest => dest.CreatedAt, src => src.CreatedAt);
+
+        // 24. Session -> SessionDetailsDto
+        config.NewConfig<Session, SessionDetailsDto>()
+            .Map(dest => dest.Id, src => src.Id)
+            .Map(dest => dest.GroupId, src => src.GroupId)
+            .Map(dest => dest.GroupName, src => src.Group != null ? src.Group.Name : string.Empty)
+            .Map(dest => dest.WorkspaceId, src => src.Group != null ? src.Group.OwnerWorkspaceId : Guid.Empty)
+            .Map(dest => dest.StartsAt, src => src.StartsAt)
+            .Map(dest => dest.EndsAt, src => src.EndsAt)
+            .Map(dest => dest.LateGraceMinutes, src => src.LateGraceMinutes)
+            .Map(dest => dest.RoomName, src => src.Group != null ? src.Group.RoomName : null)
+            .Map(dest => dest.Topic, _ => (string?)null)
+            .Map(dest => dest.Status, src => src.Status.ToString())
+            .Map(dest => dest.AutoAbsenceProcessedAt, src => src.AutoAbsenceProcessedAt)
+            .Map(dest => dest.CancelledAt, src => src.CancelledAt)
+            .Map(dest => dest.CancellationReason, src => src.CancellationReason)
+            .Map(dest => dest.PresentCount, src => src.AttendanceRecords.Count(r => r.VoidedAt == null && r.Status == Domain.Enums.AttendanceStatus.Present))
+            .Map(dest => dest.LateCount, src => src.AttendanceRecords.Count(r => r.VoidedAt == null && r.Status == Domain.Enums.AttendanceStatus.Late))
+            .Map(dest => dest.AbsentCount, src => src.AttendanceRecords.Count(r => r.VoidedAt == null && r.Status == Domain.Enums.AttendanceStatus.Absent))
+            .Map(dest => dest.ExcusedCount, src => src.AttendanceRecords.Count(r => r.VoidedAt == null && r.Status == Domain.Enums.AttendanceStatus.Excused))
+            .Map(dest => dest.TotalRosterCount, src => src.Group != null ? src.Group.EnrolledStudents.Count(gs => gs.Status == Domain.Enums.GroupStudentStatus.Active) : 0);
     }
 }

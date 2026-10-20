@@ -90,6 +90,9 @@ public static class DependencyInjection
         services.AddScoped<IGradeRepository, GradeRepository>();
         services.AddScoped<IAcademicYearRepository, AcademicYearRepository>();
         services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+        services.AddScoped<IGroupRepository, GroupRepository>();
+        services.AddScoped<ISessionRepository, SessionRepository>();
+        services.AddScoped<IAttendanceRecordRepository, AttendanceRecordRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;

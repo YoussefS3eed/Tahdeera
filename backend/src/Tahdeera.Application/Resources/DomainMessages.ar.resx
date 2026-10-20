@@ -375,4 +375,34 @@
   <data name="ASSISTANT_NOT_AUTHORIZED_DELEGATE_Detail" xml:space="preserve">
     <value>المساعد غير مفوض لتسجيل الحضور لهذه المجموعة.</value>
   </data>
+
+  <data name="SESSION_CANNOT_COMPLETE_BEFORE_START" xml:space="preserve">
+    <value>لا يمكن إنهاء الحصة الدراسية قبل موعد بدايتها المحدد.</value>
+  </data>
+  <data name="SESSION_CANNOT_COMPLETE_BEFORE_START_Title" xml:space="preserve">
+    <value>لا يمكن إنهاء الحصة قبل موعد بدايتها</value>
+  </data>
+  <data name="SESSION_CANNOT_COMPLETE_BEFORE_START_Detail" xml:space="preserve">
+    <value>لا يمكن إنهاء الحصة الدراسية قبل موعد بدايتها المحدد.</value>
+  </data>
+
+  <data name="GROUP_CAPACITY_EXCEEDED" xml:space="preserve">
+    <value>المجموعة وصلت للحد الأقصى من السعة الاستيعابية للطلاب.</value>
+  </data>
+  <data name="GROUP_CAPACITY_EXCEEDED_Title" xml:space="preserve">
+    <value>اكتملت السعة الاستيعابية</value>
+  </data>
+  <data name="GROUP_CAPACITY_EXCEEDED_Detail" xml:space="preserve">
+    <value>المجموعة وصلت للحد الأقصى من السعة الاستيعابية للطلاب.</value>
+  </data>
+
+  <data name="GROUP_ARCHIVED_CANNOT_SCHEDULE" xml:space="preserve">
+    <value>لا يمكن جدولة حصص لمجموعة مؤرشفة.</value>
+  </data>
+  <data name="GROUP_ARCHIVED_CANNOT_SCHEDULE_Title" xml:space="preserve">
+    <value>المجموعة مؤرشفة</value>
+  </data>
+  <data name="GROUP_ARCHIVED_CANNOT_SCHEDULE_Detail" xml:space="preserve">
+    <value>لا يمكن جدولة حصص لمجموعة مؤرشفة.</value>
+  </data>
 </root>

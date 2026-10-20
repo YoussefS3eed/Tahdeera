@@ -1,0 +1,25 @@
+namespace Tahdeera.Application.Features.Groups.DTOs;
+
+public sealed record GroupDetailDto(
+    Guid Id,
+    Guid WorkspaceId,
+    Guid AcademicYearId,
+    string AcademicYearName,
+    short GradeId,
+    string GradeName,
+    Guid? SubjectId,
+    string? SubjectName,
+    string Name,
+    string? RoomName,
+    string? ScheduleSummary,
+    int LateGraceMinutes,
+    decimal DefaultMonthlyFee,
+    short? ConsecutiveAbsenceThreshold,
+    string AbsenceAction,
+    string Status,
+    string TargetGender,
+    int? MaxCapacity,
+    int ActiveStudentCount,
+    int TotalSessionsCount,
+    GroupDelegationDto? ActiveDelegate,
+    DateTimeOffset CreatedAt);
