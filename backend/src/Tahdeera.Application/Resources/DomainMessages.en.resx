@@ -405,4 +405,63 @@
   <data name="GROUP_ARCHIVED_CANNOT_SCHEDULE_Detail" xml:space="preserve">
     <value>Cannot schedule sessions for an archived group.</value>
   </data>
+  <data name="STUDENT_NOT_ENROLLED_IN_HOME_GROUP" xml:space="preserve">
+    <value>The student is not an active enrolled member of the specified home group.</value>
+  </data>
+  <data name="STUDENT_NOT_ENROLLED_IN_HOME_GROUP_Title" xml:space="preserve">
+    <value>Student Not Enrolled in Home Group</value>
+  </data>
+  <data name="STUDENT_NOT_ENROLLED_IN_HOME_GROUP_Detail" xml:space="preserve">
+    <value>The student is not an active enrolled member of the specified home group.</value>
+  </data>
+
+  <data name="HOME_SESSION_NOT_ELIGIBLE_FOR_EXCUSAL" xml:space="preserve">
+    <value>The specified home session is not eligible for make-up excusal.</value>
+  </data>
+  <data name="HOME_SESSION_NOT_ELIGIBLE_FOR_EXCUSAL_Title" xml:space="preserve">
+    <value>Home Session Not Eligible For Excusal</value>
+  </data>
+  <data name="HOME_SESSION_NOT_ELIGIBLE_FOR_EXCUSAL_Detail" xml:space="preserve">
+    <value>The specified home session is not eligible for make-up excusal.</value>
+  </data>
+
+  <data name="ATTENDANCE_RECORD_NOT_FOUND" xml:space="preserve">
+    <value>The specified attendance record was not found.</value>
+  </data>
+  <data name="ATTENDANCE_RECORD_NOT_FOUND_Title" xml:space="preserve">
+    <value>Attendance Record Not Found</value>
+  </data>
+  <data name="ATTENDANCE_RECORD_NOT_FOUND_Detail" xml:space="preserve">
+    <value>The specified attendance record was not found.</value>
+  </data>
+
+  <data name="ATTENDANCE_RECORD_ALREADY_VOIDED" xml:space="preserve">
+    <value>Cannot modify an attendance record belonging to a cancelled session.</value>
+  </data>
+  <data name="ATTENDANCE_RECORD_ALREADY_VOIDED_Title" xml:space="preserve">
+    <value>Attendance Record Cancelled</value>
+  </data>
+  <data name="ATTENDANCE_RECORD_ALREADY_VOIDED_Detail" xml:space="preserve">
+    <value>Cannot modify an attendance record belonging to a cancelled session.</value>
+  </data>
+
+  <data name="INVALID_AUTO_ABSENCE_BUFFER" xml:space="preserve">
+    <value>Auto-absence buffer must be between 0 and 120 minutes.</value>
+  </data>
+  <data name="INVALID_AUTO_ABSENCE_BUFFER_Title" xml:space="preserve">
+    <value>Invalid Auto Absence Buffer</value>
+  </data>
+  <data name="INVALID_AUTO_ABSENCE_BUFFER_Detail" xml:space="preserve">
+    <value>Auto-absence buffer must be between 0 and 120 minutes.</value>
+  </data>
+
+  <data name="SESSION_NOT_ACTIVE" xml:space="preserve">
+    <value>Live check-in is only permitted for scheduled or running sessions.</value>
+  </data>
+  <data name="SESSION_NOT_ACTIVE_Title" xml:space="preserve">
+    <value>Session Not Active</value>
+  </data>
+  <data name="SESSION_NOT_ACTIVE_Detail" xml:space="preserve">
+    <value>Live check-in is only permitted for scheduled or running sessions.</value>
+  </data>
 </root>

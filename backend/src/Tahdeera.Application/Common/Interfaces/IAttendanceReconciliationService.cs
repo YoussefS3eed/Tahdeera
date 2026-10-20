@@ -16,6 +16,16 @@ public record ReconciliationResult(
 
 public interface IAttendanceReconciliationService
 {
+    Task<int> CalculateConsecutiveAbsenceStreakAsync(
+        Guid groupId,
+        Guid studentId,
+        CancellationToken ct = default);
+
+    Task ReconcileStudentStreakAsync(
+        Guid groupId,
+        Guid studentId,
+        CancellationToken ct = default);
+
     Task<ReconciliationResult> ReconcileStudentAbsencesAsync(
         Guid workspaceId,
         Guid groupId,

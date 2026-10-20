@@ -405,4 +405,63 @@
   <data name="GROUP_ARCHIVED_CANNOT_SCHEDULE_Detail" xml:space="preserve">
     <value>لا يمكن جدولة حصص لمجموعة مؤرشفة.</value>
   </data>
+  <data name="STUDENT_NOT_ENROLLED_IN_HOME_GROUP" xml:space="preserve">
+    <value>الطالب غير مسجل كعضو نشط في المجموعة الأساسية المحددة.</value>
+  </data>
+  <data name="STUDENT_NOT_ENROLLED_IN_HOME_GROUP_Title" xml:space="preserve">
+    <value>الطالب غير مسجل في المجموعة الأساسية</value>
+  </data>
+  <data name="STUDENT_NOT_ENROLLED_IN_HOME_GROUP_Detail" xml:space="preserve">
+    <value>الطالب غير مسجل كعضو نشط في المجموعة الأساسية المحددة.</value>
+  </data>
+
+  <data name="HOME_SESSION_NOT_ELIGIBLE_FOR_EXCUSAL" xml:space="preserve">
+    <value>الحصة الأساسية المحددة غير مؤهلة للتعويض أو تم تبريرها مسبقاً.</value>
+  </data>
+  <data name="HOME_SESSION_NOT_ELIGIBLE_FOR_EXCUSAL_Title" xml:space="preserve">
+    <value>الحصة غير مؤهلة للتعويض</value>
+  </data>
+  <data name="HOME_SESSION_NOT_ELIGIBLE_FOR_EXCUSAL_Detail" xml:space="preserve">
+    <value>الحصة الأساسية المحددة غير مؤهلة للتعويض أو تم تبريرها مسبقاً.</value>
+  </data>
+
+  <data name="ATTENDANCE_RECORD_NOT_FOUND" xml:space="preserve">
+    <value>لم يتم العثور على سجل الحضور المحدد.</value>
+  </data>
+  <data name="ATTENDANCE_RECORD_NOT_FOUND_Title" xml:space="preserve">
+    <value>سجل الحضور غير موجود</value>
+  </data>
+  <data name="ATTENDANCE_RECORD_NOT_FOUND_Detail" xml:space="preserve">
+    <value>لم يتم العثور على سجل الحضور المحدد.</value>
+  </data>
+
+  <data name="ATTENDANCE_RECORD_ALREADY_VOIDED" xml:space="preserve">
+    <value>لا يمكن تعديل سجل حضور لحصة دراسية تم إلغاؤها.</value>
+  </data>
+  <data name="ATTENDANCE_RECORD_ALREADY_VOIDED_Title" xml:space="preserve">
+    <value>سجل الحضور ملغى</value>
+  </data>
+  <data name="ATTENDANCE_RECORD_ALREADY_VOIDED_Detail" xml:space="preserve">
+    <value>لا يمكن تعديل سجل حضور لحصة دراسية تم إلغاؤها.</value>
+  </data>
+
+  <data name="INVALID_AUTO_ABSENCE_BUFFER" xml:space="preserve">
+    <value>مهلة تسجيل الغياب التلقائي يجب أن تكون بين 0 و 120 دقيقة.</value>
+  </data>
+  <data name="INVALID_AUTO_ABSENCE_BUFFER_Title" xml:space="preserve">
+    <value>مهلة غياب غير صالحة</value>
+  </data>
+  <data name="INVALID_AUTO_ABSENCE_BUFFER_Detail" xml:space="preserve">
+    <value>مهلة تسجيل الغياب التلقائي يجب أن تكون بين 0 و 120 دقيقة.</value>
+  </data>
+
+  <data name="SESSION_NOT_ACTIVE" xml:space="preserve">
+    <value>تسجيل الحضور المباشر متاح فقط للحصص المجدولة أو الجارية حالياً.</value>
+  </data>
+  <data name="SESSION_NOT_ACTIVE_Title" xml:space="preserve">
+    <value>الحصة غير نشطة</value>
+  </data>
+  <data name="SESSION_NOT_ACTIVE_Detail" xml:space="preserve">
+    <value>تسجيل الحضور المباشر متاح فقط للحصص المجدولة أو الجارية حالياً.</value>
+  </data>
 </root>

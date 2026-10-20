@@ -91,6 +91,18 @@ public class AttendanceRecord
         DateTimeOffset checkInAt,
         Guid? userId)
     {
+        return RegisterMakeup(session, studentId, workspaceId, homeGroupId, null, checkInAt, userId);
+    }
+
+    public static AttendanceRecord RegisterMakeup(
+        Session session,
+        Guid studentId,
+        Guid workspaceId,
+        Guid homeGroupId,
+        string? reason,
+        DateTimeOffset checkInAt,
+        Guid? userId)
+    {
         var punctualityStatus = session.EvaluatePunctuality(checkInAt);
         return new AttendanceRecord
         {
@@ -106,7 +118,8 @@ public class AttendanceRecord
             LastModifiedAt = checkInAt,
             AutoEvaluationLocked = false,
             IsGuestMakeup = true,
-            HomeGroupId = homeGroupId
+            HomeGroupId = homeGroupId,
+            RetroactiveReason = reason
         };
     }
 
@@ -122,6 +135,7 @@ public class AttendanceRecord
         AutoEvaluationLocked = true;
         LastModifiedByUserId = actorUserId;
         LastModifiedAt = modifiedAt;
+        RetroactiveReason = reason.Trim();
     }
 
     public void ReevaluatePunctuality(Session session)

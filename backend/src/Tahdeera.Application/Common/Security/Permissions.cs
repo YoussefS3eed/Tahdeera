@@ -11,4 +11,5 @@ public static class Permissions
     public const string SessionsView = "Sessions.View";
     public const string AttendanceRegister = "Attendance.Register";
     public const string AttendanceCorrect = "Attendance.Correct";
+    public const string AttendanceOwnerOverride = "Attendance.OwnerOverride";
 }

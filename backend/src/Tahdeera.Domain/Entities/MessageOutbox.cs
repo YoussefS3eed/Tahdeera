@@ -86,7 +86,7 @@ public class MessageOutbox
 
     public void MarkPublishedToBroker(string brokerMessageId, DateTimeOffset publishedAt)
     {
-        if (Status != OutboxMessageStatus.Pending)
+        if (Status != OutboxMessageStatus.Pending && Status != OutboxMessageStatus.Processing)
         {
             throw new InvalidOperationException($"Cannot publish message to broker from status '{Status}'.");
         }
@@ -96,6 +96,27 @@ public class MessageOutbox
         Status = OutboxMessageStatus.PublishedToBroker;
         BrokerMessageId = brokerMessageId.Trim();
         UpdatedAt = publishedAt;
+    }
+
+    public void ReleaseStaleLease(DateTimeOffset now, string reason)
+    {
+        if (Status != OutboxMessageStatus.Processing)
+        {
+            throw new InvalidOperationException($"Cannot release stale lease for message not in 'Processing' status. Current: '{Status}'.");
+        }
+
+        if (Attempts >= MaxAttempts)
+        {
+            MarkPermanentFailure("LEASE_EXHAUSTED", $"Lease timed out and maximum attempts reached ({Attempts}/{MaxAttempts}): {reason}");
+            return;
+        }
+
+        Status = OutboxMessageStatus.FailedTransient;
+        FailureCategory = "Transient";
+        ErrorCode = "LEASE_TIMEOUT";
+        ErrorDetails = $"Lease recovered after timeout: {reason}";
+        NextAttemptAt = now;
+        UpdatedAt = now;
     }
 
     public void MarkSent(string providerMessageId, DateTimeOffset sentAt)

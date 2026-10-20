@@ -67,4 +67,46 @@ public static class DomainErrors
         public static Error UnauthorizedWorkspaceAccess =>
             Error.Forbidden("UNAUTHORIZED_WORKSPACE_ACCESS", "مساحة العمل لا تملك صلاحية الوصول إلى هذه المجموعة.");
     }
+
+    public static class Attendance
+    {
+        public static Error CredentialNotFound =>
+            Error.NotFound("CREDENTIAL_NOT_FOUND", "بطاقة الحضور الممسوحة غير مسجلة في النظام أو غير مخصصة لطالب.");
+
+        public static Error CredentialRevoked =>
+            Error.Forbidden("CREDENTIAL_REVOKED", "تم إلغاء تفعيل هذه البطاقة أو انتهت صلاحيتها.");
+
+        public static Error StudentBlockedInWorkspace =>
+            Error.Forbidden("STUDENT_BLOCKED_IN_WORKSPACE", "الطالب محظور أو موقوف في مساحة العمل الحالية ولا يمكن تسجيل حضوره.");
+
+        public static Error StudentNotEnrolledInHomeGroup =>
+            Error.Validation("STUDENT_NOT_ENROLLED_IN_HOME_GROUP", "الطالب غير مسجل كعضو نشط في المجموعة الأساسية المحددة.");
+
+        public static Error HomeSessionNotEligibleForExcusal =>
+            Error.Unprocessable("HOME_SESSION_NOT_ELIGIBLE_FOR_EXCUSAL", "الحصة الأساسية المحددة غير مؤهلة للتعويض أو تم تبريرها مسبقاً.");
+
+        public static Error GradeMismatch =>
+            Error.Unprocessable("GROUP_GRADE_MISMATCH", "المرحلة الدراسية للطالب لا تتطابق مع مرحلة المجموعة.");
+
+        public static Error CorrectionReasonRequired =>
+            Error.Validation("CORRECTION_REASON_REQUIRED", "سبب التعديل إلزامي لتسجيل تصحيح كشف الحضور.");
+
+        public static Error RetroactiveReasonRequired =>
+            Error.Validation("RETROACTIVE_REASON_REQUIRED", "سبب القيد بأثر رجعي إلزامي عند تسجيل حضور طالب منسحب من المجموعة.");
+
+        public static Error CorrectionWindowExpired =>
+            Error.Forbidden("ATTENDANCE_CORRECTION_WINDOW_EXPIRED", "انتهت فترة السماح (7 أيام) لتعديل كشف الحضور. يتطلب التعديل صلاحية مالك مساحة العمل حصراً.");
+
+        public static Error NotFound =>
+            Error.NotFound("ATTENDANCE_RECORD_NOT_FOUND", "لم يتم العثور على سجل الحضور المحدد.");
+
+        public static Error AlreadyVoided =>
+            Error.Validation("ATTENDANCE_RECORD_ALREADY_VOIDED", "لا يمكن تعديل سجل حضور لحصة دراسية تم إلغاؤها.");
+
+        public static Error InvalidAutoAbsenceBuffer =>
+            Error.Unprocessable("INVALID_AUTO_ABSENCE_BUFFER", "مهلة تسجيل الغياب التلقائي يجب أن تكون بين 0 و 120 دقيقة.");
+
+        public static Error SessionNotActive =>
+            Error.Validation("SESSION_NOT_ACTIVE", "تسجيل الحضور المباشر متاح فقط للحصص المجدولة أو الجارية حالياً.");
+    }
 }

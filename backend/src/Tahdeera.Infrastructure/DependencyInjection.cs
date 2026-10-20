@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Tahdeera.Application.Common.Interfaces;
 using Tahdeera.Domain.Repositories;
+using Tahdeera.Infrastructure.BackgroundJobs;
 using Tahdeera.Infrastructure.Persistence;
 using Tahdeera.Infrastructure.Persistence.Repositories;
 using Tahdeera.Infrastructure.Services;
@@ -15,6 +16,9 @@ namespace Tahdeera.Infrastructure;
 
 public static class DependencyInjection
 {
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+        => services.AddInfrastructureServices(configuration);
+
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
         var connectionString = configuration.GetConnectionString("DefaultConnection")
@@ -79,6 +83,14 @@ public static class DependencyInjection
         services.AddScoped<IAuditLogService, AuditLogService>();
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<ICredentialSecurityService, CredentialSecurityService>();
+        services.AddScoped<IAttendanceReconciliationService, AttendanceReconciliationService>();
+        services.AddScoped<IMessageOutboxPublisher, LoggingOutboxMessagePublisher>();
+
+        // Background Workers
+        services.Configure<AttendanceWorkerOptions>(configuration.GetSection(AttendanceWorkerOptions.SectionName));
+        services.Configure<OutboxWorkerOptions>(configuration.GetSection(OutboxWorkerOptions.SectionName));
+        services.AddHostedService<SessionCompletionWorker>();
+        services.AddHostedService<MessageOutboxRelayWorker>();
 
         // Repositories & Unit of Work
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
@@ -97,7 +109,4 @@ public static class DependencyInjection
 
         return services;
     }
-
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
-        => services.AddInfrastructureServices(configuration);
 }

@@ -1918,6 +1918,12 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<int>("AutoAbsenceBufferMinutes")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(15)
+                        .HasColumnName("auto_absence_buffer_minutes");
+
                     b.Property<string>("CityAddress")
                         .HasMaxLength(240)
                         .HasColumnType("character varying(240)")
@@ -1988,6 +1994,8 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
 
                     b.ToTable("workspaces", null, t =>
                         {
+                            t.HasCheckConstraint("ck_workspaces_auto_absence_buffer", "auto_absence_buffer_minutes >= 0 AND auto_absence_buffer_minutes <= 120");
+
                             t.HasCheckConstraint("ck_workspaces_kind", "kind IN ('Teacher', 'Center')");
 
                             t.HasCheckConstraint("ck_workspaces_late_grace", "default_late_grace_minutes >= 0 AND default_late_grace_minutes <= 1440");

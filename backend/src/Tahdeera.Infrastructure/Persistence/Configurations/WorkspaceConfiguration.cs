@@ -12,6 +12,7 @@ public class WorkspaceConfiguration : IEntityTypeConfiguration<Workspace>
         {
             t.HasCheckConstraint("ck_workspaces_kind", "kind IN ('Teacher', 'Center')");
             t.HasCheckConstraint("ck_workspaces_late_grace", "default_late_grace_minutes >= 0 AND default_late_grace_minutes <= 1440");
+            t.HasCheckConstraint("ck_workspaces_auto_absence_buffer", "auto_absence_buffer_minutes >= 0 AND auto_absence_buffer_minutes <= 120");
         });
 
         builder.HasKey(w => w.Id);
@@ -31,6 +32,10 @@ public class WorkspaceConfiguration : IEntityTypeConfiguration<Workspace>
 
         builder.Property(w => w.DefaultLateGraceMinutes)
             .HasDefaultValue(20)
+            .IsRequired();
+
+        builder.Property(w => w.AutoAbsenceBufferMinutes)
+            .HasDefaultValue(15)
             .IsRequired();
 
         builder.Property(w => w.WeeklyHolidayDays)
