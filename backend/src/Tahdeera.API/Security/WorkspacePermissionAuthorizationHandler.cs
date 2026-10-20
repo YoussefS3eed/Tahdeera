@@ -107,11 +107,18 @@ public class WorkspacePermissionAuthorizationHandler : AuthorizationHandler<Work
         // - Students.Manage: Owner, Teacher, Assistant (Delegated or Non-Delegated)
         // - Students.View: Owner, Teacher, Assistant, Reception, Accountant
         // - Credentials.Manage: Owner, Teacher, Assistant, Reception
-        var isAuthorized = requirement.Permission switch
+                var isAuthorized = requirement.Permission switch
         {
             Permissions.StudentsManage => member.Role is "Owner" or "Teacher" or "Assistant",
             Permissions.StudentsView => member.Role is "Owner" or "Teacher" or "Assistant" or "Reception" or "Accountant",
             Permissions.CredentialsManage => member.Role is "Owner" or "Teacher" or "Assistant" or "Reception",
+            Permissions.GroupsManage => member.Role is "Owner" or "Teacher",
+            Permissions.GroupsView => member.Role is "Owner" or "Teacher" or "Assistant" or "Reception" or "Accountant",
+            Permissions.SessionsManage => member.Role is "Owner" or "Teacher",
+            Permissions.SessionsView => member.Role is "Owner" or "Teacher" or "Assistant" or "Reception",
+            Permissions.AttendanceRegister => member.Role is "Owner" or "Teacher" or "Assistant" or "Reception",
+            Permissions.AttendanceCorrect => member.Role is "Owner" or "Teacher" or "Assistant",
+            Permissions.AttendanceOwnerOverride => member.Role is "Owner",
             _ => false
         };
 
