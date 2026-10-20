@@ -1,0 +1,468 @@
+<div class="dashboard-page space-y-6 max-w-7xl mx-auto px-4 py-6">
+  <!-- Top Header & Sub-header Controls -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <div class="text-xs text-slate-500 mb-1">
+        {{ localization.currentLang() === 'ar' ? 'مساحة السنتر / لوحة التحكم' : 'Center Workspace / Dashboard' }}
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-bold text-slate-900">
+        {{ localization.currentLang() === 'ar' ? 'لوحة التحكم' : 'Dashboard Overview' }}
+      </h1>
+      <p class="text-sm text-slate-600 mt-0.5">
+        @if (currentUser()) {
+          {{ localization.currentLang() === 'ar' ? 'مرحباً، ' + currentUser()?.fullName : 'Welcome, ' + currentUser()?.fullName }}
+          —
+        }
+        {{ activeWorkspace()?.name }} ({{ localization.currentLang() === 'ar' ? 'العام الدراسي 2026/2027' : 'Academic Year 2026/2027' }})
+      </p>
+    </div>
+
+    <!-- Actions & Manual Refresh Button -->
+    <div class="flex flex-wrap items-center gap-2.5">
+      <button
+        type="button"
+        (click)="refresh()"
+        class="refresh-btn p-2.5 rounded-xl border border-slate-300 hover:bg-slate-50 text-slate-700 transition-all flex items-center justify-center shadow-sm"
+        [title]="localization.currentLang() === 'ar' ? 'تحديث البيانات' : 'Refresh Data'"
+      >
+        <span class="material-symbols-outlined text-lg" [class.animate-spin]="isRefreshing()">refresh</span>
+      </button>
+
+      <a
+        routerLink="/workspace/students"
+        class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-sm transition-all flex items-center gap-1.5"
+      >
+        <span class="material-symbols-outlined text-lg">person_add</span>
+        <span>{{ localization.currentLang() === 'ar' ? 'إضافة طالب' : 'Add Student' }}</span>
+      </a>
+
+      <a
+        routerLink="/workspace/nfc-station"
+        class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm shadow-sm transition-all flex items-center gap-1.5"
+      >
+        <span class="material-symbols-outlined text-lg">contactless</span>
+        <span>{{ localization.currentLang() === 'ar' ? 'محطة الحضور NFC' : 'NFC Station' }}</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Subscription Renewal Notice Banner (Rendered when <= 7 days or flag active) -->
+  @if (dashboardData()?.renewalNotice?.showBanner) {
+    <div class="renewal-banner rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm text-amber-900 shadow-sm">
+      <div class="flex items-center gap-2 font-medium">
+        <span class="material-symbols-outlined text-amber-600">info</span>
+        <span>
+          {{ localization.currentLang() === 'ar' ? 'اشتراكك ينتهي قريباً (متبقي ' : 'Your subscription expires soon (' }}
+          <strong class="ltr-num font-mono">{{ dashboardData()?.renewalNotice?.daysRemaining }}</strong>
+          {{ localization.currentLang() === 'ar' ? ' أيام). للتجديد والدعم الفني المباشر: ' : ' days left). Direct support hotlines: ' }}
+          <a href="tel:01272785618" class="ltr-num font-mono font-bold hover:underline">01272785618</a>
+          —
+          <a href="tel:01019482687" class="ltr-num font-mono font-bold hover:underline">01019482687</a>
+        </span>
+      </div>
+      <a routerLink="/workspace/settings" class="text-xs font-bold text-amber-900 underline hover:text-amber-700">
+        {{ localization.currentLang() === 'ar' ? 'تفاصيل الاشتراك ←' : 'Subscription Details →' }}
+      </a>
+    </div>
+  }
+
+  <!-- Hero NFC Reader Status Banner -->
+  <div class="hero-banner rounded-2xl bg-gradient-to-l from-slate-900 via-slate-800 to-blue-800 text-white p-6 sm:p-7 shadow-md relative overflow-hidden">
+    <div class="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+      <div class="space-y-2.5 max-w-2xl">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-xs font-semibold text-emerald-300">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            {{ localization.currentLang() === 'ar' ? 'قارئ NFC الذكي (ACR122U) متصل وجاهز' : 'Smart NFC Reader (ACR122U) Connected & Ready' }}
+          </span>
+          <span class="text-xs text-blue-200">
+            {{ localization.currentLang() === 'ar' ? 'تسجيل فوري فائق السرعة' : 'Instant Ultra-Fast Check-in' }}
+          </span>
+        </div>
+        <h2 class="text-xl sm:text-2xl font-bold">
+          {{ localization.currentLang() === 'ar' ? 'كل طالب في مكانه، وكل حصة محسوبة بدقة.' : 'Every student accounted for, every session tracked precisely.' }}
+        </h2>
+        <p class="text-xs sm:text-sm text-blue-100 leading-relaxed">
+          {{ localization.currentLang() === 'ar'
+            ? 'يتم تسجيل الحضور بلمسة كارت NFC وإرسال إشعار واتساب فوري لولي الأمر مع حفظ كامل للسجلات محلياً وسحابياً.'
+            : 'Check-in is recorded in milliseconds via NFC card touch, delivering automatic WhatsApp updates to parents.'
+          }}
+        </p>
+        <div class="pt-2 flex flex-wrap items-center gap-2.5">
+          <a
+            routerLink="/workspace/nfc-station"
+            class="px-4 py-2 rounded-xl bg-white text-slate-900 font-bold text-xs sm:text-sm hover:bg-blue-50 transition-all flex items-center gap-1.5"
+          >
+            <span class="material-symbols-outlined text-base text-blue-600">sensors</span>
+            <span>{{ localization.currentLang() === 'ar' ? 'تشغيل محطة NFC الآن' : 'Launch NFC Station' }}</span>
+          </a>
+          <a
+            routerLink="/workspace/attendance"
+            class="px-4 py-2 rounded-xl bg-white/15 hover:bg-white/25 text-white font-bold text-xs sm:text-sm transition-all flex items-center gap-1.5"
+          >
+            <span class="material-symbols-outlined text-base">fact_check</span>
+            <span>{{ localization.currentLang() === 'ar' ? 'كشف الحضور اليومي' : 'Daily Attendance Sheet' }}</span>
+          </a>
+        </div>
+      </div>
+      <div class="hidden md:flex items-center justify-center shrink-0">
+        <span class="material-symbols-outlined text-7xl text-blue-300 opacity-80">contactless</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Primary KPI Cards Section (Fixed 124px height during load for CLS < 0.05) -->
+  @if (isLoading()) {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="skeleton-kpi-card min-h-[124px] h-[124px]">
+        <app-skeleton-loader variant="kpi-card" height="124px"></app-skeleton-loader>
+      </div>
+      <div class="skeleton-kpi-card min-h-[124px] h-[124px]">
+        <app-skeleton-loader variant="kpi-card" height="124px"></app-skeleton-loader>
+      </div>
+      <div class="skeleton-kpi-card min-h-[124px] h-[124px]">
+        <app-skeleton-loader variant="kpi-card" height="124px"></app-skeleton-loader>
+      </div>
+      <div class="skeleton-kpi-card min-h-[124px] h-[124px]">
+        <app-skeleton-loader variant="kpi-card" height="124px"></app-skeleton-loader>
+      </div>
+    </div>
+  } @else {
+    <div
+      class="grid gap-4"
+      [ngClass]="canViewFinancials() && dashboardData()?.kpis?.unpaidTuition ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'"
+    >
+      <!-- KPI Card 1: Total Students -->
+      <div class="kpi-card bg-white border border-slate-200 rounded-2xl p-5 border-b-4 border-b-slate-800 shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between text-xs text-slate-500 mb-2">
+          <span>{{ localization.currentLang() === 'ar' ? 'إجمالي الطلاب' : 'Total Students' }}</span>
+          <span class="material-symbols-outlined text-slate-800 text-lg">groups</span>
+        </div>
+        <div class="text-3xl font-bold text-slate-900 ltr-num font-mono">
+          {{ dashboardData()?.kpis?.totalStudents?.totalCount ?? 0 }}
+        </div>
+        <div class="text-xs text-slate-500 mt-1.5">
+          <span class="ltr-num font-mono">{{ dashboardData()?.kpis?.totalStudents?.activeCount ?? 0 }}</span>
+          {{ localization.currentLang() === 'ar' ? ' نشط • ' : ' active • ' }}
+          <span class="ltr-num font-mono">{{ dashboardData()?.kpis?.totalStudents?.inactiveCount ?? 0 }}</span>
+          {{ localization.currentLang() === 'ar' ? ' غير نشط' : ' inactive' }}
+        </div>
+      </div>
+
+      <!-- KPI Card 2: Present Today -->
+      <div class="kpi-card bg-white border border-slate-200 rounded-2xl p-5 border-b-4 border-b-emerald-500 shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between text-xs text-slate-500 mb-2">
+          <span>{{ localization.currentLang() === 'ar' ? 'حاضر اليوم' : 'Present Today' }}</span>
+          <span class="material-symbols-outlined text-emerald-600 text-lg">check_circle</span>
+        </div>
+        <div class="text-3xl font-bold text-emerald-600 ltr-num font-mono">
+          {{ dashboardData()?.kpis?.presentToday?.presentCount ?? 0 }}
+        </div>
+        <div class="text-xs text-slate-500 mt-1.5">
+          {{ localization.currentLang() === 'ar' ? 'من ' : 'of ' }}
+          <span class="ltr-num font-mono">{{ dashboardData()?.kpis?.presentToday?.totalScheduledRecords ?? 0 }}</span>
+          {{ localization.currentLang() === 'ar' ? ' تسجيلاً (' : ' scheduled (' }}
+          <span class="ltr-num font-mono">{{ dashboardData()?.kpis?.presentToday?.attendancePercentage ?? 0 }}%</span>)
+        </div>
+      </div>
+
+      <!-- KPI Card 3: Absent Today -->
+      <div class="kpi-card bg-white border border-slate-200 rounded-2xl p-5 border-b-4 border-b-red-500 shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between text-xs text-slate-500 mb-2">
+          <span>{{ localization.currentLang() === 'ar' ? 'غائب اليوم' : 'Absent Today' }}</span>
+          <span class="material-symbols-outlined text-red-600 text-lg">cancel</span>
+        </div>
+        <div class="text-3xl font-bold text-red-600 ltr-num font-mono">
+          {{ dashboardData()?.kpis?.absentToday?.absentCount ?? 0 }}
+        </div>
+        <div class="text-xs text-slate-500 mt-1.5">
+          <span class="ltr-num font-mono">{{ dashboardData()?.kpis?.absentToday?.unexcusedCount ?? 0 }}</span>
+          {{ localization.currentLang() === 'ar' ? ' بدون عذر • ' : ' unexcused • ' }}
+          <span class="ltr-num font-mono">{{ dashboardData()?.kpis?.absentToday?.excusedCount ?? 0 }}</span>
+          {{ localization.currentLang() === 'ar' ? ' بعذر' : ' excused' }}
+        </div>
+      </div>
+
+      <!-- KPI Card 4: Unpaid Tuition (STRICT CONF-09 DOM EXCLUSION) -->
+      @if (canViewFinancials() && dashboardData()?.kpis?.unpaidTuition) {
+        <div class="tuition-card kpi-card bg-white border border-slate-200 rounded-2xl p-5 border-b-4 border-b-amber-500 shadow-sm flex flex-col justify-between">
+          <div class="flex items-center justify-between text-xs text-slate-500 mb-2">
+            <span>{{ localization.currentLang() === 'ar' ? 'المصروفات المتأخرة' : 'Unpaid Tuition' }}</span>
+            <span class="material-symbols-outlined text-amber-600 text-lg">payments</span>
+          </div>
+          <div class="text-3xl font-bold text-slate-900 ltr-num font-mono">
+            {{ dashboardData()?.kpis?.unpaidTuition?.totalOverdueAmount }}
+            <span class="text-sm font-normal text-slate-600">
+              {{ localization.currentLang() === 'ar' ? 'ج.م' : 'EGP' }}
+            </span>
+          </div>
+          <div class="text-xs text-slate-500 mt-1.5">
+            <span class="ltr-num font-mono">{{ dashboardData()?.kpis?.unpaidTuition?.unpaidStudentCount }}</span>
+            {{ localization.currentLang() === 'ar' ? ' طالباً لم يسددوا' : ' students pending' }}
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Middle Row: Today's Sessions & Quick Action Shortcuts -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <!-- Today's Scheduled Sessions Table -->
+    <div class="lg:col-span-7 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 class="text-lg font-bold text-slate-900">
+          {{ localization.currentLang() === 'ar' ? 'حصص اليوم المجدولة' : "Today's Scheduled Sessions" }}
+        </h2>
+        <a routerLink="/workspace/schedule" class="text-xs font-bold text-blue-600 hover:underline">
+          {{ localization.currentLang() === 'ar' ? 'عرض الجدول الكامل ←' : 'Full Schedule →' }}
+        </a>
+      </div>
+
+      <div class="overflow-x-auto border border-slate-200 rounded-xl">
+        <table class="w-full text-right text-xs sm:text-sm">
+          <thead class="bg-slate-50 text-slate-500 border-b border-slate-200">
+            <tr>
+              <th class="py-3 px-4 font-semibold">{{ localization.currentLang() === 'ar' ? 'المجموعة' : 'Group' }}</th>
+              <th class="py-3 px-4 font-semibold">{{ localization.currentLang() === 'ar' ? 'الوقت' : 'Time' }}</th>
+              <th class="py-3 px-4 font-semibold">{{ localization.currentLang() === 'ar' ? 'الحالة' : 'Status' }}</th>
+              <th class="py-3 px-4 font-semibold">{{ localization.currentLang() === 'ar' ? 'إجراء' : 'Action' }}</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            @for (session of dashboardData()?.upcomingSessions; track session.id) {
+              <tr class="hover:bg-slate-50/50 transition-colors">
+                <td class="py-3.5 px-4 font-bold text-slate-800">
+                  {{ session.groupName }}
+                  <span class="text-xs font-normal text-slate-500">({{ session.gradeLevel }})</span>
+                </td>
+                <td class="py-3.5 px-4 ltr-num font-mono text-slate-600">
+                  {{ session.scheduledStart }} – {{ session.scheduledEnd }}
+                </td>
+                <td class="py-3.5 px-4">
+                  <span
+                    class="px-2.5 py-1 rounded-full text-xs font-bold inline-block"
+                    [ngClass]="session.status === 'Completed' ? 'bg-emerald-50 text-emerald-700' : session.status === 'InProgress' ? 'bg-blue-100 text-blue-800' : 'bg-slate-100 text-slate-700'"
+                  >
+                    {{ session.statusBadgeLabel }}
+                  </span>
+                </td>
+                <td class="py-3.5 px-4">
+                  <a
+                    [routerLink]="session.actionRoute"
+                    class="text-xs font-bold text-blue-600 hover:underline"
+                  >
+                    {{ session.actionLabel }}
+                  </a>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="4" class="py-6 text-center text-slate-400">
+                  {{ localization.currentLang() === 'ar' ? 'لا توجد حصص مجدولة لليوم' : 'No sessions scheduled for today' }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Quick Action Shortcuts Grid -->
+    <div class="lg:col-span-5 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col justify-between space-y-4">
+      <div class="space-y-4">
+        <h2 class="text-lg font-bold text-slate-900">
+          {{ localization.currentLang() === 'ar' ? 'إجراءات سريعة' : 'Quick Actions' }}
+        </h2>
+        <div class="grid grid-cols-2 gap-2.5">
+          <a
+            routerLink="/workspace/students"
+            class="action-btn p-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-sm"
+          >
+            <span class="material-symbols-outlined text-base">person_add</span>
+            <span>{{ localization.currentLang() === 'ar' ? 'إضافة طالب' : 'Add Student' }}</span>
+          </a>
+
+          <button
+            type="button"
+            (click)="openGlobalSearch()"
+            class="action-btn p-3 rounded-xl border border-slate-300 hover:bg-slate-50 text-slate-800 font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-sm"
+          >
+            <span class="material-symbols-outlined text-base text-blue-600">search</span>
+            <span>{{ localization.currentLang() === 'ar' ? 'بحث عن طالب' : 'Search' }}</span>
+          </button>
+
+          <a
+            routerLink="/workspace/nfc-station"
+            class="action-btn p-3 rounded-xl border border-slate-300 hover:bg-slate-50 text-slate-800 font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-sm"
+          >
+            <span class="material-symbols-outlined text-base text-emerald-600">contactless</span>
+            <span>{{ localization.currentLang() === 'ar' ? 'محطة NFC' : 'NFC Station' }}</span>
+          </a>
+
+          <a
+            routerLink="/workspace/attendance"
+            class="action-btn p-3 rounded-xl border border-slate-300 hover:bg-slate-50 text-slate-800 font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-sm"
+          >
+            <span class="material-symbols-outlined text-base text-amber-600">fact_check</span>
+            <span>{{ localization.currentLang() === 'ar' ? 'كشف الحضور' : 'Attendance' }}</span>
+          </a>
+
+          <a
+            routerLink="/workspace/groups"
+            class="action-btn p-3 rounded-xl border border-slate-300 hover:bg-slate-50 text-slate-800 font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-sm"
+          >
+            <span class="material-symbols-outlined text-base text-purple-600">class</span>
+            <span>{{ localization.currentLang() === 'ar' ? 'المجموعات' : 'Groups' }}</span>
+          </a>
+
+          <a
+            routerLink="/workspace/reports"
+            class="action-btn p-3 rounded-xl border border-slate-300 hover:bg-slate-50 text-slate-800 font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-sm"
+          >
+            <span class="material-symbols-outlined text-base text-slate-700">bar_chart</span>
+            <span>{{ localization.currentLang() === 'ar' ? 'التقارير' : 'Reports' }}</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Financial Status Info Note (if financial role) -->
+      @if (canViewFinancials() && dashboardData()?.kpis?.unpaidTuition) {
+        <div class="rounded-xl bg-slate-50 border border-slate-200 p-4 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-900">
+              {{ localization.currentLang() === 'ar' ? 'موقف المصروفات الحالي' : 'Current Tuition Status' }}
+            </span>
+            <a routerLink="/workspace/payments" class="text-xs font-bold text-blue-600 hover:underline">
+              {{ localization.currentLang() === 'ar' ? 'قسم المدفوعات ←' : 'Payments ←' }}
+            </a>
+          </div>
+          <div class="text-sm font-bold text-slate-800">
+            <span class="ltr-num font-mono">{{ dashboardData()?.kpis?.unpaidTuition?.unpaidStudentCount }}</span>
+            {{ localization.currentLang() === 'ar' ? ' طالباً متبقي عليهم سداد المصروفات' : ' students with outstanding fees' }}
+          </div>
+          <div class="text-xs text-slate-500">
+            {{ localization.currentLang() === 'ar' ? 'الحسابات المالية مشتقة بدقة ومنفصلة عن سجلات الحضور.' : 'Financial ledgers are isolated from attendance records.' }}
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Bottom Row: Recent Attendance Feed & Weekly Attendance Bar Chart -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <!-- Recent Attendance Feed Table -->
+    <div class="lg:col-span-7 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900">
+            {{ localization.currentLang() === 'ar' ? 'آخر حركات الحضور المسجلة' : 'Recent Attendance Feed' }}
+          </h2>
+          <p class="text-xs text-slate-500">
+            {{ localization.currentLang() === 'ar' ? 'حركات الحضور المباشرة عبر محطة NFC أو الإدخال اليدوي' : 'Live attendance records via NFC station or manual check' }}
+          </p>
+        </div>
+        <a routerLink="/workspace/attendance" class="text-xs font-bold text-blue-600 hover:underline">
+          {{ localization.currentLang() === 'ar' ? 'عرض السجل ←' : 'View Full Feed →' }}
+        </a>
+      </div>
+
+      <div class="overflow-x-auto border border-slate-200 rounded-xl">
+        <table class="w-full text-right text-xs sm:text-sm">
+          <thead class="bg-slate-50 text-slate-500 border-b border-slate-200">
+            <tr>
+              <th class="py-2.5 px-4 font-semibold">{{ localization.currentLang() === 'ar' ? 'الطالب' : 'Student' }}</th>
+              <th class="py-2.5 px-4 font-semibold">{{ localization.currentLang() === 'ar' ? 'وقت الحضور' : 'Check-in Time' }}</th>
+              <th class="py-2.5 px-4 font-semibold">{{ localization.currentLang() === 'ar' ? 'الحالة' : 'Status' }}</th>
+              <th class="py-2.5 px-4 font-semibold">{{ localization.currentLang() === 'ar' ? 'واتساب ولي الأمر' : 'WhatsApp Notice' }}</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            @for (item of dashboardData()?.recentAttendance; track item.id) {
+              <tr class="hover:bg-slate-50/50 transition-colors">
+                <td class="py-3 px-4 font-bold text-slate-800">
+                  <div>{{ item.studentName }}</div>
+                  <div class="text-[11px] text-slate-400 font-mono ltr-num">{{ item.studentCode }}</div>
+                </td>
+                <td class="py-3 px-4 ltr-num font-mono text-slate-600">
+                  {{ item.checkInTime }}
+                </td>
+                <td class="py-3 px-4">
+                  <span
+                    class="px-2.5 py-1 rounded-full border text-xs font-bold inline-block"
+                    [ngClass]="getAttendanceBadgeClass(item.status)"
+                  >
+                    {{ item.status === 'Present' ? (localization.currentLang() === 'ar' ? 'حاضر' : 'Present') : item.status }}
+                  </span>
+                </td>
+                <td class="py-3 px-4">
+                  <span
+                    class="px-2.5 py-1 rounded-full border text-xs font-bold inline-block"
+                    [ngClass]="getWhatsappBadgeClass(item.whatsAppStatus)"
+                  >
+                    @if (item.whatsAppStatus === 'Delivered') {
+                      {{ localization.currentLang() === 'ar' ? 'تم التسليم' : 'Delivered' }}
+                    } @else if (item.whatsAppStatus === 'Pending') {
+                      {{ localization.currentLang() === 'ar' ? 'بانتظار الإرسال' : 'Pending' }}
+                    } @else {
+                      {{ localization.currentLang() === 'ar' ? 'فشل الإرسال' : 'Failed' }}
+                    }
+                  </span>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="4" class="py-6 text-center text-slate-400">
+                  {{ localization.currentLang() === 'ar' ? 'لا توجد حركات حضور مسجلة اليوم حتى الآن' : 'No attendance recorded today yet' }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Weekly Attendance Flex Bar Chart -->
+    <div class="lg:col-span-5 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col justify-between space-y-4">
+      <div>
+        <h2 class="text-lg font-bold text-slate-900">
+          {{ localization.currentLang() === 'ar' ? 'الحضور خلال الأسبوع' : 'Weekly Attendance Distribution' }}
+        </h2>
+        <p class="text-xs text-slate-500">
+          {{ localization.currentLang() === 'ar' ? 'إجمالي حركات الحضور لكل يوم من السبت للجمعة' : 'Total attendance logs per day Saturday to Friday' }}
+        </p>
+      </div>
+
+      <!-- Bars Container -->
+      <div class="h-44 flex items-end justify-between gap-2 pt-4 px-2 border-b border-slate-200 pb-2">
+        @for (bar of dashboardData()?.weeklyDistribution; track bar.dayKey) {
+          <div class="flex-1 flex flex-col items-center gap-1.5">
+            <span
+              class="text-[10px] font-bold ltr-num font-mono"
+              [ngClass]="bar.isCurrentDay ? 'text-blue-600' : 'text-slate-500'"
+            >
+              {{ bar.isHoliday ? (localization.currentLang() === 'ar' ? 'إجازة' : 'Off') : bar.attendanceCount }}
+            </span>
+            <div
+              class="w-full max-w-[28px] rounded-t-lg transition-all"
+              [ngClass]="bar.isHoliday ? 'bg-slate-200' : bar.isCurrentDay ? 'bg-blue-600' : 'bg-slate-800'"
+              [style.height.px]="bar.isHoliday ? 14 : bar.attendanceCount > 0 ? (bar.attendanceCount * 1.3) : 6"
+            ></div>
+            <span class="text-[11px] text-slate-600 font-medium">
+              {{ bar.dayLabel }}
+            </span>
+          </div>
+        }
+      </div>
+
+      <div class="text-xs text-slate-500 flex items-center justify-between">
+        <span>
+          {{ localization.currentLang() === 'ar' ? 'متوسط الالتزام الأسبوعي: ' : 'Weekly Attendance Rate: ' }}
+          <strong class="text-emerald-600 ltr-num font-mono">89.4%</strong>
+        </span>
+        <span>
+          {{ localization.currentLang() === 'ar' ? 'الجمعة: إجازة رسمية' : 'Friday: Official Holiday' }}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

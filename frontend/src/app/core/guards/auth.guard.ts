@@ -1,26 +1,26 @@
 /**
  * Authentication Route Guard
- * Milestone F1 Phase 7: Protects private workspace routes and preserves returnUrl
+ * Milestone F2: Protects private workspace routes and preserves returnUrl query parameter
  */
 
 import { inject } from '@angular/core';
-import { CanActivateFn, Router, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree } from '@angular/router';
+import {
+  CanActivateFn,
+  Router,
+  ActivatedRouteSnapshot,
+  RouterStateSnapshot,
+  UrlTree
+} from '@angular/router';
+import { AuthStore } from '../stores/auth.store';
 
 export const authGuard: CanActivateFn = (
-  route: ActivatedRouteSnapshot,
+  _route: ActivatedRouteSnapshot,
   state: RouterStateSnapshot
 ): boolean | UrlTree => {
   const router = inject(Router);
+  const authStore = inject(AuthStore);
 
-  let isLoggedIn = true;
-  if (typeof localStorage !== 'undefined') {
-    const token = localStorage.getItem('tahdeera_auth_token');
-    if (token === 'unauthenticated' || token === '') {
-      isLoggedIn = false;
-    }
-  }
-
-  if (!isLoggedIn) {
+  if (!authStore.isAuthenticated()) {
     return router.createUrlTree(['/login'], {
       queryParams: { returnUrl: state.url }
     });

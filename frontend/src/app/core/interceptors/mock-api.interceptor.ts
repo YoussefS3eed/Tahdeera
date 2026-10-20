@@ -17,6 +17,8 @@ import { Student, ClassSession, AttendanceRecord } from '../models/domain.models
 import { PagedResult, ProblemDetails } from '../models/api-response.models';
 import { AttendanceStatus, SyncOperationStatus } from '../enums/domain.enums';
 import { handlePublicInquiry } from '../mock/handlers/public.mock';
+import { handleAuthMockRequest } from '../mock/handlers/auth.mock';
+import { handleDashboardMockRequest } from '../mock/handlers/dashboard.mock';
 
 // In-Memory Seed Data Fixture
 const MOCK_STUDENTS: Student[] = [
@@ -226,6 +228,28 @@ export const mockApiInterceptor: HttpInterceptorFn = (
     // 4. POST /api/v1/public/inquiries
   if (req.method === 'POST' && url.includes('/api/v1/public/inquiries')) {
     return handlePublicInquiry(req).pipe(delayIf(delayMs));
+  }
+
+  // 5. Auth Endpoints: /api/v1/auth/*
+  if (url.includes('/api/v1/auth/')) {
+    const authRes = handleAuthMockRequest(req);
+    if (authRes instanceof HttpErrorResponse) {
+      return throwError(() => authRes).pipe(delayIf(delayMs));
+    }
+    if (authRes instanceof HttpResponse) {
+      return of(authRes).pipe(delayIf(delayMs));
+    }
+  }
+
+  // 6. Dashboard Overview: /api/v1/workspaces/:id/dashboard
+  if (url.includes('/dashboard')) {
+    const dashRes = handleDashboardMockRequest(req);
+    if (dashRes instanceof HttpErrorResponse) {
+      return throwError(() => dashRes).pipe(delayIf(delayMs));
+    }
+    if (dashRes instanceof HttpResponse) {
+      return of(dashRes).pipe(delayIf(delayMs));
+    }
   }
 
   // Fallback 404

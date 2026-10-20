@@ -1,0 +1,241 @@
+<div class="lockout-screen space-y-6 max-w-5xl mx-auto px-4 py-8">
+  <!-- Sub-header Breadcrumb & Context -->
+  <div class="lockout-header">
+    <div class="text-xs text-slate-500 mb-1">
+      {{ localization.currentLang() === 'ar' ? 'مساحة السنتر / الإعدادات والاشتراك' : 'Center Workspace / Settings & Subscription' }}
+    </div>
+    <h1 class="text-2xl sm:text-3xl font-bold text-slate-900">
+      @if (lockoutReason() === 'SubscriptionExpired') {
+        {{ localization.currentLang() === 'ar' ? 'انتهت مدة اشتراك الحساب' : 'Subscription Expired' }}
+      } @else {
+        {{ localization.currentLang() === 'ar' ? 'الحساب موقوف إدارياً' : 'Account Administratively Suspended' }}
+      }
+    </h1>
+    <p class="text-sm text-slate-500 mt-1">
+      @if (lockoutReason() === 'SubscriptionExpired') {
+        {{ localization.currentLang() === 'ar' ? 'حالة انتهاء فترة الاشتراك • يُرجى التجديد لاستئناف العمليات اليومية' : 'Subscription period ended • Please renew to resume daily operations' }}
+      } @else {
+        {{ localization.currentLang() === 'ar' ? 'إيقاف يدوي بواسطة إدارة المنصة • يتطلب مراجعة إدارية' : 'Manual suspension by platform administration • Administrative review required' }}
+      }
+    </p>
+  </div>
+
+  <!-- Primary Notification Card -->
+  @if (lockoutReason() === 'SubscriptionExpired') {
+    <!-- State A: Subscription Expired (Amber Theme) -->
+    <div class="lockout-card card-amber bg-white border border-amber-200 rounded-2xl p-6 sm:p-10 shadow-sm space-y-6">
+      <div class="flex items-center gap-4">
+        <div class="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-3xl">event_busy</span>
+        </div>
+        <div>
+          <span class="inline-block px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-xs font-bold">
+            {{ localization.currentLang() === 'ar' ? 'منتهي • بانتظار التجديد' : 'Expired • Pending Renewal' }}
+          </span>
+          <div class="text-xs text-slate-500 mt-1">
+            {{ activeWorkspace()?.name }} • {{ activeWorkspace()?.code }}
+          </div>
+        </div>
+      </div>
+
+      <h2 class="text-xl sm:text-2xl font-bold text-slate-900 leading-relaxed">
+        {{ localization.currentLang() === 'ar'
+          ? 'انتهت مدة اشتراكك في النظام. يُرجى التواصل لتجديد الاشتراك واستعادة الخدمة.'
+          : 'Your subscription period has ended. Please contact support to renew and restore full access.'
+        }}
+      </h2>
+
+      <!-- Data Safety Reassurance Box -->
+      <div class="rounded-xl bg-blue-50 border border-blue-200 p-4 flex items-center gap-3 text-xs sm:text-sm text-blue-900 font-medium">
+        <span class="material-symbols-outlined text-blue-600 shrink-0">info</span>
+        <span>
+          {{ localization.currentLang() === 'ar'
+            ? 'سجلات الطلاب والحضور والدفعات محفوظة بالكامل. انتهاء الاشتراك لا يحذف أي بيانات إطلاقاً.'
+            : 'All student records, attendance histories, and financial logs are securely preserved. Subscription expiry never deletes data.'
+          }}
+        </span>
+      </div>
+
+      <!-- Hotline Direct Phone Links -->
+      <div class="hotline-box bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+          <span class="material-symbols-outlined text-blue-600">headset_mic</span>
+          <span>{{ localization.currentLang() === 'ar' ? 'للتجديد والاستفسار الفوري تواصل معنا عبر الأرقام المباشرة:' : 'For instant renewal & inquiries, contact support directly:' }}</span>
+        </div>
+        <div class="flex items-center gap-3 text-lg font-bold text-slate-900 font-mono">
+          <a [href]="'tel:' + hotline1" class="hotline-link ltr-num text-blue-600 hover:text-blue-800 hover:underline">
+            {{ hotline1 }}
+          </a>
+          <span class="text-slate-300">—</span>
+          <a [href]="'tel:' + hotline2" class="hotline-link ltr-num text-blue-600 hover:text-blue-800 hover:underline">
+            {{ hotline2 }}
+          </a>
+        </div>
+      </div>
+
+      <!-- Restricted Operational Buttons -->
+      <div class="pt-2">
+        <div class="text-xs font-semibold text-slate-500 mb-2">
+          {{ localization.currentLang() === 'ar' ? 'العمليات المقيدة مؤقتاً:' : 'Temporarily Restricted Operations:' }}
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <button type="button" disabled class="restricted-btn px-4 py-2.5 rounded-xl bg-slate-100 text-slate-400 font-bold text-xs cursor-not-allowed border border-slate-200">
+            {{ localization.currentLang() === 'ar' ? 'تسجيل حضور (مقيد)' : 'Record Attendance (Restricted)' }}
+          </button>
+          <button type="button" disabled class="restricted-btn px-4 py-2.5 rounded-xl bg-slate-100 text-slate-400 font-bold text-xs cursor-not-allowed border border-slate-200">
+            {{ localization.currentLang() === 'ar' ? 'إضافة طالب (مقيد)' : 'Add Student (Restricted)' }}
+          </button>
+          <button type="button" disabled class="restricted-btn px-4 py-2.5 rounded-xl bg-slate-100 text-slate-400 font-bold text-xs cursor-not-allowed border border-slate-200">
+            {{ localization.currentLang() === 'ar' ? 'تصدير تقارير (مقيد)' : 'Export Reports (Restricted)' }}
+          </button>
+        </div>
+        <p class="text-xs text-slate-500 mt-2">
+          {{ localization.currentLang() === 'ar'
+            ? 'الوظائف غير متاحة من جهة الخادم حتى يؤكد مالك المنصة التجديد. لا يمكن تفعيل الاشتراك ذاتياً.'
+            : 'Write operations are restricted server-side until renewal is confirmed by platform administration.'
+          }}
+        </p>
+      </div>
+
+      <!-- Actions Footer -->
+      <div class="flex flex-wrap items-center gap-3 pt-4 border-t border-slate-100">
+        <a [href]="'tel:' + hotline1" class="px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm transition-all shadow-sm flex items-center gap-2">
+          <span class="material-symbols-outlined text-base">phone</span>
+          <span>{{ localization.currentLang() === 'ar' ? 'اتصل بالدعم للتجديد' : 'Call Support to Renew' }}</span>
+        </a>
+        <button
+          type="button"
+          (click)="logout()"
+          class="logout-btn px-5 py-3 rounded-xl border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-sm transition-all"
+        >
+          {{ localization.currentLang() === 'ar' ? 'تسجيل الخروج والعودة للرئيسية' : 'Sign Out & Return Home' }}
+        </button>
+      </div>
+    </div>
+  } @else {
+    <!-- State B: Admin Suspended (Red Danger Theme) -->
+    <div class="lockout-card card-red bg-white border border-red-200 rounded-2xl p-6 sm:p-10 shadow-sm space-y-6">
+      <div class="flex items-center gap-4">
+        <div class="w-14 h-14 rounded-2xl bg-red-50 border border-red-200 text-red-600 flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-3xl">shield_locked</span>
+        </div>
+        <div>
+          <span class="inline-block px-3 py-1 rounded-full bg-red-50 text-red-700 border border-red-200 text-xs font-bold">
+            {{ localization.currentLang() === 'ar' ? 'موقوف • إجراء إداري' : 'Suspended • Administrative Action' }}
+          </span>
+          <div class="text-xs text-slate-500 mt-1">
+            {{ activeWorkspace()?.name }} • {{ activeWorkspace()?.code }}
+          </div>
+        </div>
+      </div>
+
+      <h2 class="text-xl sm:text-2xl font-bold text-slate-900 leading-relaxed">
+        {{ localization.currentLang() === 'ar'
+          ? 'تم إيقاف حسابك مؤقتاً بواسطة إدارة المنصة.'
+          : 'Your account has been temporarily suspended by platform administration.'
+        }}
+      </h2>
+
+      <p class="text-sm text-slate-700 font-medium">
+        {{ localization.currentLang() === 'ar'
+          ? 'السبب المسجل: مراجعة إدارية لصلاحية بيانات مسؤول الحساب أو مطابقة الاشتراطات.'
+          : 'Recorded Reason: Administrative review of account owner credentials or policy compliance.'
+        }}
+      </p>
+
+      <div class="rounded-xl bg-red-50 border border-red-200 p-4 flex items-center gap-3 text-xs sm:text-sm text-red-900 font-medium">
+        <span class="material-symbols-outlined text-red-600 shrink-0">error</span>
+        <span>
+          {{ localization.currentLang() === 'ar'
+            ? 'هذا الإجراء يدوي بواسطة الإدارة. رفع الإيقاف يحتاج مراجعة وتأكيد من مسؤول المنصة.'
+            : 'This is a manual administrative action. Lifting suspension requires direct review with administration.'
+          }}
+        </span>
+      </div>
+
+      <!-- Hotline Direct Phone Links -->
+      <div class="hotline-box bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+          <span class="material-symbols-outlined text-blue-600">headset_mic</span>
+          <span>{{ localization.currentLang() === 'ar' ? 'للتواصل مع الدعم ومراجعة حالة الحساب:' : 'To contact support regarding your account suspension:' }}</span>
+        </div>
+        <div class="flex items-center gap-3 text-lg font-bold text-slate-900 font-mono">
+          <a [href]="'tel:' + hotline1" class="hotline-link ltr-num text-blue-600 hover:text-blue-800 hover:underline">
+            {{ hotline1 }}
+          </a>
+          <span class="text-slate-300">—</span>
+          <a [href]="'tel:' + hotline2" class="hotline-link ltr-num text-blue-600 hover:text-blue-800 hover:underline">
+            {{ hotline2 }}
+          </a>
+        </div>
+      </div>
+
+      <!-- Restricted Operational Buttons -->
+      <div class="pt-2">
+        <div class="text-xs font-semibold text-slate-500 mb-2">
+          {{ localization.currentLang() === 'ar' ? 'العمليات المقيدة:' : 'Restricted Operations:' }}
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <button type="button" disabled class="restricted-btn px-4 py-2.5 rounded-xl bg-slate-100 text-slate-400 font-bold text-xs cursor-not-allowed border border-slate-200">
+            {{ localization.currentLang() === 'ar' ? 'إدارة الطلاب (مقيد)' : 'Manage Students (Restricted)' }}
+          </button>
+          <button type="button" disabled class="restricted-btn px-4 py-2.5 rounded-xl bg-slate-100 text-slate-400 font-bold text-xs cursor-not-allowed border border-slate-200">
+            {{ localization.currentLang() === 'ar' ? 'تسجيل الحضور (مقيد)' : 'Record Attendance (Restricted)' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Actions Footer -->
+      <div class="flex flex-wrap items-center gap-3 pt-4 border-t border-slate-100">
+        <a [href]="'tel:' + hotline1" class="px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm transition-all shadow-sm flex items-center gap-2">
+          <span class="material-symbols-outlined text-base">phone</span>
+          <span>{{ localization.currentLang() === 'ar' ? 'التواصل مع الإدارة' : 'Contact Administration' }}</span>
+        </a>
+        <button
+          type="button"
+          (click)="logout()"
+          class="logout-btn px-5 py-3 rounded-xl border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-sm transition-all"
+        >
+          {{ localization.currentLang() === 'ar' ? 'تسجيل الخروج والعودة للرئيسية' : 'Sign Out & Return Home' }}
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Preserved Records Informational Cards Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+    <!-- Card 1: Data Safety Details -->
+    <div class="data-safety-card bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-3">
+      <div class="flex items-center gap-2 text-slate-900 font-bold text-base">
+        <span class="material-symbols-outlined text-emerald-600">verified_user</span>
+        <h3>{{ localization.currentLang() === 'ar' ? 'سجلاتك باقية ومحفوظة' : 'Records Preserved Securely' }}</h3>
+      </div>
+      <p class="text-sm font-semibold text-slate-700">
+        <span class="ltr-num font-mono">{{ studentCount() }}</span>
+        {{ localization.currentLang() === 'ar' ? 'ملف طالب' : 'student profiles' }}
+        •
+        <span class="ltr-num font-mono">{{ groupCount() }}</span>
+        {{ localization.currentLang() === 'ar' ? 'مجموعة دراسية' : 'study groups' }}
+      </p>
+      <p class="text-xs text-slate-500 leading-relaxed">
+        {{ localization.currentLang() === 'ar'
+          ? 'تاريخ الحضور والتحصيل والامتحانات لا يُستبدل ولا يُحذف. يتم استئناف الوصول بالكامل فور تأكيد التجديد.'
+          : 'Attendance histories, financial transactions, and test marks are never erased. Access resumes automatically upon activation.'
+        }}
+      </p>
+    </div>
+
+    <!-- Card 2: Restoration Steps -->
+    <div class="recovery-steps-card bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-3">
+      <div class="flex items-center gap-2 text-slate-900 font-bold text-base">
+        <span class="material-symbols-outlined text-blue-600">help</span>
+        <h3>{{ localization.currentLang() === 'ar' ? 'كيف تستعيد الخدمة؟' : 'How to Restore Access?' }}</h3>
+      </div>
+      <ol class="text-xs text-slate-600 space-y-1.5 list-decimal list-inside leading-relaxed">
+        <li>{{ localization.currentLang() === 'ar' ? 'تواصل مع أحد رقمي الدعم الفني المباشرين.' : 'Contact support at one of the direct hotlines.' }}</li>
+        <li>{{ localization.currentLang() === 'ar' ? 'راجع باقة الاشتراك والمدة المطلوبة مع ممثل الخدمة.' : 'Review required subscription tier and terms.' }}</li>
+        <li>{{ localization.currentLang() === 'ar' ? 'يتم تفعيل الحساب فورياً من لوحة الإدارة المركزية.' : 'Access is restored immediately by platform administrators.' }}</li>
+      </ol>
+    </div>
+  </div>
+</div>

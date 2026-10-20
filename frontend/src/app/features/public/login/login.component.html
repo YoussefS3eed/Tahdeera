@@ -1,0 +1,658 @@
+<div class="login-page">
+  <div class="login-card">
+    <!-- Brand Header -->
+    <div class="card-header">
+      <div class="logo-box">
+        <span class="material-symbols-outlined logo-icon">school</span>
+      </div>
+      <h1 class="portal-title">
+        {{ localization.currentLang() === 'ar' ? 'تسجيل دخول الكادر التعليمي' : 'Staff Portal Sign In' }}
+      </h1>
+      <p class="portal-subtitle">
+        {{ localization.currentLang() === 'ar' ? 'أدخل بريدك الإلكتروني أو رقم هاتفك المسجل وكلمة المرور' : 'Enter your registered email or phone number and password' }}
+      </p>
+    </div>
+
+    <!-- Rate Limit Lockout Banner -->
+    @if (isRateLocked()) {
+      <div class="rate-limit-alert" role="alert">
+        <span class="material-symbols-outlined alert-icon">timer</span>
+        <div>
+          @if (localization.currentLang() === 'ar') {
+            <span>تم تجاوز الحد الأقصى للمحاولات (5 محاولات خاطئة). يرجى الانتظار </span>
+            <strong class="ltr-num font-mono">{{ remainingLockoutSeconds() }}</strong>
+            <span> ثانية قبل المحاولة مجدداً.</span>
+          } @else {
+            <span>Maximum login attempts exceeded (5 failed attempts). Please wait </span>
+            <strong class="ltr-num font-mono">{{ remainingLockoutSeconds() }}</strong>
+            <span> seconds before retrying.</span>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Timing-Safe Error Alert -->
+    @if (errorMessage() && !isRateLocked()) {
+      <div class="error-alert" role="alert">
+        <span class="material-symbols-outlined alert-icon">error</span>
+        <span>{{ errorMessage() }}</span>
+      </div>
+    }
+
+    <!-- Login Form -->
+    <form [formGroup]="loginForm" (ngSubmit)="submit()" class="login-form">
+      <!-- Identifier Field (Email or Egyptian Phone) -->
+      <div class="form-group">
+        <label for="login-identifier" class="form-label">
+          {{ localization.currentLang() === 'ar' ? 'البريد الإلكتروني أو رقم الهاتف' : 'Email or Mobile Number' }}
+        </label>
+        <div class="input-container">
+          <span class="material-symbols-outlined input-prefix-icon">person</span>
+          <input
+            id="login-identifier"
+            type="text"
+            formControlName="identifier"
+            class="form-input"
+            [class.input-error]="loginForm.get('identifier')?.invalid && loginForm.get('identifier')?.touched"
+            [placeholder]="localization.currentLang() === 'ar' ? 'اسم المستخدم أو رقم الهاتف (01012345678)' : 'Email or mobile number (01012345678)'"
+            [attr.disabled]="(isRateLocked() || isLoading()) ? true : null"
+            autocomplete="username"
+            required
+          />
+        </div>
+        @if (loginForm.get('identifier')?.invalid && loginForm.get('identifier')?.touched) {
+          <span class="field-error">
+            {{ localization.currentLang() === 'ar' ? 'يرجى إدخال بريد إلكتروني صحيح أو رقم هاتف مصري (11 رقم يبدأ بـ 01)' : 'Please enter a valid email or 11-digit Egyptian mobile number' }}
+          </span>
+        }
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group">
+        <div class="password-label-row">
+          <label for="login-password" class="form-label">
+            {{ localization.currentLang() === 'ar' ? 'كلمة المرور' : 'Password' }}
+          </label>
+          <button
+            type="button"
+            class="forgot-pwd-link"
+            (click)="openForgotPasswordModal()"
+            tabindex="0"
+          >
+            {{ localization.currentLang() === 'ar' ? 'نسيت كلمة المرور؟' : 'Forgot password?' }}
+          </button>
+        </div>
+        <div class="input-container">
+          <span class="material-symbols-outlined input-prefix-icon">lock</span>
+          <input
+            id="login-password"
+            [type]="showPassword() ? 'text' : 'password'"
+            formControlName="password"
+            class="form-input password-input"
+            [class.input-error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+            placeholder="••••••••"
+            [attr.disabled]="(isRateLocked() || isLoading()) ? true : null"
+            autocomplete="current-password"
+            required
+          />
+          <button
+            type="button"
+            class="pwd-toggle-btn"
+            (click)="togglePasswordVisibility()"
+            [attr.aria-label]="localization.currentLang() === 'ar' ? 'إظهار أو إخفاء كلمة المرور' : 'Toggle password visibility'"
+            tabindex="0"
+          >
+            <span class="material-symbols-outlined">
+              {{ showPassword() ? 'visibility_off' : 'visibility' }}
+            </span>
+          </button>
+        </div>
+        @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+          <span class="field-error">
+            {{ localization.currentLang() === 'ar' ? 'كلمة المرور مطلوبة (6 أحرف على الأقل)' : 'Password is required (min 6 characters)' }}
+          </span>
+        }
+      </div>
+
+      <!-- Remember Me -->
+      <div class="form-meta-row">
+        <label class="remember-label">
+          <input
+            type="checkbox"
+            formControlName="rememberMe"
+            class="remember-checkbox"
+            [attr.disabled]="(isRateLocked() || isLoading()) ? true : null"
+          />
+          <span>{{ localization.currentLang() === 'ar' ? 'تذكر تسجيل الدخول' : 'Remember my session' }}</span>
+        </label>
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="submit-btn"
+        [disabled]="loginForm.invalid || isRateLocked() || isLoading()"
+      >
+        @if (isLoading()) {
+          <span class="spinner"></span>
+        }
+        <span>{{ localization.currentLang() === 'ar' ? 'تسجيل الدخول إلى النظام' : 'Sign In to Platform' }}</span>
+      </button>
+    </form>
+
+    <!-- Quick Demo Switcher Bar -->
+    <div class="demo-switcher-section">
+      <div class="divider-text">
+        <span>{{ localization.currentLang() === 'ar' ? 'تجربة سريعة للأدوار (Demo Presets)' : 'Quick Demo Role Presets' }}</span>
+      </div>
+      <div class="demo-buttons-grid">
+        <button
+          type="button"
+          class="demo-btn teacher"
+          (click)="selectDemoPreset('teacher')"
+          [disabled]="isRateLocked() || isLoading()"
+        >
+          <span class="material-symbols-outlined btn-icon">person</span>
+          <span>{{ localization.currentLang() === 'ar' ? 'المدرس (المالك) — أ. محمد' : 'Teacher (Owner) — Mr. Mohamed' }}</span>
+        </button>
+
+        <button
+          type="button"
+          class="demo-btn assistant"
+          (click)="selectDemoPreset('assistant')"
+          [disabled]="isRateLocked() || isLoading()"
+        >
+          <span class="material-symbols-outlined btn-icon">support_agent</span>
+          <span>{{ localization.currentLang() === 'ar' ? 'المساعد — أ. سارة' : 'Assistant — Ms. Sara' }}</span>
+        </button>
+
+        <button
+          type="button"
+          class="demo-btn receptionist"
+          (click)="selectDemoPreset('receptionist')"
+          [disabled]="isRateLocked() || isLoading()"
+        >
+          <span class="material-symbols-outlined btn-icon">badge</span>
+          <span>{{ localization.currentLang() === 'ar' ? 'الاستقبال — أ. كريم' : 'Receptionist — Mr. Karim' }}</span>
+        </button>
+
+        <button
+          type="button"
+          class="demo-btn expired"
+          (click)="selectDemoPreset('expired')"
+          [disabled]="isRateLocked() || isLoading()"
+        >
+          <span class="material-symbols-outlined btn-icon">event_busy</span>
+          <span>{{ localization.currentLang() === 'ar' ? 'اشتراك منتهي — سنتر الأوائل' : 'Expired — Al-Awael Center' }}</span>
+        </button>
+
+        <button
+          type="button"
+          class="demo-btn suspended"
+          (click)="selectDemoPreset('suspended')"
+          [disabled]="isRateLocked() || isLoading()"
+        >
+          <span class="material-symbols-outlined btn-icon">shield_locked</span>
+          <span>{{ localization.currentLang() === 'ar' ? 'حساب موقوف — سنتر النور' : 'Suspended — Al-Noor Center' }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Return Link -->
+    <div class="card-footer">
+      <a routerLink="/" class="return-home-link">
+        <span class="material-symbols-outlined">arrow_back</span>
+        <span>{{ localization.currentLang() === 'ar' ? 'العودة للبوابة الرئيسية' : 'Return to Public Portal' }}</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Forgot Password Assistance Modal -->
+  @if (isForgotPasswordOpen()) {
+    <div class="modal-backdrop" (click)="closeForgotPasswordModal()">
+      <div
+        class="modal-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="forgot-modal-title"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="modal-header">
+          <div class="modal-icon-badge">
+            <span class="material-symbols-outlined">help_center</span>
+          </div>
+          <h3 id="forgot-modal-title" class="modal-heading">
+            {{ localization.currentLang() === 'ar' ? 'استعادة كلمة المرور' : 'Password Recovery' }}
+          </h3>
+          <p class="modal-body-text">
+            {{ localization.currentLang() === 'ar' ? 'حسابات الكادر يتم إدارتها وتعيين كلمات المرور لها مركزياً بواسطة إدارة السنتر أو فريق الدعم الفني للمنصة. يرجى التواصل مع مسؤول المركز أو الاتصال بالخطوط الساخنة المباشرة:' : 'Staff accounts are managed directly by center administration or Tahdeera platform support. Please contact your center administrator or platform support hotlines directly:' }}
+          </p>
+        </div>
+
+        <div class="hotlines-container">
+          <a href="tel:01272785618" class="hotline-btn">
+            <span class="material-symbols-outlined">call</span>
+            <span class="ltr-num font-mono">01272785618</span>
+          </a>
+          <a href="tel:01019482687" class="hotline-btn">
+            <span class="material-symbols-outlined">call</span>
+            <span class="ltr-num font-mono">01019482687</span>
+          </a>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="modal-close-btn" (click)="closeForgotPasswordModal()">
+            {{ localization.currentLang() === 'ar' ? 'إغلاق النافذة' : 'Close' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>
+
+<style>
+  .login-page {
+    min-height: calc(100vh - 120px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-block: 2.5rem;
+    padding-inline: 1rem;
+    background-color: var(--bg-page, #f8fafc);
+  }
+
+  .login-card {
+    width: 100%;
+    max-width: 480px;
+    background-color: var(--bg-surface, #ffffff);
+    border: 1px solid var(--border-subtle, #e2e8f0);
+    border-radius: var(--radius-lg, 16px);
+    box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+    padding: 2rem;
+  }
+
+  .card-header {
+    text-align: center;
+    margin-block-end: 1.5rem;
+  }
+
+  .logo-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    background-color: rgba(37, 99, 235, 0.1);
+    color: var(--brand-primary, #2563eb);
+    margin-block-end: 0.75rem;
+  }
+
+  .logo-icon {
+    font-size: 2rem;
+  }
+
+  .portal-title {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: var(--text-primary, #0f172a);
+    margin: 0;
+  }
+
+  .portal-subtitle {
+    font-size: 0.875rem;
+    color: var(--text-muted, #64748b);
+    margin-block-start: 0.375rem;
+    margin-block-end: 0;
+  }
+
+  .rate-limit-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.875rem;
+    border-radius: var(--radius-md, 8px);
+    background-color: rgba(245, 158, 11, 0.1);
+    border: 1px solid var(--color-warning, #f59e0b);
+    color: #92400e;
+    font-size: 0.875rem;
+    margin-block-end: 1.25rem;
+  }
+
+  .error-alert {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.75rem;
+    border-radius: var(--radius-md, 8px);
+    background-color: rgba(239, 68, 68, 0.1);
+    border: 1px solid var(--color-danger, #ef4444);
+    color: var(--color-danger, #ef4444);
+    font-size: 0.875rem;
+    margin-block-end: 1.25rem;
+  }
+
+  .alert-icon {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+  }
+
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .form-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary, #0f172a);
+  }
+
+  .password-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .forgot-pwd-link {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--brand-primary, #2563eb);
+    font-size: 0.8125rem;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-prefix-icon {
+    position: absolute;
+    inset-inline-start: 0.75rem;
+    color: var(--text-muted, #94a3b8);
+    font-size: 1.25rem;
+    pointer-events: none;
+  }
+
+  .form-input {
+    width: 100%;
+    height: 44px;
+    padding-inline-start: 2.5rem;
+    padding-inline-end: 0.75rem;
+    padding-block: 0;
+    border: 1px solid var(--border-strong, #cbd5e1);
+    border-radius: var(--radius-md, 8px);
+    background-color: var(--bg-surface, #ffffff);
+    color: var(--text-primary, #0f172a);
+    font-size: 0.875rem;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .form-input:focus {
+    border-color: var(--brand-primary, #2563eb);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  }
+
+  .password-input {
+    padding-inline-end: 2.75rem;
+  }
+
+  .pwd-toggle-btn {
+    position: absolute;
+    inset-inline-end: 0.5rem;
+    background: none;
+    border: none;
+    color: var(--text-muted, #94a3b8);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem;
+    border-radius: 4px;
+  }
+
+  .field-error {
+    font-size: 0.75rem;
+    color: var(--color-danger, #ef4444);
+  }
+
+  .form-meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .remember-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary, #334155);
+    cursor: pointer;
+  }
+
+  .submit-btn {
+    width: 100%;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background-color: var(--brand-primary, #2563eb);
+    color: #ffffff;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius-md, 8px);
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
+
+  .submit-btn:hover:not(:disabled) {
+    background-color: var(--brand-primary-hover, #1d4ed8);
+  }
+
+  .submit-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .demo-switcher-section {
+    margin-block-start: 1.75rem;
+    padding-block-start: 1.25rem;
+    border-block-start: 1px dashed var(--border-subtle, #e2e8f0);
+  }
+
+  .divider-text {
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-muted, #64748b);
+    letter-spacing: 0.05em;
+    margin-block-end: 0.875rem;
+  }
+
+  .demo-buttons-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .demo-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-md, 8px);
+    border: 1px solid var(--border-subtle, #e2e8f0);
+    background-color: var(--bg-surface-elevated, #f8fafc);
+    color: var(--text-primary, #0f172a);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: start;
+    transition: all 0.15s ease;
+  }
+
+  .demo-btn:hover:not(:disabled) {
+    background-color: var(--bg-surface, #ffffff);
+    border-color: var(--brand-primary, #2563eb);
+    color: var(--brand-primary, #2563eb);
+  }
+
+  .demo-btn.expired:hover:not(:disabled) {
+    border-color: var(--color-warning, #f59e0b);
+    color: #b45309;
+  }
+
+  .demo-btn.suspended:hover:not(:disabled) {
+    border-color: var(--color-danger, #ef4444);
+    color: var(--color-danger, #ef4444);
+  }
+
+  .btn-icon {
+    font-size: 1.125rem;
+    color: var(--text-muted, #64748b);
+  }
+
+  .card-footer {
+    text-align: center;
+    margin-block-start: 1.5rem;
+  }
+
+  .return-home-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.8125rem;
+    color: var(--text-muted, #64748b);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .return-home-link:hover {
+    color: var(--text-primary, #0f172a);
+  }
+
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+  }
+
+  .modal-dialog {
+    background-color: var(--bg-surface, #ffffff);
+    border: 1px solid var(--border-subtle, #e2e8f0);
+    border-radius: var(--radius-lg, 16px);
+    max-width: 440px;
+    width: 100%;
+    padding: 1.75rem;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  }
+
+  .modal-header {
+    text-align: center;
+    margin-block-end: 1.25rem;
+  }
+
+  .modal-icon-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background-color: rgba(37, 99, 235, 0.1);
+    color: var(--brand-primary, #2563eb);
+    margin-block-end: 0.75rem;
+  }
+
+  .modal-heading {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-primary, #0f172a);
+    margin: 0;
+  }
+
+  .modal-body-text {
+    font-size: 0.875rem;
+    color: var(--text-secondary, #475569);
+    margin-block-start: 0.5rem;
+    margin-block-end: 0;
+    line-height: 1.6;
+  }
+
+  .hotlines-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    margin-block: 1.25rem;
+  }
+
+  .hotline-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    padding: 0.75rem;
+    border-radius: var(--radius-md, 8px);
+    background-color: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    color: var(--brand-primary, #2563eb);
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .hotline-btn:hover {
+    background-color: #e2e8f0;
+  }
+
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .modal-close-btn {
+    padding: 0.5rem 1.25rem;
+    border-radius: var(--radius-md, 8px);
+    border: 1px solid var(--border-strong, #cbd5e1);
+    background-color: transparent;
+    color: var(--text-primary, #0f172a);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .spinner {
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid #ffffff;
+    border-block-start-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+</style>

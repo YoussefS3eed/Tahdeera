@@ -1,24 +1,38 @@
 /**
  * Workspace Lockout Route Guard
- * Milestone F1 Phase 7: Protects against Expired or Suspended workspace access
+ * Milestone F2: Gating guard enforcing lockout routing for Expired/Suspended accounts
  */
 
 import { inject } from '@angular/core';
-import { CanActivateFn, Router, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree } from '@angular/router';
+import {
+  CanActivateFn,
+  Router,
+  ActivatedRouteSnapshot,
+  RouterStateSnapshot,
+  UrlTree
+} from '@angular/router';
+import { AuthStore } from '../stores/auth.store';
 
 export const lockoutGuard: CanActivateFn = (
   _route: ActivatedRouteSnapshot,
-  _state: RouterStateSnapshot
+  state: RouterStateSnapshot
 ): boolean | UrlTree => {
   const router = inject(Router);
+  const authStore = inject(AuthStore);
 
-  let status = 'Active';
-  if (typeof localStorage !== 'undefined') {
-    status = localStorage.getItem('tahdeera_workspace_status') || 'Active';
+  const isLockoutRoute =
+    state.url.includes('/workspace/lockout') || state.url.includes('/locked');
+
+  if (authStore.isLockedOut()) {
+    if (!isLockoutRoute) {
+      return router.createUrlTree(['/workspace/lockout']);
+    }
+    return true;
   }
 
-  if (status === 'Expired' || status === 'Suspended') {
-    return router.createUrlTree(['/workspace/lockout']);
+  // Active workspace should not remain on lockout screen
+  if (isLockoutRoute) {
+    return router.createUrlTree(['/workspace/dashboard']);
   }
 
   return true;

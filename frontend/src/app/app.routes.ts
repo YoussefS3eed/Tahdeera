@@ -5,7 +5,6 @@ import { lockoutGuard } from './core/guards/lockout.guard';
 import { WorkspaceRole } from './core/enums/domain.enums';
 import { FoundationHarnessComponent } from './features/harness/foundation-harness.component';
 import { ForbiddenStubComponent } from './features/stubs/forbidden-stub.component';
-import { LockoutStubComponent } from './features/stubs/lockout-stub.component';
 
 export const routes: Routes = [
   // Public Portal Layout
@@ -28,8 +27,8 @@ export const routes: Routes = [
       {
         path: 'login',
         loadComponent: () =>
-          import('./features/public/login-stub/login-stub.component').then(
-            (m) => m.LoginStubComponent
+          import('./features/public/login/login.component').then(
+            (m) => m.LoginComponent
           ),
         title: 'تسجيل الدخول — تحضيرة'
       }
@@ -43,7 +42,14 @@ export const routes: Routes = [
     title: 'Tahdeera Foundation Harness'
   },
 
-  // Workspace Shell Layout (Phases 1–3 use WorkspacePlaceholderComponent)
+  // Top-level locked alias
+  {
+    path: 'locked',
+    redirectTo: 'workspace/lockout',
+    pathMatch: 'full'
+  },
+
+  // Workspace Shell Layout
   {
     path: 'workspace',
     loadComponent: () =>
@@ -54,19 +60,30 @@ export const routes: Routes = [
       {
         path: '',
         loadComponent: () =>
-          import('./features/workspace/placeholder/workspace-placeholder.component').then(
-            (m) => m.WorkspacePlaceholderComponent
+          import('./features/workspace/dashboard/dashboard.component').then(
+            (m) => m.DashboardComponent
           ),
+        canActivate: [authGuard, lockoutGuard],
         pathMatch: 'full',
-        title: 'مساحة العمل — تحضيرة'
+        title: 'لوحة التحكم — تحضيرة'
       },
       {
         path: 'dashboard',
         loadComponent: () =>
-          import('./features/workspace/placeholder/workspace-placeholder.component').then(
-            (m) => m.WorkspacePlaceholderComponent
+          import('./features/workspace/dashboard/dashboard.component').then(
+            (m) => m.DashboardComponent
           ),
+        canActivate: [authGuard, lockoutGuard],
         title: 'لوحة التحكم — تحضيرة'
+      },
+      {
+        path: 'lockout',
+        loadComponent: () =>
+          import('./features/workspace/lockout/lockout.component').then(
+            (m) => m.LockoutComponent
+          ),
+        canActivate: [authGuard],
+        title: 'حالة الحساب — تحضيرة'
       },
       {
         path: 'nfc-station',
@@ -74,6 +91,7 @@ export const routes: Routes = [
           import('./features/workspace/placeholder/workspace-placeholder.component').then(
             (m) => m.WorkspacePlaceholderComponent
           ),
+        canActivate: [authGuard, lockoutGuard],
         title: 'محطة الحضور المباشر — تحضيرة'
       },
       {
@@ -82,6 +100,7 @@ export const routes: Routes = [
           import('./features/workspace/placeholder/workspace-placeholder.component').then(
             (m) => m.WorkspacePlaceholderComponent
           ),
+        canActivate: [authGuard, lockoutGuard],
         title: 'الحضور والغياب اليومي — تحضيرة'
       },
       {
@@ -90,6 +109,7 @@ export const routes: Routes = [
           import('./features/workspace/placeholder/workspace-placeholder.component').then(
             (m) => m.WorkspacePlaceholderComponent
           ),
+        canActivate: [authGuard, lockoutGuard],
         title: 'سجل الطلاب — تحضيرة'
       },
       {
@@ -98,6 +118,7 @@ export const routes: Routes = [
           import('./features/workspace/placeholder/workspace-placeholder.component').then(
             (m) => m.WorkspacePlaceholderComponent
           ),
+        canActivate: [authGuard, lockoutGuard],
         title: 'بطاقات الحضور NFC — تحضيرة'
       },
       {
@@ -106,6 +127,7 @@ export const routes: Routes = [
           import('./features/workspace/placeholder/workspace-placeholder.component').then(
             (m) => m.WorkspacePlaceholderComponent
           ),
+        canActivate: [authGuard, lockoutGuard],
         title: 'المجموعات الدراسية — تحضيرة'
       },
       {
@@ -114,6 +136,7 @@ export const routes: Routes = [
           import('./features/workspace/placeholder/workspace-placeholder.component').then(
             (m) => m.WorkspacePlaceholderComponent
           ),
+        canActivate: [authGuard, lockoutGuard],
         title: 'الجدول والمواعيد — تحضيرة'
       },
       {
@@ -122,6 +145,7 @@ export const routes: Routes = [
           import('./features/workspace/placeholder/workspace-placeholder.component').then(
             (m) => m.WorkspacePlaceholderComponent
           ),
+        canActivate: [authGuard, lockoutGuard],
         title: 'الرسوم والمدفوعات — تحضيرة'
       },
       {
@@ -130,6 +154,7 @@ export const routes: Routes = [
           import('./features/workspace/placeholder/workspace-placeholder.component').then(
             (m) => m.WorkspacePlaceholderComponent
           ),
+        canActivate: [authGuard, lockoutGuard],
         title: 'أولياء الأمور وواتساب — تحضيرة'
       },
       {
@@ -138,6 +163,7 @@ export const routes: Routes = [
           import('./features/workspace/placeholder/workspace-placeholder.component').then(
             (m) => m.WorkspacePlaceholderComponent
           ),
+        canActivate: [authGuard, lockoutGuard],
         title: 'الامتحانات والواجبات — تحضيرة'
       },
       {
@@ -146,6 +172,7 @@ export const routes: Routes = [
           import('./features/workspace/placeholder/workspace-placeholder.component').then(
             (m) => m.WorkspacePlaceholderComponent
           ),
+        canActivate: [authGuard, lockoutGuard],
         title: 'التقارير والإحصائيات — تحضيرة'
       },
       {
@@ -154,6 +181,7 @@ export const routes: Routes = [
           import('./features/workspace/placeholder/workspace-placeholder.component').then(
             (m) => m.WorkspacePlaceholderComponent
           ),
+        canActivate: [authGuard, lockoutGuard],
         title: 'فريق العمل والصلاحيات — تحضيرة'
       },
       {
@@ -162,6 +190,7 @@ export const routes: Routes = [
           import('./features/workspace/placeholder/workspace-placeholder.component').then(
             (m) => m.WorkspacePlaceholderComponent
           ),
+        canActivate: [authGuard, lockoutGuard],
         title: 'إعدادات السنتر — تحضيرة'
       },
       {
@@ -170,6 +199,7 @@ export const routes: Routes = [
           import('./features/workspace/placeholder/workspace-placeholder.component').then(
             (m) => m.WorkspacePlaceholderComponent
           ),
+        canActivate: [authGuard, lockoutGuard],
         title: 'مساعد الذكاء الاصطناعي — تحضيرة'
       },
       // Guard & Security Test Routes
@@ -177,11 +207,6 @@ export const routes: Routes = [
         path: 'forbidden',
         component: ForbiddenStubComponent,
         title: 'Access Forbidden - Tahdeera'
-      },
-      {
-        path: 'lockout',
-        component: LockoutStubComponent,
-        title: 'Workspace Suspended - Tahdeera'
       },
       {
         path: 'protected',

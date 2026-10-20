@@ -1,8 +1,3 @@
-/**
- * Unit Tests for Application Routing
- * Milestone F2 / User Story 3: Application Routing Integration Tests
- */
-
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { provideLocationMocks } from '@angular/common/testing';
@@ -10,14 +5,19 @@ import { Location } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { routes } from './app.routes';
+import { AuthStore } from './core/stores/auth.store';
 
-describe('App Routes', () => {
+describe('App Routes Integration', () => {
   let router: Router;
   let location: Location;
+  let authStore: AuthStore;
 
   beforeEach(async () => {
+    localStorage.clear();
+
     await TestBed.configureTestingModule({
       providers: [
+        AuthStore,
         provideRouter(routes),
         provideLocationMocks(),
         provideHttpClient(),
@@ -27,6 +27,11 @@ describe('App Routes', () => {
 
     router = TestBed.inject(Router);
     location = TestBed.inject(Location);
+    authStore = TestBed.inject(AuthStore);
+  });
+
+  afterEach(() => {
+    localStorage.clear();
   });
 
   it('should navigate to root / successfully', async () => {
@@ -39,37 +44,96 @@ describe('App Routes', () => {
     expect(location.path()).toBe('/login');
   });
 
-  it('should navigate to /workspace successfully', async () => {
-    await router.navigateByUrl('/workspace');
-    expect(location.path()).toBe('/workspace');
+  it('should redirect unauthenticated access from /workspace/dashboard to /login with returnUrl', async () => {
+    authStore.accessToken.set(null);
+    authStore.workspaces.set([]);
+
+    await router.navigateByUrl('/workspace/dashboard');
+    expect(location.path()).toContain('/login?returnUrl=');
   });
 
-  it('should navigate to /workspace/dashboard successfully', async () => {
+  it('should redirect locked account from /workspace/dashboard to /workspace/lockout', async () => {
+    authStore.accessToken.set('valid_token');
+    authStore.user.set({
+      id: 'usr_01',
+      fullName: 'أ. محمد',
+      email: 'teacher@tahdeera.app',
+      phone: '01012345670',
+      initials: 'م.ع'
+    });
+    authStore.workspaces.set([
+      {
+        id: 'ws_locked',
+        name: 'سنتر الأوائل',
+        code: 'AWAEL',
+        status: 'Expired',
+        role: 'Teacher',
+        studentCount: 248,
+        activeGroupCount: 12,
+        subscriptionDaysRemaining: 0,
+        subscriptionExpiresAt: '2026-10-15T00:00:00Z'
+      }
+    ]);
+    authStore.activeWorkspaceId.set('ws_locked');
+
+    await router.navigateByUrl('/workspace/dashboard');
+    expect(location.path()).toBe('/workspace/lockout');
+  });
+
+  it('should resolve /workspace/dashboard when authenticated and workspace is active', async () => {
+    authStore.accessToken.set('valid_token');
+    authStore.user.set({
+      id: 'usr_01',
+      fullName: 'أ. محمد',
+      email: 'teacher@tahdeera.app',
+      phone: '01012345670',
+      initials: 'م.ع'
+    });
+    authStore.workspaces.set([
+      {
+        id: 'ws_active',
+        name: 'سنتر الأوائل',
+        code: 'AWAEL',
+        status: 'Active',
+        role: 'Teacher',
+        studentCount: 248,
+        activeGroupCount: 12,
+        subscriptionDaysRemaining: 45,
+        subscriptionExpiresAt: '2026-12-05T00:00:00Z'
+      }
+    ]);
+    authStore.activeWorkspaceId.set('ws_active');
+
     await router.navigateByUrl('/workspace/dashboard');
     expect(location.path()).toBe('/workspace/dashboard');
   });
 
-  it('should navigate to all unimplemented workspace child routes', async () => {
-    const childPaths = [
-      '/workspace/nfc-station',
-      '/workspace/attendance',
-      '/workspace/students',
-      '/workspace/cards',
-      '/workspace/groups',
-      '/workspace/schedule',
-      '/workspace/payments',
-      '/workspace/whatsapp',
-      '/workspace/lms',
-      '/workspace/reports',
-      '/workspace/team',
-      '/workspace/settings',
-      '/workspace/ai-assistant'
-    ];
+  it('should redirect /locked to /workspace/lockout when authenticated', async () => {
+    authStore.accessToken.set('valid_token');
+    authStore.user.set({
+      id: 'usr_01',
+      fullName: 'أ. محمد',
+      email: 'teacher@tahdeera.app',
+      phone: '01012345670',
+      initials: 'م.ع'
+    });
+    authStore.workspaces.set([
+      {
+        id: 'ws_locked',
+        name: 'سنتر الأوائل',
+        code: 'AWAEL',
+        status: 'Expired',
+        role: 'Teacher',
+        studentCount: 248,
+        activeGroupCount: 12,
+        subscriptionDaysRemaining: 0,
+        subscriptionExpiresAt: '2026-10-15T00:00:00Z'
+      }
+    ]);
+    authStore.activeWorkspaceId.set('ws_locked');
 
-    for (const path of childPaths) {
-      await router.navigateByUrl(path);
-      expect(location.path()).toBe(path);
-    }
+    await router.navigateByUrl('/locked');
+    expect(location.path()).toBe('/workspace/lockout');
   });
 
   it('should redirect unknown wildcard routes to root /', async () => {
