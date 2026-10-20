@@ -8,6 +8,7 @@ export class ThemeService {
   private readonly STORAGE_KEY = 'tahdeera_theme';
   private mediaQuery?: MediaQueryList;
   private mediaQueryListener?: () => void;
+  private readonly systemTheme: WritableSignal<'light' | 'dark'>;
 
   readonly themeMode: WritableSignal<ThemeMode>;
   readonly effectiveTheme: Signal<'light' | 'dark'>;
@@ -15,12 +16,13 @@ export class ThemeService {
 
   constructor() {
     const initialMode = this.getInitialThemeMode();
+    this.systemTheme = signal<'light' | 'dark'>(this.resolveSystemTheme());
     this.themeMode = signal<ThemeMode>(initialMode);
 
     this.effectiveTheme = computed<'light' | 'dark'>(() => {
       const mode = this.themeMode();
       if (mode === ThemeMode.System) {
-        return this.resolveSystemTheme();
+        return this.systemTheme();
       }
       return mode === ThemeMode.Dark ? 'dark' : 'light';
     });
@@ -38,6 +40,9 @@ export class ThemeService {
    * Sets the theme mode, applies it to DOM, and persists to localStorage.
    */
   setTheme(mode: ThemeMode): void {
+    if (mode === ThemeMode.System) {
+      this.systemTheme.set(this.resolveSystemTheme());
+    }
     this.themeMode.set(mode);
     this.safeSetStorage(this.STORAGE_KEY, mode);
     this.applyThemeToDom(this.effectiveTheme());
@@ -69,6 +74,8 @@ export class ThemeService {
     if (typeof window !== 'undefined' && window.matchMedia) {
       this.mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
       this.mediaQueryListener = () => {
+        const resolved = this.resolveSystemTheme();
+        this.systemTheme.set(resolved);
         if (this.themeMode() === ThemeMode.System) {
           this.applyThemeToDom(this.effectiveTheme());
         }

@@ -77,9 +77,26 @@ export const mockApiInterceptor: HttpInterceptorFn = (
     delayMs = isNaN(override) ? 0 : override;
   }
 
-  // Simulated Error Triggers
-  if (req.params.has('simulateError')) {
-    const status = parseInt(req.params.get('simulateError') || '500', 10);
+  // Helper to extract param from HttpRequest params or URL search string
+  const getParam = (name: string): string | null => {
+    if (req.params.has(name)) return req.params.get(name);
+    try {
+      const qIdx = url.indexOf('?');
+      if (qIdx !== -1) {
+        const searchParams = new URLSearchParams(url.substring(qIdx));
+        if (searchParams.has(name)) return searchParams.get(name);
+      }
+    } catch {
+      // Fallback
+    }
+    return null;
+  };
+
+  // Simulated Error Triggers (via header or query param)
+  const simulateErrorHeader = req.headers.get('X-Simulate-Error');
+  const simulateErrorParam = getParam('simulateError');
+  if (simulateErrorHeader || simulateErrorParam) {
+    const status = parseInt(simulateErrorHeader || simulateErrorParam || '500', 10);
     const problem = createProblemDetails(status, url);
     return throwError(() => new HttpErrorResponse({
       status,
@@ -95,9 +112,9 @@ export const mockApiInterceptor: HttpInterceptorFn = (
 
   // 1. GET /api/v1/students
   if (req.method === 'GET' && url.includes('/api/v1/students')) {
-    const pageNumber = Math.max(1, parseInt(req.params.get('pageNumber') || '1', 10));
-    const pageSize = Math.max(1, parseInt(req.params.get('pageSize') || '10', 10));
-    const search = (req.params.get('search') || '').trim().toLowerCase();
+    const pageNumber = Math.max(1, parseInt(getParam('pageNumber') || '1', 10));
+    const pageSize = Math.max(1, parseInt(getParam('pageSize') || '10', 10));
+    const search = (getParam('search') || '').trim().toLowerCase();
 
     let filtered = MOCK_STUDENTS;
     if (search) {
@@ -145,7 +162,8 @@ export const mockApiInterceptor: HttpInterceptorFn = (
     const body = req.body as Record<string, string> || {};
 
     // Simulate 409 Conflict if query param simulateConflict=true or studentId is already checked in
-    if (req.params.get('simulateConflict') === 'true' || body['simulateConflict']) {
+    const isConflict = getParam('simulateConflict') === 'true' || body['simulateConflict'];
+    if (isConflict) {
       const errorBody: ProblemDetails = {
         type: 'https://errors.tahdeera.com/attendance/duplicate-checkin',
         title: 'Conflict',

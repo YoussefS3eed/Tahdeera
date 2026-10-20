@@ -18,16 +18,16 @@ export const roleGuard: CanActivateFn = (
     return true;
   }
 
-  let currentRole: WorkspaceRole = WorkspaceRole.Teacher;
+  let currentRole = WorkspaceRole.Teacher as string;
   if (typeof localStorage !== 'undefined') {
-    const savedRole = localStorage.getItem('tahdeera_user_role') as WorkspaceRole;
-    if (savedRole && Object.values(WorkspaceRole).includes(savedRole)) {
+    const savedRole = localStorage.getItem('tahdeera_user_role');
+    if (savedRole) {
       currentRole = savedRole;
     }
   }
 
   // SuperAdmin has universal clearance
-  if ((currentRole as string) === 'SuperAdmin' || requiredRoles.includes(currentRole)) {
+  if (currentRole === 'SuperAdmin' || requiredRoles.includes(currentRole as WorkspaceRole)) {
     return true;
   }
 

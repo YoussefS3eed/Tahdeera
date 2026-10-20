@@ -16,7 +16,7 @@ describe('authInterceptor', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        LocalizationService,
+        { provide: LocalizationService, useValue: { currentLang: () => 'ar' } },
         provideHttpClient(withInterceptors([authInterceptor])),
         provideHttpClientTesting()
       ]

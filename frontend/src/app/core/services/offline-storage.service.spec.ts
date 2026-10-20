@@ -16,15 +16,16 @@ describe('OfflineStorageService', () => {
       providers: [OfflineStorageService]
     });
     service = TestBed.inject(OfflineStorageService);
-    // Ensure clean state before each test
+    await service.ensureInitialized();
     await service.resetDatabase();
   });
 
   afterEach(async () => {
+    await service.ensureInitialized();
     await service.resetDatabase();
   });
 
-  it('should initialize and report storage availability', () => {
+  it('should initialize and report storage availability', async () => {
     expect(service).toBeTruthy();
     expect(service.isDbReady()).toBeTrue();
     expect(service.isStorageAvailable()).toBeTrue();
@@ -273,3 +274,5 @@ describe('OfflineStorageService', () => {
     expect(service.pendingSyncCount()).toBe(1);
   });
 });
+
+

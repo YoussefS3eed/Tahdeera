@@ -1,0 +1,482 @@
+{
+  "milestone": "F1",
+  "summary": {
+    "total": 28,
+    "passed": 28,
+    "failed": 0,
+    "skipped": 0,
+    "start_time": 1792461033.2101407,
+    "duration_seconds": 14.53,
+    "matrix_combinations_tested": 16
+  },
+  "test_results": [
+    {
+      "test_name": "Matrix [desktop_1440 | lang=ar | theme=light]",
+      "status": "PASS",
+      "details": {
+        "viewport": {
+          "name": "desktop_1440",
+          "width": 1440,
+          "height": 900
+        },
+        "lang": "ar",
+        "theme": "light",
+        "html_dir": "rtl",
+        "html_theme": "light",
+        "overflow": {
+          "scrollWidth": 1440,
+          "clientWidth": 1440,
+          "hasOverflow": false,
+          "overflowPixels": 0
+        },
+        "screenshot": "matrix_desktop_1440_ar_light.png"
+      },
+      "error": null
+    },
+    {
+      "test_name": "Matrix [desktop_1440 | lang=ar | theme=dark]",
+      "status": "PASS",
+      "details": {
+        "viewport": {
+          "name": "desktop_1440",
+          "width": 1440,
+          "height": 900
+        },
+        "lang": "ar",
+        "theme": "dark",
+        "html_dir": "rtl",
+        "html_theme": "dark",
+        "overflow": {
+          "scrollWidth": 1440,
+          "clientWidth": 1440,
+          "hasOverflow": false,
+          "overflowPixels": 0
+        },
+        "screenshot": "matrix_desktop_1440_ar_dark.png"
+      },
+      "error": null
+    },
+    {
+      "test_name": "Matrix [desktop_1440 | lang=en | theme=light]",
+      "status": "PASS",
+      "details": {
+        "viewport": {
+          "name": "desktop_1440",
+          "width": 1440,
+          "height": 900
+        },
+        "lang": "en",
+        "theme": "light",
+        "html_dir": "ltr",
+        "html_theme": "light",
+        "overflow": {
+          "scrollWidth": 1440,
+          "clientWidth": 1440,
+          "hasOverflow": false,
+          "overflowPixels": 0
+        },
+        "screenshot": "matrix_desktop_1440_en_light.png"
+      },
+      "error": null
+    },
+    {
+      "test_name": "Matrix [desktop_1440 | lang=en | theme=dark]",
+      "status": "PASS",
+      "details": {
+        "viewport": {
+          "name": "desktop_1440",
+          "width": 1440,
+          "height": 900
+        },
+        "lang": "en",
+        "theme": "dark",
+        "html_dir": "ltr",
+        "html_theme": "dark",
+        "overflow": {
+          "scrollWidth": 1440,
+          "clientWidth": 1440,
+          "hasOverflow": false,
+          "overflowPixels": 0
+        },
+        "screenshot": "matrix_desktop_1440_en_dark.png"
+      },
+      "error": null
+    },
+    {
+      "test_name": "Matrix [tablet_768 | lang=ar | theme=light]",
+      "status": "PASS",
+      "details": {
+        "viewport": {
+          "name": "tablet_768",
+          "width": 768,
+          "height": 1024
+        },
+        "lang": "ar",
+        "theme": "light",
+        "html_dir": "rtl",
+        "html_theme": "light",
+        "overflow": {
+          "scrollWidth": 768,
+          "clientWidth": 768,
+          "hasOverflow": false,
+          "overflowPixels": 0
+        },
+        "screenshot": "matrix_tablet_768_ar_light.png"
+      },
+      "error": null
+    },
+    {
+      "test_name": "Matrix [tablet_768 | lang=ar | theme=dark]",
+      "status": "PASS",
+      "details": {
+        "viewport": {
+          "name": "tablet_768",
+          "width": 768,
+          "height": 1024
+        },
+        "lang": "ar",
+        "theme": "dark",
+        "html_dir": "rtl",
+        "html_theme": "dark",
+        "overflow": {
+          "scrollWidth": 768,
+          "clientWidth": 768,
+          "hasOverflow": false,
+          "overflowPixels": 0
+        },
+        "screenshot": "matrix_tablet_768_ar_dark.png"
+      },
+      "error": null
+    },
+    {
+      "test_name": "Matrix [tablet_768 | lang=en | theme=light]",
+      "status": "PASS",
+      "details": {
+        "viewport": {
+          "name": "tablet_768",
+          "width": 768,
+          "height": 1024
+        },
+        "lang": "en",
+        "theme": "light",
+        "html_dir": "ltr",
+        "html_theme": "light",
+        "overflow": {
+          "scrollWidth": 768,
+          "clientWidth": 768,
+          "hasOverflow": false,
+          "overflowPixels": 0
+        },
+        "screenshot": "matrix_tablet_768_en_light.png"
+      },
+      "error": null
+    },
+    {
+      "test_name": "Matrix [tablet_768 | lang=en | theme=dark]",
+      "status": "PASS",
+      "details": {
+        "viewport": {
+          "name": "tablet_768",
+          "width": 768,
+          "height": 1024
+        },
+        "lang": "en",
+        "theme": "dark",
+        "html_dir": "ltr",
+        "html_theme": "dark",
+        "overflow": {
+          "scrollWidth": 768,
+          "clientWidth": 768,
+          "hasOverflow": false,
+          "overflowPixels": 0
+        },
+        "screenshot": "matrix_tablet_768_en_dark.png"
+      },
+      "error": null
+    },
+    {
+      "test_name": "Matrix [mobile_large_428 | lang=ar | theme=light]",
+      "status": "PASS",
+      "details": {
+        "viewport": {
+          "name": "mobile_large_428",
+          "width": 428,
+          "height": 926
+        },
+        "lang": "ar",
+        "theme": "light",
+        "html_dir": "rtl",
+        "html_theme": "light",
+        "overflow": {
+          "scrollWidth": 428,
+          "clientWidth": 428,
+          "hasOverflow": false,
+          "overflowPixels": 0
+        },
+        "screenshot": "matrix_mobile_large_428_ar_light.png"
+      },
+      "error": null
+    },
+    {
+      "test_name": "Matrix [mobile_large_428 | lang=ar | theme=dark]",
+      "status": "PASS",
+      "details": {
+        "viewport": {
+          "name": "mobile_large_428",
+          "width": 428,
+          "height": 926
+        },
+        "lang": "ar",
+        "theme": "dark",
+        "html_dir": "rtl",
+        "html_theme": "dark",
+        "overflow": {
+          "scrollWidth": 428,
+          "clientWidth": 428,
+          "hasOverflow": false,
+          "overflowPixels": 0
+        },
+        "screenshot": "matrix_mobile_large_428_ar_dark.png"
+      },
+      "error": null
+    },
+    {
+      "test_name": "Matrix [mobile_large_428 | lang=en | theme=light]",
+      "status": "PASS",
+      "details": {
+        "viewport": {
+          "name": "mobile_large_428",
+          "width": 428,
+          "height": 926
+        },
+        "lang": "en",
+        "theme": "light",
+        "html_dir": "ltr",
+        "html_theme": "light",
+        "overflow": {
+          "scrollWidth": 428,
+          "clientWidth": 428,
+          "hasOverflow": false,
+          "overflowPixels": 0
+        },
+        "screenshot": "matrix_mobile_large_428_en_light.png"
+      },
+      "error": null
+    },
+    {
+      "test_name": "Matrix [mobile_large_428 | lang=en | theme=dark]",
+      "status": "PASS",
+      "details": {
+        "viewport": {
+          "name": "mobile_large_428",
+          "width": 428,
+          "height": 926
+        },
+        "lang": "en",
+        "theme": "dark",
+        "html_dir": "ltr",
+        "html_theme": "dark",
+        "overflow": {
+          "scrollWidth": 428,
+          "clientWidth": 428,
+          "hasOverflow": false,
+          "overflowPixels": 0
+        },
+        "screenshot": "matrix_mobile_large_428_en_dark.png"
+      },
+      "error": null
+    },
+    {
+      "test_name": "Matrix [mobile_small_390 | lang=ar | theme=light]",
+      "status": "PASS",
+      "details": {
+        "viewport": {
+          "name": "mobile_small_390",
+          "width": 390,
+          "height": 844
+        },
+        "lang": "ar",
+        "theme": "light",
+        "html_dir": "rtl",
+        "html_theme": "light",
+        "overflow": {
+          "scrollWidth": 390,
+          "clientWidth": 390,
+          "hasOverflow": false,
+          "overflowPixels": 0
+        },
+        "screenshot": "matrix_mobile_small_390_ar_light.png"
+      },
+      "error": null
+    },
+    {
+      "test_name": "Matrix [mobile_small_390 | lang=ar | theme=dark]",
+      "status": "PASS",
+      "details": {
+        "viewport": {
+          "name": "mobile_small_390",
+          "width": 390,
+          "height": 844
+        },
+        "lang": "ar",
+        "theme": "dark",
+        "html_dir": "rtl",
+        "html_theme": "dark",
+        "overflow": {
+          "scrollWidth": 390,
+          "clientWidth": 390,
+          "hasOverflow": false,
+          "overflowPixels": 0
+        },
+        "screenshot": "matrix_mobile_small_390_ar_dark.png"
+      },
+      "error": null
+    },
+    {
+      "test_name": "Matrix [mobile_small_390 | lang=en | theme=light]",
+      "status": "PASS",
+      "details": {
+        "viewport": {
+          "name": "mobile_small_390",
+          "width": 390,
+          "height": 844
+        },
+        "lang": "en",
+        "theme": "light",
+        "html_dir": "ltr",
+        "html_theme": "light",
+        "overflow": {
+          "scrollWidth": 390,
+          "clientWidth": 390,
+          "hasOverflow": false,
+          "overflowPixels": 0
+        },
+        "screenshot": "matrix_mobile_small_390_en_light.png"
+      },
+      "error": null
+    },
+    {
+      "test_name": "Matrix [mobile_small_390 | lang=en | theme=dark]",
+      "status": "PASS",
+      "details": {
+        "viewport": {
+          "name": "mobile_small_390",
+          "width": 390,
+          "height": 844
+        },
+        "lang": "en",
+        "theme": "dark",
+        "html_dir": "ltr",
+        "html_theme": "dark",
+        "overflow": {
+          "scrollWidth": 390,
+          "clientWidth": 390,
+          "hasOverflow": false,
+          "overflowPixels": 0
+        },
+        "screenshot": "matrix_mobile_small_390_en_dark.png"
+      },
+      "error": null
+    },
+    {
+      "test_name": "NFC Wedge: Simulated Card Scan & Table Emission",
+      "status": "PASS",
+      "details": {
+        "scanned_uid": "04A27C19",
+        "table_has_card": true
+      },
+      "error": null
+    },
+    {
+      "test_name": "NFC Wedge: Direct KeyboardEvent.code Rapid Keystroke Burst",
+      "status": "PASS",
+      "details": {
+        "burst_uid": "12AB34CD",
+        "captured_in_table": true
+      },
+      "error": null
+    },
+    {
+      "test_name": "Dexie Storage: Persistent Device GUID in workspace_metadata",
+      "status": "PASS",
+      "details": {
+        "device_guid": "fallback-device-guid"
+      },
+      "error": null
+    },
+    {
+      "test_name": "Dexie Storage: Bulk Put Students into cached_students (count=15)",
+      "status": "PASS",
+      "details": {
+        "cached_students_count": "15"
+      },
+      "error": null
+    },
+    {
+      "test_name": "Dexie Storage: Enqueue Offline Mutation in sync_queue with auto-increment localId",
+      "status": "PASS",
+      "details": {
+        "pending_sync_count": 1
+      },
+      "error": null
+    },
+    {
+      "test_name": "Dexie Storage: Workspace Cache Purge on Switch (preserves sync_queue)",
+      "status": "PASS",
+      "details": {
+        "cached_students_after_clear": "0"
+      },
+      "error": null
+    },
+    {
+      "test_name": "Mock API: GET /api/v1/students?pageNumber=1 (RFC 9457 Pagination)",
+      "status": "PASS",
+      "details": {
+        "has_items": true
+      },
+      "error": null
+    },
+    {
+      "test_name": "Mock API: POST /api/v1/attendance?simulateConflict=true (RFC 9457 ProblemDetails 409)",
+      "status": "PASS",
+      "details": {
+        "error_output": "HTTP 409: Conflict\nDUPLICATE_CHECKIN\n\nالطالب مسجل حضور بالفعل في هذه الجلسة\n\nTrace: 00-1792461046287-01"
+      },
+      "error": null
+    },
+    {
+      "test_name": "WCAG AA Accessibility: Focus Trap Modal Entrapment & Dismissal",
+      "status": "PASS",
+      "details": {
+        "modal_opened": true,
+        "focus_trapped": true,
+        "modal_closed": true
+      },
+      "error": null
+    },
+    {
+      "test_name": "Route Guards: authGuard redirects unauthenticated visitor to /login stub",
+      "status": "PASS",
+      "details": {
+        "current_url": "http://localhost:4200/login?returnUrl=%2Fworkspace%2Fprotected"
+      },
+      "error": null
+    },
+    {
+      "test_name": "Route Guards: roleGuard redirects insufficient role to /workspace/forbidden stub",
+      "status": "PASS",
+      "details": {
+        "current_url": "http://localhost:4200/workspace/forbidden"
+      },
+      "error": null
+    },
+    {
+      "test_name": "Route Guards: lockoutGuard redirects Expired workspace to /workspace/lockout stub",
+      "status": "PASS",
+      "details": {
+        "current_url": "http://localhost:4200/workspace/lockout"
+      },
+      "error": null
+    }
+  ]
+}

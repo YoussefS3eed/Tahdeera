@@ -1,18 +1,22 @@
 /**
- * Tahdeera Offline Storage Service
- * Milestone F1 Phase 6: Dexie.js transactional IndexedDB persistence layer
+ * Tahdeera Client-side Offline Storage Service
+ * Powered by Dexie.js v4
+ * Milestone F1 Phase 6: Local-first persistence engine
  */
 
 import { Injectable, signal, WritableSignal } from '@angular/core';
 import { TahdeeraLocalDb } from './tahdeera-local-db';
 import { Student, ClassSession, AttendanceRecord } from '../models/domain.models';
 import { LocalSyncOperation, WorkspaceMetadataRecord } from '../models/sync.models';
-import { SyncOperationStatus } from '../enums/domain.enums';
+import { AttendanceStatus, SyncOperationStatus } from '../enums/domain.enums';
 
-export type EnqueueSyncOperationInput = Omit<
-  LocalSyncOperation,
-  'localId' | 'operationId' | 'deviceGuid' | 'clientTimestampUtc' | 'status' | 'retryCount'
-> & Partial<Pick<LocalSyncOperation, 'operationId' | 'deviceGuid' | 'clientTimestampUtc' | 'status' | 'retryCount'>>;
+export type EnqueueSyncOperationInput = Omit<LocalSyncOperation, 'localId' | 'operationId' | 'deviceGuid' | 'clientTimestampUtc' | 'status' | 'retryCount'> & {
+  operationId?: string;
+  deviceGuid?: string;
+  clientTimestampUtc?: string;
+  status?: SyncOperationStatus;
+  retryCount?: number;
+};
 
 @Injectable({
   providedIn: 'root'
@@ -24,10 +28,18 @@ export class OfflineStorageService {
   readonly isStorageAvailable: WritableSignal<boolean> = signal<boolean>(false);
   readonly pendingSyncCount: WritableSignal<number> = signal<number>(0);
   readonly isDbReady: WritableSignal<boolean> = signal<boolean>(false);
+  private readonly initPromise: Promise<void>;
 
   constructor() {
     this.db = new TahdeeraLocalDb();
-    this.initialize();
+    this.initPromise = this.initialize();
+  }
+
+  /**
+   * Waits for database initialization to complete.
+   */
+  async ensureInitialized(): Promise<void> {
+    await this.initPromise;
   }
 
   /**
@@ -38,10 +50,12 @@ export class OfflineStorageService {
       if (typeof indexedDB === 'undefined') {
         throw new Error('IndexedDB not supported in current environment');
       }
-      await this.db.open();
+      if (!this.db.isOpen()) {
+        await this.db.open();
+      }
       this.isStorageAvailable.set(true);
-      await this.getDeviceGuid();
-      await this.refreshPendingCount();
+      await this.internalGetDeviceGuid();
+      await this.internalRefreshPendingCount();
     } catch (err) {
       console.warn('[OfflineStorageService] IndexedDB unavailable or restricted, running in fallback mode:', err);
       this.isStorageAvailable.set(false);
@@ -54,6 +68,11 @@ export class OfflineStorageService {
    * Refreshes the pending synchronization count Signal.
    */
   async refreshPendingCount(workspaceId?: string): Promise<number> {
+    await this.ensureInitialized();
+    return this.internalRefreshPendingCount(workspaceId);
+  }
+
+  private async internalRefreshPendingCount(workspaceId?: string): Promise<number> {
     if (!this.isStorageAvailable()) {
       return 0;
     }
@@ -87,6 +106,7 @@ export class OfflineStorageService {
    * Returns assigned auto-increment localId.
    */
   async enqueueSyncOperation(operation: EnqueueSyncOperationInput): Promise<number> {
+    await this.ensureInitialized();
     if (!this.isStorageAvailable()) {
       return -1;
     }
@@ -110,6 +130,7 @@ export class OfflineStorageService {
    * Retrieves pending sync operations in strict FIFO order (localId ASC).
    */
   async getPendingOperations(workspaceId?: string): Promise<LocalSyncOperation[]> {
+    await this.ensureInitialized();
     if (!this.isStorageAvailable()) {
       return [];
     }
@@ -131,6 +152,7 @@ export class OfflineStorageService {
    * Updates status and error information for a specific sync queue operation.
    */
   async updateOperationStatus(localId: number, status: SyncOperationStatus, error?: string): Promise<void> {
+    await this.ensureInitialized();
     if (!this.isStorageAvailable()) {
       return;
     }
@@ -154,15 +176,14 @@ export class OfflineStorageService {
    * Marks a batch of local operations as successfully synced.
    */
   async markOperationsSynced(localIds: number[]): Promise<void> {
+    await this.ensureInitialized();
     if (!this.isStorageAvailable() || localIds.length === 0) {
       return;
     }
 
-    await this.db.transaction('rw', this.db.sync_queue, async () => {
-      for (const id of localIds) {
-        await this.db.sync_queue.update(id, { status: SyncOperationStatus.Synced });
-      }
-    });
+    for (const id of localIds) {
+      await this.db.sync_queue.update(id, { status: SyncOperationStatus.Synced });
+    }
 
     await this.refreshPendingCount();
   }
@@ -175,6 +196,7 @@ export class OfflineStorageService {
    * Caches a batch of student records locally.
    */
   async cacheStudents(students: Student[]): Promise<void> {
+    await this.ensureInitialized();
     if (!this.isStorageAvailable() || students.length === 0) {
       return;
     }
@@ -185,6 +207,7 @@ export class OfflineStorageService {
    * Performs an indexed lookup for a student by card UID within the active workspace.
    */
   async findStudentByNfcUid(nfcUid: string, workspaceId: string): Promise<Student | undefined> {
+    await this.ensureInitialized();
     if (!this.isStorageAvailable()) {
       return undefined;
     }
@@ -200,6 +223,7 @@ export class OfflineStorageService {
    * Performs a compound indexed lookup for a student by studentCode within the active workspace.
    */
   async findStudentByCode(studentCode: string, workspaceId: string): Promise<Student | undefined> {
+    await this.ensureInitialized();
     if (!this.isStorageAvailable()) {
       return undefined;
     }
@@ -213,6 +237,7 @@ export class OfflineStorageService {
    * Gets a student by primary ID.
    */
   async getStudentById(id: string): Promise<Student | undefined> {
+    await this.ensureInitialized();
     if (!this.isStorageAvailable()) return undefined;
     return this.db.cached_students.get(id);
   }
@@ -225,6 +250,7 @@ export class OfflineStorageService {
    * Caches class sessions locally.
    */
   async cacheSessions(sessions: ClassSession[]): Promise<void> {
+    await this.ensureInitialized();
     if (!this.isStorageAvailable() || sessions.length === 0) {
       return;
     }
@@ -235,6 +261,7 @@ export class OfflineStorageService {
    * Looks up an active session within the given workspace.
    */
   async getActiveSession(workspaceId: string, nowUtc?: string): Promise<ClassSession | undefined> {
+    await this.ensureInitialized();
     if (!this.isStorageAvailable()) {
       return undefined;
     }
@@ -250,6 +277,7 @@ export class OfflineStorageService {
    * Gets a session by primary ID.
    */
   async getSessionById(id: string): Promise<ClassSession | undefined> {
+    await this.ensureInitialized();
     if (!this.isStorageAvailable()) return undefined;
     return this.db.cached_sessions.get(id);
   }
@@ -262,6 +290,7 @@ export class OfflineStorageService {
    * Inserts or updates an attendance record in the local cache.
    */
   async cacheAttendanceRecord(record: AttendanceRecord): Promise<void> {
+    await this.ensureInitialized();
     if (!this.isStorageAvailable()) {
       return;
     }
@@ -272,6 +301,7 @@ export class OfflineStorageService {
    * Checks whether a student has already been checked into a session (compound index [sessionId+studentId]).
    */
   async findAttendanceByStudentAndSession(studentId: string, sessionId: string): Promise<AttendanceRecord | undefined> {
+    await this.ensureInitialized();
     if (!this.isStorageAvailable()) {
       return undefined;
     }
@@ -285,6 +315,7 @@ export class OfflineStorageService {
    * Retrieves all cached attendance records for a specific session.
    */
   async getAttendanceForSession(sessionId: string): Promise<AttendanceRecord[]> {
+    await this.ensureInitialized();
     if (!this.isStorageAvailable()) {
       return [];
     }
@@ -302,6 +333,11 @@ export class OfflineStorageService {
    * Retrieves or creates a persistent device GUID in workspace_metadata.
    */
   async getDeviceGuid(): Promise<string> {
+    await this.ensureInitialized();
+    return this.internalGetDeviceGuid();
+  }
+
+  private async internalGetDeviceGuid(): Promise<string> {
     if (!this.isStorageAvailable()) {
       return 'fallback-device-guid';
     }
@@ -322,6 +358,7 @@ export class OfflineStorageService {
    * Gets a typed metadata record.
    */
   async getMetadata<T>(key: string): Promise<T | null> {
+    await this.ensureInitialized();
     if (!this.isStorageAvailable()) return null;
     const record = await this.db.workspace_metadata.get(key);
     return record ? (record.value as T) : null;
@@ -331,6 +368,7 @@ export class OfflineStorageService {
    * Sets a typed metadata record.
    */
   async setMetadata<T>(key: string, value: T): Promise<void> {
+    await this.ensureInitialized();
     if (!this.isStorageAvailable()) return;
     await this.db.workspace_metadata.put({
       key,
@@ -344,36 +382,30 @@ export class OfflineStorageService {
    * Strictly preserves sync_queue to avoid losing pending mutations.
    */
   async clearWorkspaceData(workspaceId: string): Promise<void> {
+    await this.ensureInitialized();
     if (!this.isStorageAvailable()) return;
-    await this.db.transaction('rw', [this.db.cached_students, this.db.cached_sessions, this.db.cached_attendance], async () => {
-      await this.db.cached_students.where('workspaceId').equals(workspaceId).delete();
-      const sessions = await this.db.cached_sessions.where('workspaceId').equals(workspaceId).toArray();
-      const sessionIds = sessions.map(s => s.id);
-      await this.db.cached_sessions.where('workspaceId').equals(workspaceId).delete();
-      for (const sId of sessionIds) {
-        await this.db.cached_attendance.where('sessionId').equals(sId).delete();
-      }
-    });
+    await this.db.cached_students.where('workspaceId').equals(workspaceId).delete();
+    const sessions = await this.db.cached_sessions.where('workspaceId').equals(workspaceId).toArray();
+    const sessionIds = sessions.map(s => s.id);
+    await this.db.cached_sessions.where('workspaceId').equals(workspaceId).delete();
+    for (const sId of sessionIds) {
+      await this.db.cached_attendance.where('sessionId').equals(sId).delete();
+    }
   }
 
   /**
    * Resets all tables in TahdeeraLocalDb (used for test teardown).
    */
   async resetDatabase(): Promise<void> {
+    await this.ensureInitialized();
     if (!this.isStorageAvailable()) return;
-    await this.db.transaction('rw', [
-      this.db.cached_students,
-      this.db.cached_sessions,
-      this.db.cached_attendance,
-      this.db.sync_queue,
-      this.db.workspace_metadata
-    ], async () => {
-      await this.db.cached_students.clear();
-      await this.db.cached_sessions.clear();
-      await this.db.cached_attendance.clear();
-      await this.db.sync_queue.clear();
-      await this.db.workspace_metadata.clear();
-    });
+    await Promise.all([
+      this.db.cached_students.clear(),
+      this.db.cached_sessions.clear(),
+      this.db.cached_attendance.clear(),
+      this.db.sync_queue.clear(),
+      this.db.workspace_metadata.clear()
+    ]);
     this.pendingSyncCount.set(0);
   }
 
@@ -391,3 +423,5 @@ export class OfflineStorageService {
     });
   }
 }
+
+

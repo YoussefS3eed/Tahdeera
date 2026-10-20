@@ -55,7 +55,7 @@ describe('NfcListenerService', () => {
     });
 
     expect(capturedEvent).not.toBeNull();
-    expect(capturedEvent?.uid).toBe('04A27C19');
+    expect((capturedEvent as any)?.uid).toBe('04A27C19');
     expect(service.lastScannedUid()).toBe('04A27C19');
     expect(service.lastScanTimestamp()).toBeGreaterThan(0);
   }));
@@ -88,7 +88,7 @@ describe('NfcListenerService', () => {
     });
 
     expect(capturedEvent).not.toBeNull();
-    expect(capturedEvent?.uid).toBe('04A27C19');
+    expect((capturedEvent as any)?.uid).toBe('04A27C19');
     expect(service.lastScannedUid()).toBe('04A27C19');
   }));
 
@@ -118,7 +118,7 @@ describe('NfcListenerService', () => {
       tick(15);
     });
 
-    expect(capturedEvent?.uid).toBe('12AB34CD');
+    expect((capturedEvent as any)?.uid).toBe('12AB34CD');
   }));
 
   it('should normalize Arabic-Indic digits when event.code is unavailable (Fallback mode)', fakeAsync(() => {
@@ -149,7 +149,7 @@ describe('NfcListenerService', () => {
     });
 
     expect(capturedEvent).not.toBeNull();
-    expect(capturedEvent?.uid).toBe('04A27C19');
+    expect((capturedEvent as any)?.uid).toBe('04A27C19');
   }));
 
   it('should discard buffer and reject human typing with > 50ms keystroke intervals', fakeAsync(() => {
@@ -259,7 +259,7 @@ describe('NfcListenerService', () => {
 
     const result = service.simulateScan('04:A2:7C:19');
     expect(result).toBeTrue();
-    expect(captured?.uid).toBe('04A27C19');
+    expect((captured as any)?.uid).toBe('04A27C19');
     expect(service.lastScannedUid()).toBe('04A27C19');
 
     // Invalid format returns false

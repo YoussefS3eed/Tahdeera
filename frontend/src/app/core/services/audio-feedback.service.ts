@@ -1,4 +1,4 @@
-import { Injectable, signal, WritableSignal } from '@angular/core';
+import { Injectable, OnDestroy, signal, WritableSignal } from '@angular/core';
 import { ScanOutcome } from '../enums/domain.enums';
 
 interface ActiveAudioVoice {
@@ -10,7 +10,7 @@ interface ActiveAudioVoice {
 @Injectable({
   providedIn: 'root'
 })
-export class AudioFeedbackService {
+export class AudioFeedbackService implements OnDestroy {
   private readonly STORAGE_KEY = 'tahdeera_audio_muted';
   private readonly MAX_ACTIVE_VOICES = 4;
   private readonly MASTER_GAIN_CEILING = 0.4;
@@ -18,6 +18,8 @@ export class AudioFeedbackService {
   private audioCtx?: AudioContext;
   private masterGainNode?: GainNode;
   private activeVoices: ActiveAudioVoice[] = [];
+  private unlockListenerAttached = false;
+  private readonly boundGestureUnlock = () => this.handleFirstUserGesture();
 
   readonly isAudioReady: WritableSignal<boolean>;
   readonly isMuted: WritableSignal<boolean>;
@@ -28,6 +30,18 @@ export class AudioFeedbackService {
     this.isAudioReady = signal<boolean>(false);
 
     this.initAudioContext();
+    this.attachUserGestureUnlock();
+  }
+
+  ngOnDestroy(): void {
+    this.detachUserGestureUnlock();
+    if (this.audioCtx && this.audioCtx.state !== 'closed') {
+      try {
+        this.audioCtx.close();
+      } catch {
+        // Ignore close error on destruction
+      }
+    }
   }
 
   /**
@@ -193,6 +207,33 @@ export class AudioFeedbackService {
     } catch (err) {
       console.warn('AudioFeedbackService: Web Audio API not supported or initialization failed', err);
     }
+  }
+
+  private attachUserGestureUnlock(): void {
+    if (typeof window === 'undefined' || typeof document === 'undefined' || this.unlockListenerAttached) {
+      return;
+    }
+    this.unlockListenerAttached = true;
+    const events = ['click', 'keydown', 'touchstart'];
+    events.forEach(evt => {
+      document.addEventListener(evt, this.boundGestureUnlock, { capture: true, once: true, passive: true });
+    });
+  }
+
+  private async handleFirstUserGesture(): Promise<void> {
+    this.detachUserGestureUnlock();
+    await this.resumeAudio();
+  }
+
+  private detachUserGestureUnlock(): void {
+    if (typeof document === 'undefined' || !this.unlockListenerAttached) {
+      return;
+    }
+    const events = ['click', 'keydown', 'touchstart'];
+    events.forEach(evt => {
+      document.removeEventListener(evt, this.boundGestureUnlock, { capture: true });
+    });
+    this.unlockListenerAttached = false;
   }
 
   private getAudioContext(): AudioContext | undefined {
