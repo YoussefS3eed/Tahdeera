@@ -1,35 +1,58 @@
 /**
  * Role Authorization Route Guard
- * Milestone F1 Phase 7: Validates user WorkspaceRole against route requirements
+ * Milestone F2 Phase 7: Validates user WorkspaceRole against route requirements
+ * Denied access redirects to /workspace/dashboard with one-time router state
  */
 
 import { inject } from '@angular/core';
-import { CanActivateFn, Router, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree } from '@angular/router';
-import { WorkspaceRole } from '../enums/domain.enums';
+import {
+  CanActivateFn,
+  Router,
+  ActivatedRouteSnapshot,
+  RouterStateSnapshot,
+  UrlTree
+} from '@angular/router';
+import { AuthStore } from '../stores/auth.store';
+import { WorkspaceRole } from '../models/auth.models';
 
 export const roleGuard: CanActivateFn = (
   route: ActivatedRouteSnapshot,
-  _state: RouterStateSnapshot
+  state: RouterStateSnapshot
 ): boolean | UrlTree => {
+  const authStore = inject(AuthStore);
   const router = inject(Router);
+
+  if (!authStore.isAuthenticated()) {
+    return router.createUrlTree(['/login'], {
+      queryParams: { returnUrl: state.url }
+    });
+  }
+
   const requiredRoles = route.data?.['requiredRoles'] as WorkspaceRole[] | undefined;
 
   if (!requiredRoles || requiredRoles.length === 0) {
     return true;
   }
 
-  let currentRole = WorkspaceRole.Teacher as string;
-  if (typeof localStorage !== 'undefined') {
-    const savedRole = localStorage.getItem('tahdeera_user_role');
-    if (savedRole) {
-      currentRole = savedRole;
-    }
-  }
+  const currentRole = authStore.currentUserRole();
 
-  // SuperAdmin has universal clearance
-  if (currentRole === 'SuperAdmin' || requiredRoles.includes(currentRole as WorkspaceRole)) {
+  // Universal clearance for SuperAdmin or matching workspace role
+  if (
+    currentRole === ('SuperAdmin' as unknown as WorkspaceRole) ||
+    (currentRole && requiredRoles.includes(currentRole))
+  ) {
     return true;
   }
 
-  return router.createUrlTree(['/workspace/forbidden']);
+  // Deny access and redirect to dashboard with client-side one-time router state
+  router.navigate(['/workspace/dashboard'], {
+    state: {
+      accessDenied: true,
+      messageKey: 'DASHBOARD.UNAUTHORIZED_ROLE_ACCESS',
+      attemptedUrl: state.url,
+      timestamp: Date.now()
+    }
+  });
+
+  return false;
 };

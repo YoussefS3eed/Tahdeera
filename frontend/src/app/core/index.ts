@@ -1,6 +1,6 @@
 /**
  * Core Barrel Exports
- * Milestone F1 Phase 3, 4, 5, 6 & 7 Services, Enums, Models, Pipes, Interceptors & Guards
+ * Milestone F2 Core Services, Stores, Enums, Models, Pipes, Interceptors & Guards
  */
 
 // Enums
@@ -10,6 +10,21 @@ export * from './enums/domain.enums';
 export * from './models/domain.models';
 export * from './models/sync.models';
 export * from './models/api-response.models';
+export type {
+  WorkspaceStatus,
+  LockoutReason,
+  WorkspaceSummary,
+  AuthTokens,
+  LoginRequest,
+  LoginResponse,
+  RefreshTokenRequest,
+  RefreshTokenResponse,
+  ReauthRequest
+} from './models/auth.models';
+export * from './models/route.models';
+
+// Stores
+export * from './stores/auth.store';
 
 // Services
 export * from './services/theme.service';

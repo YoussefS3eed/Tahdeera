@@ -79,4 +79,49 @@ describe('HeaderComponent', () => {
 
     expect(component.toggleSidebar.emit).toHaveBeenCalled();
   });
+
+  it('should open global search modal when Ctrl+K is pressed and preventDefault', () => {
+    expect(component.isSearchOpen).toBeFalse();
+    const event = new KeyboardEvent('keydown', {
+      key: 'k',
+      ctrlKey: true,
+      cancelable: true
+    });
+    spyOn(event, 'preventDefault');
+    window.dispatchEvent(event);
+    fixture.detectChanges();
+
+    expect(event.preventDefault).toHaveBeenCalled();
+    expect(component.isSearchOpen).toBeTrue();
+  });
+
+  it('should open global search modal when Cmd+K (metaKey) is pressed', () => {
+    component.isSearchOpen = false;
+    const event = new KeyboardEvent('keydown', {
+      key: 'K',
+      metaKey: true,
+      cancelable: true
+    });
+    spyOn(event, 'preventDefault');
+    window.dispatchEvent(event);
+    fixture.detectChanges();
+
+    expect(event.preventDefault).toHaveBeenCalled();
+    expect(component.isSearchOpen).toBeTrue();
+  });
+
+  it('should not open search modal for other key combinations', () => {
+    component.isSearchOpen = false;
+    const event = new KeyboardEvent('keydown', {
+      key: 'j',
+      ctrlKey: true,
+      cancelable: true
+    });
+    spyOn(event, 'preventDefault');
+    window.dispatchEvent(event);
+    fixture.detectChanges();
+
+    expect(event.preventDefault).not.toHaveBeenCalled();
+    expect(component.isSearchOpen).toBeFalse();
+  });
 });

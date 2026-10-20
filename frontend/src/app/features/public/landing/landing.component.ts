@@ -1,8 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { LocalizationService } from '../../../core/services/localization.service';
 import { ThemeService } from '../../../core/services/theme.service';
+import { AuthStore } from '../../../core/stores/auth.store';
 import { SubscriptionInquiryModalComponent } from './subscription-inquiry-modal/subscription-inquiry-modal.component';
 import { PackageTier } from '../../../core/models/public.models';
 
@@ -22,6 +23,9 @@ interface FaqItem {
 export class LandingComponent {
   readonly localization = inject(LocalizationService);
   readonly theme = inject(ThemeService);
+  readonly authStore = inject(AuthStore);
+
+  readonly isAuthenticated = computed(() => this.authStore.isAuthenticated());
 
   isModalOpen: boolean = false;
   selectedPackage: PackageTier = 'Pro';

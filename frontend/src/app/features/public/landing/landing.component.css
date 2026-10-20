@@ -170,6 +170,28 @@
   transition: background-color 0.15s ease;
 }
 
+.btn-cta-dashboard {
+  background-color: var(--brand-primary, #1e3a8a);
+  color: #ffffff;
+  border: 1px solid var(--brand-primary, #1e3a8a);
+  border-radius: var(--radius-md, 10px);
+  padding-block: 0.625rem;
+  padding-inline: 1rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.btn-cta-dashboard:hover {
+  background-color: var(--brand-primary-hover, #172554);
+  transform: translateY(-1px);
+}
+
 .btn-cta-secondary:hover {
   background-color: var(--bg-surface-elevated, #f8fafc);
 }

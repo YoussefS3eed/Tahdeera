@@ -114,6 +114,7 @@
     "HERO_SUBTITLE": "An integrated cloud system combining smart NFC card attendance, financial ledgers, and direct parent messaging without hassle.",
     "CTA_START": "Get Started Free",
     "CTA_LOGIN": "Sign In",
+    "NAV_GO_TO_DASHBOARD": "Go to Dashboard",
     "PACKAGES_TITLE": "Plans tailored for all tutoring centers and private educators",
     "PRICE_PER_MONTH": "EGP / month",
     "REQUEST_DEMO": "Request Subscription",
@@ -221,6 +222,12 @@
     "STATUS_PENDING_CLOSURE": "In Review",
     "WHATSAPP_DELIVERED": "Delivered",
     "WHATSAPP_PENDING": "Pending Delivery",
-    "WHATSAPP_FAILED": "Delivery Failed"
+    "WHATSAPP_FAILED": "Delivery Failed",
+    "UNAUTHORIZED_ROLE_ACCESS": "Sorry, this section is restricted to account owners and administrators only."
+  },
+  "PLACEHOLDER": {
+    "TARGET_MILESTONE": "Target Milestone:",
+    "RETURN_TO_DASHBOARD": "Return to Dashboard",
+    "STATUS_SCHEDULED": "Scheduled for delivery in"
   }
 }

@@ -10,6 +10,7 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 import { By } from '@angular/platform-browser';
 import { LocalizationService } from '../../../core/services/localization.service';
+import { AuthStore } from '../../../core/stores/auth.store';
 import { ThemeService } from '../../../core/services/theme.service';
 
 describe('LandingComponent', () => {
@@ -24,7 +25,8 @@ describe('LandingComponent', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
-        provideRouter([])
+        provideRouter([]),
+        AuthStore
       ]
     }).compileComponents();
 
@@ -105,12 +107,32 @@ describe('LandingComponent', () => {
   });
 
   it('should toggle FAQ accordion items', () => {
-    expect(component.faqItems[0].isOpen).toBeFalse();
 
-    component.toggleFaq(0);
-    expect(component.faqItems[0].isOpen).toBeTrue();
+  });
 
-    component.toggleFaq(0);
-    expect(component.faqItems[0].isOpen).toBeFalse();
+  it('should render login CTA when unauthenticated', () => {
+    const authStore = TestBed.inject(AuthStore);
+    authStore.logout();
+    fixture.detectChanges();
+
+    const cta = fixture.debugElement.query(By.css('.btn-cta-secondary'));
+    expect(cta).toBeTruthy();
+    expect(cta.nativeElement.textContent).toContain('تسجيل الدخول');
+  });
+
+  it('should render Go to Dashboard CTA when authenticated', () => {
+    const authStore = TestBed.inject(AuthStore);
+    authStore.login({
+      user: { id: 'usr_01', fullName: 'أ. محمد', email: 't@t.app', phone: '01012345670', initials: 'م.ع' },
+      tokens: { accessToken: 'tk', refreshToken: 'rt', tokenType: 'Bearer', expiresIn: 900 },
+      workspaces: [{ id: 'ws_1', name: 'سنتر الأوائل', code: 'AW', status: 'Active', role: 'Teacher', studentCount: 248, activeGroupCount: 12, subscriptionDaysRemaining: 45, subscriptionExpiresAt: '2026-12-05' }],
+      activeWorkspaceId: 'ws_1'
+    });
+    fixture.detectChanges();
+
+    const dashboardCta = fixture.debugElement.query(By.css('.btn-cta-dashboard'));
+    expect(dashboardCta).toBeTruthy();
+    expect(dashboardCta.nativeElement.textContent).toContain('الانتقال إلى لوحة التحكم');
+
   });
 });

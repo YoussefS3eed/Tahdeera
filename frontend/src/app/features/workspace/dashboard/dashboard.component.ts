@@ -5,6 +5,7 @@ import { DashboardService } from './services/dashboard.service';
 import { AuthStore } from '../../../core/stores/auth.store';
 import { LocalizationService } from '../../../core/services/localization.service';
 import { DashboardOverviewResponse } from '../../../core/models/dashboard.models';
+import { AccessDeniedNotificationState } from '../../../core/models/route.models';
 import { SkeletonLoaderComponent } from '../../../shared/components/skeleton-loader/skeleton-loader.component';
 
 @Component({
@@ -25,12 +26,65 @@ export class DashboardComponent implements OnInit {
   readonly dashboardData = signal<DashboardOverviewResponse | null>(null);
   readonly errorMessage = signal<string | null>(null);
 
+  // Client-side one-time notification state for unauthorized role redirects
+  readonly unauthorizedAlertVisible = signal<boolean>(false);
+  readonly unauthorizedAlertMessageKey = signal<string>('DASHBOARD.UNAUTHORIZED_ROLE_ACCESS');
+
   readonly canViewFinancials = computed(() => this.authStore.canViewFinancials());
   readonly activeWorkspace = computed(() => this.authStore.activeWorkspace());
   readonly currentUser = computed(() => this.authStore.user());
 
+  get unauthorizedAlertMessage(): string {
+    return (
+      this.localization.translate(this.unauthorizedAlertMessageKey()) ||
+      (this.localization.currentLang() === 'ar'
+        ? 'عذرًا، هذا القسم مخصص لمالك الحساب والإدارة فقط.'
+        : 'Sorry, this section is restricted to account owners and administrators only.')
+    );
+  }
+
+  constructor() {
+    this.consumeRouterNotificationState();
+  }
+
   ngOnInit(): void {
     this.loadData();
+  }
+
+  /**
+   * Consumes one-time Router Navigation State delivered by roleGuard.
+   * Immediately clears state via history.replaceState so page refresh or back/forward
+   * history navigation never re-displays the banner.
+   */
+  private consumeRouterNotificationState(): void {
+    const nav = this.router.getCurrentNavigation();
+    const state = (nav?.extras?.state ||
+      (typeof history !== 'undefined' ? history.state : undefined)) as AccessDeniedNotificationState | undefined;
+
+    if (state?.accessDenied) {
+      this.unauthorizedAlertVisible.set(true);
+      if (state.messageKey) {
+        this.unauthorizedAlertMessageKey.set(state.messageKey);
+      }
+
+      // Immediately scrub state from history to ensure strictly one-time display
+      if (typeof history !== 'undefined' && history.replaceState) {
+        try {
+          const cleanState = { ...history.state };
+          delete cleanState.accessDenied;
+          delete cleanState.messageKey;
+          delete cleanState.attemptedUrl;
+          delete cleanState.timestamp;
+          history.replaceState(cleanState, '');
+        } catch {
+          // Graceful fallback in environments with restricted history access
+        }
+      }
+    }
+  }
+
+  dismissUnauthorizedAlert(): void {
+    this.unauthorizedAlertVisible.set(false);
   }
 
   loadData(): void {

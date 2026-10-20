@@ -94,7 +94,8 @@ describe('DashboardComponent', () => {
           provide: LocalizationService,
           useValue: {
             currentLang: () => 'ar',
-            isRtl: () => true
+            isRtl: () => true,
+            translate: (key: string) => key === 'DASHBOARD.UNAUTHORIZED_ROLE_ACCESS' ? 'عذرًا، هذا القسم مخصص لمالك الحساب والإدارة فقط.' : ''
           }
         },
         provideRouter([])
@@ -258,5 +259,51 @@ describe('DashboardComponent', () => {
     refreshBtn.nativeElement.click();
 
     expect(dashboardServiceSpy.getOverview).toHaveBeenCalledTimes(2);
+  });
+
+  it('should render unauthorized role alert banner when history.state contains accessDenied: true', () => {
+    history.replaceState({ accessDenied: true, messageKey: 'DASHBOARD.UNAUTHORIZED_ROLE_ACCESS' }, '');
+    dashboardServiceSpy.getOverview.and.returnValue(of(mockOverviewWithTuition));
+
+    fixture = TestBed.createComponent(DashboardComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    expect(component.unauthorizedAlertVisible()).toBeTrue();
+    const banner = fixture.debugElement.query(By.css('.unauthorized-role-banner'));
+    expect(banner).toBeTruthy();
+    expect(banner.nativeElement.textContent).toContain('عذرًا، هذا القسم مخصص لمالك الحساب والإدارة فقط.');
+
+    expect(history.state.accessDenied).toBeUndefined();
+  });
+
+  it('should dismiss unauthorized role alert banner when dismiss button is clicked', () => {
+    history.replaceState({ accessDenied: true, messageKey: 'DASHBOARD.UNAUTHORIZED_ROLE_ACCESS' }, '');
+    dashboardServiceSpy.getOverview.and.returnValue(of(mockOverviewWithTuition));
+
+    fixture = TestBed.createComponent(DashboardComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    expect(component.unauthorizedAlertVisible()).toBeTrue();
+    const dismissBtn = fixture.debugElement.query(By.css('.dismiss-role-alert-btn'));
+    expect(dismissBtn).toBeTruthy();
+    dismissBtn.nativeElement.click();
+    fixture.detectChanges();
+
+    expect(component.unauthorizedAlertVisible()).toBeFalse();
+    expect(fixture.debugElement.query(By.css('.unauthorized-role-banner'))).toBeNull();
+  });
+
+  it('should not render unauthorized alert banner when navigation state has no accessDenied', () => {
+    history.replaceState({}, '');
+    dashboardServiceSpy.getOverview.and.returnValue(of(mockOverviewWithTuition));
+
+    fixture = TestBed.createComponent(DashboardComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    expect(component.unauthorizedAlertVisible()).toBeFalse();
+    expect(fixture.debugElement.query(By.css('.unauthorized-role-banner'))).toBeNull();
   });
 });

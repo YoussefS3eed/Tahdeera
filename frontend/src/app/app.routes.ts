@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
 import { lockoutGuard } from './core/guards/lockout.guard';
-import { WorkspaceRole } from './core/enums/domain.enums';
+import { WorkspaceRole } from './core/models/auth.models';
 import { FoundationHarnessComponent } from './features/harness/foundation-harness.component';
 import { ForbiddenStubComponent } from './features/stubs/forbidden-stub.component';
 
@@ -145,7 +145,8 @@ export const routes: Routes = [
           import('./features/workspace/placeholder/workspace-placeholder.component').then(
             (m) => m.WorkspacePlaceholderComponent
           ),
-        canActivate: [authGuard, lockoutGuard],
+        canActivate: [authGuard, lockoutGuard, roleGuard],
+        data: { requiredRoles: ['Owner', 'Admin'] as WorkspaceRole[] },
         title: 'الرسوم والمدفوعات — تحضيرة'
       },
       {
@@ -181,7 +182,8 @@ export const routes: Routes = [
           import('./features/workspace/placeholder/workspace-placeholder.component').then(
             (m) => m.WorkspacePlaceholderComponent
           ),
-        canActivate: [authGuard, lockoutGuard],
+        canActivate: [authGuard, lockoutGuard, roleGuard],
+        data: { requiredRoles: ['Owner', 'Admin'] as WorkspaceRole[] },
         title: 'فريق العمل والصلاحيات — تحضيرة'
       },
       {
@@ -190,7 +192,8 @@ export const routes: Routes = [
           import('./features/workspace/placeholder/workspace-placeholder.component').then(
             (m) => m.WorkspacePlaceholderComponent
           ),
-        canActivate: [authGuard, lockoutGuard],
+        canActivate: [authGuard, lockoutGuard, roleGuard],
+        data: { requiredRoles: ['Owner', 'Admin'] as WorkspaceRole[] },
         title: 'إعدادات السنتر — تحضيرة'
       },
       {
@@ -216,7 +219,7 @@ export const routes: Routes = [
       {
         path: 'teachers-only',
         canActivate: [roleGuard],
-        data: { requiredRoles: [WorkspaceRole.Teacher, WorkspaceRole.Owner, WorkspaceRole.Admin] },
+        data: { requiredRoles: ['Teacher', 'Owner', 'Admin'] as WorkspaceRole[] },
         component: FoundationHarnessComponent
       },
       {

@@ -114,6 +114,7 @@
     "HERO_SUBTITLE": "نظام سحابي متكامل يجمع بين تسجيل الحضور الذكي ببطاقات الطلاب، الخزينة، والتواصل المباشر مع أولياء الأمور دون تعقيد.",
     "CTA_START": "ابدأ الآن مجاناً",
     "CTA_LOGIN": "تسجيل الدخول",
+    "NAV_GO_TO_DASHBOARD": "الانتقال إلى لوحة التحكم",
     "PACKAGES_TITLE": "باقات تناسب جميع أحجام السناتر والمعلمين",
     "PRICE_PER_MONTH": "ج.م / شهر",
     "REQUEST_DEMO": "طلب اشتراك",
@@ -221,6 +222,12 @@
     "STATUS_PENDING_CLOSURE": "قيد المراجعة",
     "WHATSAPP_DELIVERED": "تم التسليم",
     "WHATSAPP_PENDING": "بانتظار الإرسال",
-    "WHATSAPP_FAILED": "فشل الإرسال"
+    "WHATSAPP_FAILED": "فشل الإرسال",
+    "UNAUTHORIZED_ROLE_ACCESS": "عذرًا، هذا القسم مخصص لمالك الحساب والإدارة فقط."
+  },
+  "PLACEHOLDER": {
+    "TARGET_MILESTONE": "المرحلة المجدولة:",
+    "RETURN_TO_DASHBOARD": "العودة إلى لوحة التحكم",
+    "STATUS_SCHEDULED": "مجدولة للتسليم في"
   }
 }

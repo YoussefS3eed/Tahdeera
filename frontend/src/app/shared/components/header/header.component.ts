@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { LocalizationService } from '../../../core/services/localization.service';
@@ -307,6 +307,14 @@ export class HeaderComponent {
   @Output() toggleSidebar = new EventEmitter<void>();
 
   isSearchOpen: boolean = false;
+
+  @HostListener('window:keydown', ['$event'])
+  handleKeyboardShortcut(event: KeyboardEvent): void {
+    if ((event.ctrlKey || event.metaKey) && event.key && event.key.toLowerCase() === 'k') {
+      event.preventDefault();
+      this.openSearchModal();
+    }
+  }
 
   openSearchModal(): void {
     this.isSearchOpen = true;

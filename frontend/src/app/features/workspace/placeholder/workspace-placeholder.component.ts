@@ -1,35 +1,38 @@
-import { Component } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { LocalizationService } from '../../../core/services/localization.service';
+import { DEFERRED_WORKSPACE_TABS, DeferredTabMetadata, TargetMilestone } from './placeholder.models';
 
 @Component({
   selector: 'app-workspace-placeholder',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   template: `
     <div class="placeholder-container">
       <div class="placeholder-card">
         <div class="icon-bubble">
-          <span class="material-symbols-outlined">dashboard_customize</span>
+          <span class="material-symbols-outlined">{{ iconName() }}</span>
         </div>
 
         <h2 class="placeholder-title">
-          مساحة العمل — سيتم تفعيل لوحة التحكم في المرحلة 4 وباقي الأقسام في المراحل اللاحقة
+          {{ title() }}
         </h2>
 
         <p class="placeholder-desc">
-          تم تثبيت هيكل نظام تحضيرة ومخطط القوائم الجانبية الموحدة بنجاح. يمكنك استعراض التجاوب وتغيير اللغة والمظهر، وسيتم تفعيل لوحة المؤشرات (Dashboard) ومحطة التحضير في المراحل القادمة.
+          {{ description() }}
         </p>
 
-        <div class="badge-notice">
-          <span class="material-symbols-outlined notice-icon">info</span>
-          <span>المرحلة الحالية: تثبيت قوالب العرض وبوابة الهبوط (Phases 1–3)</span>
+        <div class="badge-notice" [ngClass]="badgeColorClass()">
+          <span class="material-symbols-outlined notice-icon">rocket_launch</span>
+          <span class="badge-label">{{ localization.translate('PLACEHOLDER.TARGET_MILESTONE') || 'المرحلة المجدولة:' }}</span>
+          <span class="badge-value font-mono">{{ targetMilestone() }}</span>
         </div>
 
         <div class="placeholder-actions">
-          <button type="button" class="btn-return" (click)="navigateHome()">
+          <button type="button" class="btn-return" (click)="navigateDashboard()">
             <span class="material-symbols-outlined">arrow_forward</span>
-            العودة لبوابة الزوار
+            <span>{{ localization.translate('PLACEHOLDER.RETURN_TO_DASHBOARD') || 'العودة إلى لوحة التحكم' }}</span>
           </button>
         </div>
       </div>
@@ -49,7 +52,8 @@ import { Router } from '@angular/router';
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 2rem 1rem;
+      padding-block: 2rem;
+      padding-inline: 1rem;
       width: 100%;
       max-width: 36rem;
       margin-inline: auto;
@@ -59,7 +63,8 @@ import { Router } from '@angular/router';
       background-color: var(--bg-surface, #ffffff);
       border: 1px solid var(--border-subtle, #e2e8f0);
       border-radius: var(--radius-lg, 16px);
-      padding: 2.5rem;
+      padding-block: 2.5rem;
+      padding-inline: 2rem;
       width: 100%;
       text-align: center;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
@@ -105,19 +110,45 @@ import { Router } from '@angular/router';
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      padding-block: 0.5rem;
-      padding-inline: 1rem;
+      padding-block: 0.375rem;
+      padding-inline: 0.875rem;
       border-radius: 9999px;
-      background-color: var(--bg-surface-elevated, #f1f5f9);
-      color: var(--text-secondary, #475569);
       font-size: 0.8125rem;
       font-weight: 600;
       margin-block-end: 2rem;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+
+    .badge-f3 {
+      background-color: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+    }
+
+    :host-context([data-theme="dark"]) .badge-f3 {
+      background-color: rgba(59, 130, 246, 0.15);
+      color: #93c5fd;
+      border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    .badge-f4 {
+      background-color: #faf5ff;
+      color: #7e22ce;
+      border: 1px solid #e9d5ff;
+    }
+
+    :host-context([data-theme="dark"]) .badge-f4 {
+      background-color: rgba(168, 85, 247, 0.15);
+      color: #d8b4fe;
+      border-color: rgba(168, 85, 247, 0.3);
     }
 
     .notice-icon {
-      font-size: 1rem;
-      color: var(--brand-accent, #3b82f6);
+      font-size: 1.125rem;
+    }
+
+    .badge-value {
+      font-weight: 700;
     }
 
     .placeholder-actions {
@@ -155,9 +186,52 @@ import { Router } from '@angular/router';
   `]
 })
 export class WorkspacePlaceholderComponent {
-  constructor(private router: Router) {}
+  readonly route = inject(ActivatedRoute);
+  readonly router = inject(Router);
+  readonly localization = inject(LocalizationService);
 
-  navigateHome(): void {
-    this.router.navigate(['/']);
+  private readonly fallbackMeta: DeferredTabMetadata = {
+    routePath: 'unknown',
+    iconName: 'construction',
+    titleAr: 'قسم قيد التطوير',
+    titleEn: 'Under Development',
+    descriptionAr: 'يتم العمل على تطوير وتجهيز هذا القسم حاليًا وفقًا لخارطة طريق منصة تحضيرة.',
+    descriptionEn: 'This section is currently being developed according to the Tahdeera platform roadmap.',
+    targetMilestone: 'Milestone F3'
+  };
+
+  private readonly routePath = signal<string>(
+    this.route.snapshot.url[0]?.path || this.route.snapshot.routeConfig?.path || ''
+  );
+
+  readonly currentTabMeta = computed<DeferredTabMetadata>(() => {
+    const slug = this.routePath();
+    return DEFERRED_WORKSPACE_TABS[slug] || this.fallbackMeta;
+  });
+
+  readonly title = computed<string>(() => {
+    const meta = this.currentTabMeta();
+    return this.localization.currentLang() === 'ar' ? meta.titleAr : meta.titleEn;
+  });
+
+  readonly description = computed<string>(() => {
+    const meta = this.currentTabMeta();
+    return this.localization.currentLang() === 'ar' ? meta.descriptionAr : meta.descriptionEn;
+  });
+
+  readonly targetMilestone = computed<TargetMilestone>(() => {
+    return this.currentTabMeta().targetMilestone;
+  });
+
+  readonly iconName = computed<string>(() => {
+    return this.currentTabMeta().iconName;
+  });
+
+  readonly badgeColorClass = computed<string>(() => {
+    return this.targetMilestone() === 'Milestone F3' ? 'badge-f3' : 'badge-f4';
+  });
+
+  navigateDashboard(): void {
+    this.router.navigate(['/workspace/dashboard']);
   }
 }

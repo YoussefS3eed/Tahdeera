@@ -59,10 +59,10 @@
         </button>
 
         <a
-          routerLink="/login"
-          class="btn-cta-secondary"
+          [routerLink]="isAuthenticated() ? '/workspace/dashboard' : '/login'"
+          [class]="isAuthenticated() ? 'btn-cta-dashboard' : 'btn-cta-secondary'"
         >
-          تسجيل الدخول
+          {{ isAuthenticated() ? (localization.translate('LANDING.NAV_GO_TO_DASHBOARD') || (localization.isRtl() ? 'الانتقال إلى لوحة التحكم' : 'Go to Dashboard')) : (localization.translate('LANDING.CTA_LOGIN') || (localization.isRtl() ? 'تسجيل الدخول' : 'Sign In')) }}
         </a>
       </div>
     </div>
@@ -96,7 +96,7 @@
           </button>
 
           <a
-            routerLink="/login"
+            [routerLink]="isAuthenticated() ? '/workspace/dashboard' : '/login'"
             class="btn-hero-secondary"
           >
             <span class="material-symbols-outlined">login</span>
