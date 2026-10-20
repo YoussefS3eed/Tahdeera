@@ -16,6 +16,7 @@ import { delay } from 'rxjs/operators';
 import { Student, ClassSession, AttendanceRecord } from '../models/domain.models';
 import { PagedResult, ProblemDetails } from '../models/api-response.models';
 import { AttendanceStatus, SyncOperationStatus } from '../enums/domain.enums';
+import { handlePublicInquiry } from '../mock/handlers/public.mock';
 
 // In-Memory Seed Data Fixture
 const MOCK_STUDENTS: Student[] = [
@@ -220,6 +221,11 @@ export const mockApiInterceptor: HttpInterceptorFn = (
       preferredTheme: 'light'
     };
     return of(new HttpResponse({ status: 200, body: me })).pipe(delayIf(delayMs));
+  }
+
+    // 4. POST /api/v1/public/inquiries
+  if (req.method === 'POST' && url.includes('/api/v1/public/inquiries')) {
+    return handlePublicInquiry(req).pipe(delayIf(delayMs));
   }
 
   // Fallback 404

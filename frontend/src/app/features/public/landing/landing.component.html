@@ -1,0 +1,416 @@
+<div class="landing-container">
+  <!-- Public Top Navigation -->
+  <header class="public-navbar">
+    <div class="nav-content">
+      <div class="brand-logo" routerLink="/">
+        <div class="brand-icon">
+          <svg class="brand-cap-svg" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+            <path d="M24 6L42 14L24 22L6 14L24 6Z" stroke="#1D4ED8" stroke-width="2.5" stroke-linejoin="round"/>
+            <path d="M36 17V27C36 31 24 34 24 34C24 34 12 31 12 27V17" stroke="#2563EB" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M10 34L24 40L38 34" stroke="#F59E0B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M10 39L24 45L38 39" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">{{ localization.translate('SHELL.APP_NAME') || 'تحضيرة' }}</span>
+          <span class="brand-accent-line"></span>
+          <span class="brand-tagline">{{ localization.translate('SHELL.APP_TAGLINE') || 'حضورك الذكي' }}</span>
+        </div>
+      </div>
+
+      <nav class="nav-links">
+        <a href="#features-sec" class="nav-link">المميزات</a>
+        <a href="#nfc-sec" class="nav-link">محطة NFC</a>
+        <a href="#packages-sec" class="nav-link">الباقات</a>
+        <a href="#faq-sec" class="nav-link">الأسئلة الشائعة</a>
+      </nav>
+
+      <div class="nav-actions">
+        <!-- Language Switcher -->
+        <button
+          type="button"
+          class="icon-action-btn"
+          (click)="toggleLanguage()"
+          [title]="localization.isRtl() ? 'Switch to English' : 'التحويل إلى العربية'"
+          aria-label="تغيير اللغة"
+        >
+          <span class="lang-code font-bold">{{ localization.isRtl() ? 'EN' : 'عربي' }}</span>
+        </button>
+
+        <!-- Theme Switcher -->
+        <button
+          type="button"
+          class="icon-action-btn"
+          (click)="toggleTheme()"
+          [title]="theme.isDarkMode() ? 'الوضع النهاري' : 'الوضع الليلي'"
+          aria-label="تبديل المظهر"
+        >
+          <span class="material-symbols-outlined">
+            {{ theme.isDarkMode() ? 'light_mode' : 'dark_mode' }}
+          </span>
+        </button>
+
+        <button
+          type="button"
+          class="btn-cta-primary"
+          (click)="openSubscribeModal('Pro')"
+        >
+          طلب الاشتراك
+        </button>
+
+        <a
+          routerLink="/login"
+          class="btn-cta-secondary"
+        >
+          تسجيل الدخول
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <div class="hero-text-col">
+        <span class="hero-badge">
+          <span class="badge-dot"></span>
+          {{ localization.translate('LANDING.BADGE') || '🚀 أذكى نظام لإدارة السناتر والدروس الخصوصية في مصر' }}
+        </span>
+
+        <h1 class="hero-headline">
+          {{ localization.translate('LANDING.HERO_TITLE') || 'حضور بلمسة NFC في ثانية.. وإشعار فوري لولي الأمر عبر واتساب' }}
+        </h1>
+
+        <p class="hero-description">
+          {{ localization.translate('LANDING.HERO_SUBTITLE') || 'منظومة سحابية متكاملة تجمع بين بطاقات الحضور الذكية، السجلات المالية، والتواصل التلقائي بدون تعقيد.' }}
+        </p>
+
+        <div class="hero-cta-group">
+          <button
+            type="button"
+            class="btn-hero-primary"
+            (click)="openSubscribeModal('Pro')"
+          >
+            <span class="material-symbols-outlined">rocket_launch</span>
+            <span>ابدأ الآن مجاناً</span>
+          </button>
+
+          <a
+            routerLink="/login"
+            class="btn-hero-secondary"
+          >
+            <span class="material-symbols-outlined">login</span>
+            <span>تسجيل الدخول</span>
+          </a>
+        </div>
+
+        <p class="hero-subnote">
+          حسابك يُجهز بواسطة إدارة المنصة، وفق احتياجات سنترك وباقتك المختارة.
+        </p>
+      </div>
+
+      <!-- Simulated NFC Tap Preview Card -->
+      <div class="hero-preview-col" id="nfc-sec">
+        <div class="roster-preview-card">
+          <div class="card-header-bar">
+            <h3 class="card-preview-title">يومك الدراسي، بوضوح</h3>
+            <span class="live-demo-pill">عرض توضيحي مباشر</span>
+          </div>
+
+          <div class="stat-counters-row">
+            <div class="stat-counter-box">
+              <span class="counter-label">طلاب المجموعة</span>
+              <span class="counter-val ltr-num">36</span>
+            </div>
+            <div class="stat-counter-box success-box">
+              <span class="counter-label">حاضر</span>
+              <span class="counter-val ltr-num text-success">28</span>
+            </div>
+            <div class="stat-counter-box info-box">
+              <span class="counter-label">بانتظار الحضور</span>
+              <span class="counter-val ltr-num text-info">5</span>
+            </div>
+          </div>
+
+          <div class="roster-table-wrapper">
+            <table class="roster-table">
+              <thead>
+                <tr>
+                  <th>الطالب</th>
+                  <th>المجموعة</th>
+                  <th>الحضور</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="font-bold">أحمد محمد علي</td>
+                  <td class="text-muted">رياضيات أ</td>
+                  <td><span class="badge-status-present">حاضر</span></td>
+                </tr>
+                <tr>
+                  <td class="font-bold">مريم خالد حسن</td>
+                  <td class="text-muted">رياضيات أ</td>
+                  <td><span class="badge-status-present">حاضر</span></td>
+                </tr>
+                <tr>
+                  <td class="font-bold">يوسف إبراهيم سعد</td>
+                  <td class="text-muted">رياضيات أ</td>
+                  <td><span class="badge-status-pending">بانتظار</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="simulated-nfc-tap-banner">
+            <div class="nfc-tap-info">
+              <span class="material-symbols-outlined nfc-check-icon">check_circle</span>
+              <div>
+                <div class="nfc-tap-title">
+                  حضر الآن: أحمد محمود - <span class="ltr-num font-mono">04:A2:7C:19</span>
+                </div>
+                <div class="nfc-tap-subtitle">
+                  رسالة ولي الأمر في قائمة الإرسال • <span class="ltr-num">16:02</span>
+                </div>
+              </div>
+            </div>
+            <span class="nfc-badge-tag">NFC جاهز</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust Strip -->
+  <div class="trust-strip">
+    <div class="trust-content">
+      <span class="trust-item"><span class="material-symbols-outlined check-icon">check</span>إدارة عربية RTL من البداية</span>
+      <span class="trust-item"><span class="material-symbols-outlined check-icon">check</span>حضور مرتبط بالحصة الفعلية</span>
+      <span class="trust-item"><span class="material-symbols-outlined check-icon">check</span>بيانات كل سنتر معزولة ومستقلة</span>
+      <span class="trust-item"><span class="material-symbols-outlined check-icon">check</span>امتحانات ذكية وتقارير موثوقة</span>
+    </div>
+  </div>
+
+  <!-- 4 Capability Pillars Grid -->
+  <section id="features-sec" class="capabilities-section">
+    <div class="section-header">
+      <h2 class="section-title">من أول تسجيل.. لآخر تقرير.</h2>
+      <p class="section-subtitle">أدوات مترابطة لتفاصيل اليوم الدراسي، من غير تشتت بين دفاتر وملفات متفرقة.</p>
+    </div>
+
+    <div class="capabilities-grid">
+      <div class="capability-card">
+        <div class="feature-icon-box">
+          <span class="material-symbols-outlined">contactless</span>
+        </div>
+        <h3 class="feature-card-title">
+          {{ localization.translate('LANDING.FEAT_1_TITLE') || 'حضور فوري ببطاقات NFC' }}
+        </h3>
+        <p class="feature-card-desc">
+          {{ localization.translate('LANDING.FEAT_1_DESC') || 'مسح البطاقات بأي قارئ USB قياسي؛ تسجيل صوتي ومرئي في أقل من 50 مللي ثانية.' }}
+        </p>
+      </div>
+
+      <div class="capability-card">
+        <div class="feature-icon-box">
+          <span class="material-symbols-outlined">chat</span>
+        </div>
+        <h3 class="feature-card-title">
+          {{ localization.translate('LANDING.FEAT_2_TITLE') || 'تنبيهات واتساب المؤتمتة' }}
+        </h3>
+        <p class="feature-card-desc">
+          {{ localization.translate('LANDING.FEAT_2_DESC') || 'إرسال رسائل فورية آلية لأولياء الأمور بالحضور، الغياب، والرسوم المستحقة.' }}
+        </p>
+      </div>
+
+      <div class="capability-card">
+        <div class="feature-icon-box">
+          <span class="material-symbols-outlined">cloud_off</span>
+        </div>
+        <h3 class="feature-card-title">
+          {{ localization.translate('LANDING.FEAT_3_TITLE') || 'موثوقية العمل بدون إنترنت' }}
+        </h3>
+        <p class="feature-card-desc">
+          {{ localization.translate('LANDING.FEAT_3_DESC') || 'تسجيل الحضور يستمر حتى عند انقطاع الشبكة، ومزامنة تلقائية فور العودة.' }}
+        </p>
+      </div>
+
+      <div class="capability-card">
+        <div class="feature-icon-box">
+          <span class="material-symbols-outlined">account_balance_wallet</span>
+        </div>
+        <h3 class="feature-card-title">
+          {{ localization.translate('LANDING.FEAT_4_TITLE') || 'دفتر حسابات مالي غير قابل للتلاعب' }}
+        </h3>
+        <p class="feature-card-desc">
+          {{ localization.translate('LANDING.FEAT_4_DESC') || 'نظام محاسبي دقيق لتتبع مستحقات الطلاب والدفعات والاشتراكات.' }}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3-Tier Packages Section -->
+  <section id="packages-sec" class="packages-section">
+    <div class="section-header">
+      <h2 class="section-title">باقة تناسب طريقة شغلك</h2>
+      <p class="section-subtitle">المميزات والحدود والمدة والسعر تُحدد عند الاتفاق، ويمكن تخصيص كل ميزة لكل حساب.</p>
+    </div>
+
+    <div class="packages-grid">
+      <!-- Basic Package -->
+      <div class="package-card">
+        <div class="pkg-header">
+          <h3 class="pkg-title">الباقة الأساسية</h3>
+          <p class="pkg-subtitle">للمدرس المستقل أو السنتر الناشئ</p>
+          <div class="pkg-price-tag">
+            <span class="pkg-amount ltr-num">199</span>
+            <span class="pkg-currency">ج.م / شهرياً</span>
+          </div>
+        </div>
+
+        <ul class="pkg-feature-list">
+          <li><span class="material-symbols-outlined check-icon">check_circle</span> حتى <span class="ltr-num">100</span> طالب مسجل</li>
+          <li><span class="material-symbols-outlined check-icon">check_circle</span> تسجيل الحضور ببطاقات NFC السريعة</li>
+          <li><span class="material-symbols-outlined check-icon">check_circle</span> ملف الطالب الموحد وكود باركود</li>
+          <li><span class="material-symbols-outlined check-icon">check_circle</span> إيصالات قبض ورقية ورقمية</li>
+        </ul>
+
+        <button
+          type="button"
+          class="btn-select-pkg"
+          (click)="openSubscribeModal('Basic')"
+        >
+          طلب تفاصيل الباقة
+        </button>
+      </div>
+
+      <!-- Pro Package (Featured) -->
+      <div class="package-card featured">
+        <span class="featured-ribbon">الأكثر طلباً</span>
+        <div class="pkg-header">
+          <h3 class="pkg-title">باقة المحترفين</h3>
+          <p class="pkg-subtitle">للمدرسين ذوي المجموعات المتعددة</p>
+          <div class="pkg-price-tag">
+            <span class="pkg-amount ltr-num">349</span>
+            <span class="pkg-currency">ج.م / شهرياً</span>
+          </div>
+        </div>
+
+        <ul class="pkg-feature-list">
+          <li><span class="material-symbols-outlined check-icon">check_circle</span> حتى <span class="ltr-num">300</span> طالب مسجل</li>
+          <li><span class="material-symbols-outlined check-icon">check_circle</span> جميع ميزات الباقة الأساسية</li>
+          <li><span class="material-symbols-outlined check-icon">check_circle</span> إشعارات واتساب فورية لأولياء الأمور</li>
+          <li><span class="material-symbols-outlined check-icon">check_circle</span> بنك الامتحانات والواجبات الذكية</li>
+          <li><span class="material-symbols-outlined check-icon">check_circle</span> دعم فني متقدم على مدار الأسبوع</li>
+        </ul>
+
+        <button
+          type="button"
+          class="btn-select-pkg featured-btn"
+          (click)="openSubscribeModal('Pro')"
+        >
+          طلب تفاصيل الباقة
+        </button>
+      </div>
+
+      <!-- Center Package -->
+      <div class="package-card">
+        <div class="pkg-header">
+          <h3 class="pkg-title">باقة السنتر المتكامل</h3>
+          <p class="pkg-subtitle">للسناتر الكبيرة والمراكز التعليمية</p>
+          <div class="pkg-price-tag">
+            <span class="pkg-amount ltr-num">599</span>
+            <span class="pkg-currency">ج.م / شهرياً</span>
+          </div>
+        </div>
+
+        <ul class="pkg-feature-list">
+          <li><span class="material-symbols-outlined check-icon">check_circle</span> عدد طلاب غير محدود (<span class="ltr-num">+1000</span>)</li>
+          <li><span class="material-symbols-outlined check-icon">check_circle</span> صلاحيات الفريق (مدير، مساعد، محاسب)</li>
+          <li><span class="material-symbols-outlined check-icon">check_circle</span> إدارة فروع وقاعات متعددة</li>
+          <li><span class="material-symbols-outlined check-icon">check_circle</span> تقارير محاسبية تفصيلية وتصدير Excel</li>
+          <li><span class="material-symbols-outlined check-icon">check_circle</span> أولوية قصوى ودعم فني مباشر</li>
+        </ul>
+
+        <button
+          type="button"
+          class="btn-select-pkg"
+          (click)="openSubscribeModal('Center')"
+        >
+          طلب تفاصيل الباقة
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section id="faq-sec" class="faq-section">
+    <div class="section-header">
+      <h2 class="section-title">أسئلة قبل البداية</h2>
+    </div>
+
+    <div class="faq-container">
+      @for (faq of faqItems; track $index) {
+        <div class="faq-item" [class.open]="faq.isOpen">
+          <button type="button" class="faq-question-btn" (click)="toggleFaq($index)">
+            <span class="faq-q-text">{{ faq.questionKey }}</span>
+            <span class="material-symbols-outlined faq-arrow-icon">
+              {{ faq.isOpen ? 'expand_less' : 'expand_more' }}
+            </span>
+          </button>
+          @if (faq.isOpen) {
+            <div class="faq-answer-content">
+              <p>{{ faq.answerKey }}</p>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- Contact & CTA Footer -->
+  <footer class="public-footer">
+    <div class="footer-cta-bar">
+      <div class="footer-headline-group">
+        <h2 class="footer-cta-title">خلّي إدارة سنترك أوضح.</h2>
+        <p class="footer-cta-subtitle">احكِ لنا عن مجموعاتك وطريقة حضورك؛ نساعدك تختار الإعداد والباقة المناسبة.</p>
+      </div>
+
+      <div class="footer-action-group">
+        <div class="hotlines-box">
+          <span class="hotline-label">هواتف الدعم والاستفسار:</span>
+          <div class="hotline-numbers">
+            <a href="tel:01272785618" class="hotline-link ltr-num">01272785618</a>
+            <span class="hotline-sep">—</span>
+            <a href="tel:01019482687" class="hotline-link ltr-num">01019482687</a>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="btn-footer-subscribe"
+          (click)="openSubscribeModal('Pro')"
+        >
+          تواصل معنا لطلب الاشتراك
+        </button>
+      </div>
+    </div>
+
+    <div class="footer-bottom-bar">
+      <div class="copyright-text">
+        {{ localization.translate('SHELL.APP_NAME') || 'تحضيرة' }} — {{ localization.translate('SHELL.APP_TAGLINE') || 'حضورك الذكي' }} • منصة للمدرسين والمراكز التعليمية
+      </div>
+      <div class="footer-links">
+        <a href="#features-sec" class="footer-link">المميزات</a>
+        <a href="#packages-sec" class="footer-link">الباقات</a>
+        <a routerLink="/login" class="footer-link">تسجيل الدخول</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Subscription Inquiry Modal -->
+  <app-subscription-inquiry-modal
+    [isOpen]="isModalOpen"
+    [initialPackage]="selectedPackage"
+    (closed)="closeSubscribeModal()"
+  ></app-subscription-inquiry-modal>
+</div>
