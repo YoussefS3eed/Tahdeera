@@ -1,0 +1,185 @@
+<div class="modal-backdrop" (click)="close()">
+  <div class="modal-card" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-header">
+      <div class="header-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="8.5" cy="7.5" r="4"></circle>
+          <line x1="20" y1="8" x2="20" y2="14"></line>
+          <line x1="23" y1="11" x2="17" y2="11"></line>
+        </svg>
+      </div>
+      <div>
+        <h3 id="modal-title" class="modal-title">إضافة طالب جديد للمركز</h3>
+        <p class="modal-subtitle">تسجيل بيانات الهوية الأكاديمية وولي الأمر وربط الكارت الذكي</p>
+      </div>
+      <button type="button" class="btn-close" (click)="close()" aria-label="إغلاق">✕</button>
+    </div>
+
+    <!-- Stepper Indicator -->
+    <div class="stepper-indicator">
+      <div class="step-badge" [class.active]="currentStep() === 1" [class.completed]="currentStep() > 1">
+        <span class="step-num ltr-num font-mono">1</span>
+        <span class="step-title">الهوية الأكاديمية</span>
+      </div>
+      <div class="step-line" [class.active]="currentStep() > 1"></div>
+      <div class="step-badge" [class.active]="currentStep() === 2" [class.completed]="currentStep() > 2">
+        <span class="step-num ltr-num font-mono">2</span>
+        <span class="step-title">ولي الأمر والواتساب</span>
+      </div>
+      <div class="step-line" [class.active]="currentStep() > 2"></div>
+      <div class="step-badge" [class.active]="currentStep() === 3">
+        <span class="step-num ltr-num font-mono">3</span>
+        <span class="step-title">المجموعة وكارت NFC</span>
+      </div>
+    </div>
+
+    @if (validationError) {
+      <div class="alert-error" role="alert">
+        {{ validationError }}
+      </div>
+    }
+
+    <!-- Modal Form Body -->
+    <div class="modal-body">
+      <!-- Step 1: Academic Identity -->
+      @if (currentStep() === 1) {
+        <div class="step-content">
+          <div class="form-group">
+            <label class="form-label" for="full-name">
+              الاسم الكامل للطالب: <span class="required">*</span>
+            </label>
+            <input
+              id="full-name"
+              type="text"
+              class="form-input"
+              placeholder="مثال: يوسف محمود أحمد"
+              [(ngModel)]="fullName" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="student-grade">
+              المرحلة والصف الدراسي: <span class="required">*</span>
+            </label>
+            <select id="student-grade" class="form-select" [(ngModel)]="grade">
+              <option value="Grade1Secondary">الصف الأول الثانوي</option>
+              <option value="Grade2Secondary">الصف الثاني الثانوي</option>
+              <option value="Grade3Secondary">الصف الثالث الثانوي</option>
+              <option value="Grade1Prep">الصف الأول الإعدادي</option>
+              <option value="Grade2Prep">الصف الثاني الإعدادي</option>
+              <option value="Grade3Prep">الصف الثالث الإعدادي</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="student-code">
+              كود الطالب الموحد (System Code): <span class="required">*</span>
+            </label>
+            <input
+              id="student-code"
+              type="text"
+              class="form-input ltr-num font-mono"
+              [(ngModel)]="studentCode" />
+            <span class="input-hint">يتم إنشاؤه تلقائياً بصيغة ST-XXXX ويمكن تخصيصه</span>
+          </div>
+        </div>
+      }
+
+      <!-- Step 2: Guardian & WhatsApp -->
+      @if (currentStep() === 2) {
+        <div class="step-content">
+          <div class="form-group">
+            <label class="form-label" for="guardian-name">
+              اسم ولي الأمر الكامل: <span class="required">*</span>
+            </label>
+            <input
+              id="guardian-name"
+              type="text"
+              class="form-input"
+              placeholder="مثال: محمود أحمد حسن"
+              [(ngModel)]="guardianName" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="guardian-phone">
+              رقم هاتف ولي الأمر (مصري): <span class="required">*</span>
+            </label>
+            <input
+              id="guardian-phone"
+              type="tel"
+              class="form-input ltr-num font-mono"
+              placeholder="01019482687"
+              [(ngModel)]="guardianPhone" />
+            <span class="input-hint">يجب أن يبدأ بـ 010 أو 011 أو 012 أو 015 ويتكون من 11 رقماً</span>
+          </div>
+
+          <div class="form-check-group">
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="whatsappOptIn" />
+              <span>تفعيل استقبال تقارير الحضور التلقائية عبر واتساب</span>
+            </label>
+          </div>
+        </div>
+      }
+
+      <!-- Step 3: Groups & NFC Card -->
+      @if (currentStep() === 3) {
+        <div class="step-content">
+          <div class="form-group">
+            <label class="form-label" for="group-select">
+              المجموعة الدراسية الأساسية (مطابقة للمرحلة CONF-05):
+            </label>
+            <select id="group-select" class="form-select" [(ngModel)]="selectedGroupId">
+              <option value="">بدون مجموعة حالياً</option>
+              @for (grp of gradeGroups(); track grp.id) {
+                <option [value]="grp.id">
+                  {{ grp.name }} ({{ grp.currentEnrollmentCount || grp.enrolledCount || 0 }} / {{ grp.maxCapacity }} طالب)
+                </option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="card-uid">
+              معرف كارت NFC الذكي (مرر الكارت على القارئ):
+            </label>
+            <div class="nfc-input-wrapper">
+              <input
+                id="card-uid"
+                type="text"
+                class="form-input ltr-num font-mono"
+                placeholder="مرر الكارت الآن أو أدخل الـ UID..."
+                [(ngModel)]="initialNfcCardUid" />
+              <span class="nfc-pulse-indicator" title="بانتظار مسح الكارت">📡</span>
+            </div>
+            <span class="input-hint">يمكن ربط الكارت لاحقاً من شاشة إدارة الكروت</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="monthly-fee">
+              الاشتراك الشهري المقترح (جنيه مصري):
+            </label>
+            <input
+              id="monthly-fee"
+              type="number"
+              class="form-input ltr-num font-mono"
+              [(ngModel)]="defaultMonthlyFee" />
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Modal Footer Controls -->
+    <div class="modal-footer">
+      @if (currentStep() > 1) {
+        <button type="button" class="btn btn-secondary" (click)="prevStep()">السابق</button>
+      }
+      <button type="button" class="btn btn-secondary" (click)="close()">إلغاء</button>
+      @if (currentStep() < 3) {
+        <button type="button" class="btn btn-primary" (click)="nextStep()">التالي</button>
+      } @else {
+        <button type="button" class="btn btn-primary" (click)="submit()">إتمام التسجيل وإضافة الطالب</button>
+      }
+    </div>
+  </div>
+</div>

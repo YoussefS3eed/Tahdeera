@@ -1,0 +1,218 @@
+<div class="students-page">
+  <!-- Top Header with Actions -->
+  <div class="page-header">
+    <div class="header-titles">
+      <h1 class="page-title">دليل الطلاب الأكاديمي (SCR-07)</h1>
+      <p class="page-description">إدارة بيانات الطلاب، تسجيل طالب جديد بالمركز، وربط الطلاب المسجلين مسبقاً</p>
+    </div>
+
+    <div class="header-actions">
+      <button type="button" class="btn btn-outline" (click)="showLinkModal.set(true)">
+        <span class="icon">🔗</span>
+        <span>ربط طالب موجود (DEC-02)</span>
+      </button>
+
+      <button type="button" class="btn btn-primary" (click)="showAddModal.set(true)">
+        <span class="icon">➕</span>
+        <span>إضافة طالب جديد</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Search & Filters Toolbar -->
+  <div class="toolbar-card">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="بحث بالاسم، كود الطالب (ST-XXXX)، أو هاتف ولي الأمر..."
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event)" />
+      @if (searchQuery()) {
+        <button type="button" class="btn-clear-search" (click)="searchQuery.set('')">✕</button>
+      }
+    </div>
+
+    <div class="filters-row">
+      <select
+        class="form-select"
+        [ngModel]="selectedGrade()"
+        (ngModelChange)="selectedGrade.set($event)">
+        <option value="all">جميع المراحل الدراسية</option>
+        <option value="Grade1Secondary">الصف الأول الثانوي</option>
+        <option value="Grade2Secondary">الصف الثاني الثانوي</option>
+        <option value="Grade3Secondary">الصف الثالث الثانوي</option>
+        <option value="Grade1Prep">الصف الأول الإعدادي</option>
+        <option value="Grade2Prep">الصف الثاني الإعدادي</option>
+        <option value="Grade3Prep">الصف الثالث الإعدادي</option>
+      </select>
+
+      <select
+        class="form-select"
+        [ngModel]="selectedGroupId()"
+        (ngModelChange)="selectedGroupId.set($event)">
+        <option value="all">جميع المجموعات</option>
+        @for (grp of groups(); track grp.id) {
+          <option [value]="grp.id">{{ grp.name }}</option>
+        }
+      </select>
+
+      <select
+        class="form-select"
+        [ngModel]="selectedStatus()"
+        (ngModelChange)="selectedStatus.set($event)">
+        <option value="all">جميع الحالات</option>
+        <option value="Active">نشط</option>
+        <option value="Withdrawn">منسحب</option>
+        <option value="Suspended">موقوف</option>
+      </select>
+
+      <div class="view-toggle">
+        <button
+          type="button"
+          class="btn-toggle"
+          [class.active]="viewMode() === 'grid'"
+          (click)="setViewMode('grid')"
+          title="عرض كروت">
+          ⊞ كروت
+        </button>
+        <button
+          type="button"
+          class="btn-toggle"
+          [class.active]="viewMode() === 'table'"
+          (click)="setViewMode('table')"
+          title="عرض جدول">
+          ☰ جدول
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="loading-state">
+      <p>جاري تحميل قائمة الطلاب...</p>
+    </div>
+  } @else if (filteredStudents().length === 0) {
+    <div class="empty-state">
+      <span class="empty-icon">👥</span>
+      <h3>لا توجد نتائج مطابقة لبحثك</h3>
+      <p>جرب تغيير كلمات البحث أو إعادة ضبط الفلاتر المحددة</p>
+    </div>
+  } @else {
+    <!-- Grid View Mode -->
+    @if (viewMode() === 'grid') {
+      <div class="students-grid">
+        @for (std of filteredStudents(); track std.id) {
+          <div class="student-card" (click)="navigateToProfile(std.id)">
+            <div class="card-top">
+              <div class="avatar-circle">
+                {{ std.fullName.charAt(0) }}
+              </div>
+              <div class="student-meta">
+                <h3 class="student-name">{{ std.fullName }}</h3>
+                <span class="student-code font-mono ltr-num">{{ std.studentCode }}</span>
+              </div>
+              <span class="status-badge status-{{ std.status | lowercase }}">
+                @switch (std.status) {
+                  @case ('Active') { نشط }
+                  @case ('Withdrawn') { منسحب }
+                  @case ('Suspended') { موقوف }
+                  @default { {{ std.status }} }
+                }
+              </span>
+            </div>
+
+            <div class="card-details">
+              <div class="detail-row">
+                <span class="label">المرحلة:</span>
+                <span class="value">{{ std.grade }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">ولي الأمر:</span>
+                <span class="value">{{ std.guardianName }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">الهاتف:</span>
+                <span class="value font-mono ltr-num">{{ std.guardianPhone }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">كارت NFC:</span>
+                <span class="value font-mono ltr-num">
+                  {{ std.activeNfcCardUid || 'غير مربوط' }}
+                </span>
+              </div>
+            </div>
+
+            <div class="card-footer">
+              <div class="rate-box">
+                <span class="rate-label">نسبة الحضور:</span>
+                <span class="rate-val font-mono ltr-num font-bold">{{ std.attendanceRate }}%</span>
+              </div>
+              <span class="view-link">عرض الملف 360° ←</span>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Table View Mode -->
+    @if (viewMode() === 'table') {
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>كود الطالب</th>
+              <th>اسم الطالب</th>
+              <th>المرحلة الدراسية</th>
+              <th>هاتف ولي الأمر</th>
+              <th>معرف كارت NFC</th>
+              <th>نسبة الحضور</th>
+              <th>الحالة</th>
+              <th class="actions-header">الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (std of filteredStudents(); track std.id) {
+              <tr (click)="navigateToProfile(std.id)">
+                <td class="font-mono ltr-num font-semibold">{{ std.studentCode }}</td>
+                <td class="font-semibold">{{ std.fullName }}</td>
+                <td>{{ std.grade }}</td>
+                <td class="font-mono ltr-num">{{ std.guardianPhone }}</td>
+                <td class="font-mono ltr-num">{{ std.activeNfcCardUid || '-' }}</td>
+                <td class="font-mono ltr-num font-semibold">{{ std.attendanceRate }}%</td>
+                <td>
+                  <span class="status-badge status-{{ std.status | lowercase }}">
+                    {{ std.status === 'Active' ? 'نشط' : (std.status === 'Withdrawn' ? 'منسحب' : 'موقوف') }}
+                  </span>
+                </td>
+                <td class="actions-cell">
+                  <button type="button" class="btn-table-action" (click)="$event.stopPropagation(); navigateToProfile(std.id)">
+                    الملف 360°
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+
+  <!-- Modals -->
+  @if (showAddModal()) {
+    <app-add-student-modal
+      [availableGroups]="groups()"
+      (created)="onStudentCreated($event)"
+      (closed)="showAddModal.set(false)">
+    </app-add-student-modal>
+  }
+
+  @if (showLinkModal()) {
+    <app-link-global-student-modal
+      (linked)="onStudentLinked($event)"
+      (closed)="showLinkModal.set(false)">
+    </app-link-global-student-modal>
+  }
+</div>

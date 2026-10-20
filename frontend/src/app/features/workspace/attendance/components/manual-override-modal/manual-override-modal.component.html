@@ -1,0 +1,64 @@
+<div class="modal-backdrop" (click)="close()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title">تعديل حالة الحضور يدويًا 🔒</h3>
+      <button type="button" class="close-btn" (click)="close()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="student-strip">
+        <span class="student-name">{{ record().studentName }}</span>
+        <span class="student-code ltr-num font-mono">{{ record().studentCode }}</span>
+      </div>
+
+      <div class="lock-notice">
+        ℹ️ تعديل هذا السجل يدويًا سيقوم بتثبيته وقفله (🔒)، ولن يتأثر بإعادة التقييم التلقائي.
+      </div>
+
+      <div class="status-options">
+        <label class="status-option option-present" [class.selected]="selectedStatus === 'Present'">
+          <input type="radio" name="status" value="Present" [(ngModel)]="selectedStatus" />
+          <span>حاضر (Present)</span>
+        </label>
+
+        <label class="status-option option-late" [class.selected]="selectedStatus === 'Late'">
+          <input type="radio" name="status" value="Late" [(ngModel)]="selectedStatus" />
+          <span>متأخر (Late)</span>
+        </label>
+
+        <label class="status-option option-excused" [class.selected]="selectedStatus === 'Excused'">
+          <input type="radio" name="status" value="Excused" [(ngModel)]="selectedStatus" />
+          <span>معذور (Excused)</span>
+        </label>
+
+        <label class="status-option option-absent" [class.selected]="selectedStatus === 'Absent'">
+          <input type="radio" name="status" value="Absent" [(ngModel)]="selectedStatus" />
+          <span>غائب (Absent)</span>
+        </label>
+      </div>
+
+      <div class="form-group">
+        <label for="overrideReason" class="form-label">سبب التعديل اليدوي (إجباري):</label>
+        <textarea
+          id="overrideReason"
+          [(ngModel)]="overrideReason"
+          rows="3"
+          class="form-control"
+          placeholder="اكتب سبب التعديل بالتفصيل (5 أحرف على الأقل)..."
+        ></textarea>
+        @if (validationError) {
+          <div class="validation-error">{{ validationError }}</div>
+        }
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn-save" (click)="save()">
+        حفظ وتثبيت التعديل 🔒
+      </button>
+      <button type="button" class="btn-cancel" (click)="close()">
+        إلغاء
+      </button>
+    </div>
+  </div>
+</div>

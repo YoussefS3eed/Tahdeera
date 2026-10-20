@@ -410,6 +410,57 @@ export class OfflineStorageService {
   }
 
   /**
+   * Enqueues an offline attendance scan into sync_queue (Milestone F3)
+   */
+  async enqueueOfflineScan(row: any): Promise<number> {
+    await this.ensureInitialized();
+    if (!this.isStorageAvailable()) return -1;
+    const op = {
+      ...row,
+      operationId: row.operationId || this.generateUuid(),
+      deviceGuid: row.deviceGuid || (await this.getDeviceGuid()),
+      scannedAtUtc: row.scannedAtUtc || new Date().toISOString(),
+      syncStatus: row.syncStatus || 'Pending',
+      status: row.status || SyncOperationStatus.PendingSync
+    };
+    const localId = await this.db.sync_queue.add(op);
+    await this.refreshPendingCount(row.workspaceId);
+    return localId;
+  }
+
+  /**
+   * Retrieves cached attendance roster for a session
+   */
+  async getCachedRoster(sessionId: string): Promise<any[]> {
+    await this.ensureInitialized();
+    if (!this.isStorageAvailable()) return [];
+    return this.db.cached_attendance.where('sessionId').equals(sessionId).toArray();
+  }
+
+  /**
+   * Retrieves all items from sync_queue
+   */
+  async getSyncQueue(): Promise<any[]> {
+    await this.ensureInitialized();
+    if (!this.isStorageAvailable()) return [];
+    return this.db.sync_queue.toArray();
+  }
+
+  /**
+   * Updates sync status and conflict reason for a sync_queue row
+   */
+  async updateSyncStatus(localId: number, syncStatus: 'Synced' | 'Conflict' | 'Failed', conflictReason?: string): Promise<void> {
+    await this.ensureInitialized();
+    if (!this.isStorageAvailable()) return;
+    await this.db.sync_queue.update(localId, {
+      syncStatus,
+      conflictReason: conflictReason || null,
+      status: syncStatus === 'Synced' ? SyncOperationStatus.Synced : (syncStatus === 'Conflict' ? SyncOperationStatus.Conflict : SyncOperationStatus.Failed)
+    });
+    await this.internalRefreshPendingCount();
+  }
+
+  /**
    * Safe UUID generator with fallback for non-secure HTTP contexts.
    */
   private generateUuid(): string {

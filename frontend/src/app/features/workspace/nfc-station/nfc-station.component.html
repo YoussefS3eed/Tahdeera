@@ -1,0 +1,149 @@
+<div class="nfc-station-page">
+  <!-- Top Station Control Bar -->
+  <div class="station-header">
+    <div class="header-titles">
+      <h1 class="page-title">محطة الحضور المباشر (NFC Station)</h1>
+      <p class="page-subtitle">تسجيل فوري لحضور الطلاب ببطاقات NFC والباركود مع التغذية الصوتية المباشرة</p>
+    </div>
+
+    <div class="header-controls">
+      <!-- Audio Mute Toggle -->
+      <button
+        type="button"
+        class="ctrl-btn audio-btn"
+        [class.muted]="audio.isMuted()"
+        (click)="toggleAudio()"
+        [title]="audio.isMuted() ? 'تفعيل الصوت' : 'كتم الصوت'"
+      >
+        <span>{{ audio.isMuted() ? '🔇' : '🔊' }}</span>
+        <span>{{ audio.isMuted() ? 'الصوت مكتوم' : 'الصوت مفعل' }}</span>
+      </button>
+
+      <!-- Offline Sync Badge -->
+      <div class="sync-badge">
+        <span class="sync-dot" [class.has-pending]="offlineStorage.pendingSyncCount() > 0"></span>
+        <span class="sync-label">
+          @if (offlineStorage.pendingSyncCount() > 0) {
+            بانتظار المزامنة: <strong class="ltr-num font-mono">{{ offlineStorage.pendingSyncCount() }}</strong>
+          } @else {
+            متصل • متزامن بالكامل
+          }
+        </span>
+        <button
+          type="button"
+          class="sync-btn"
+          [disabled]="isSyncing()"
+          (click)="syncNow()"
+        >
+          {{ isSyncing() ? 'جارٍ...' : 'مزامنة الآن' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Session Selector Banner -->
+  <div class="session-selector-card">
+    <div class="selector-row">
+      <div class="session-label">
+        <span class="status-pulse-dot"></span>
+        <span>الحصة الجارية حالياً:</span>
+      </div>
+
+      <select
+        class="session-dropdown"
+        [ngModel]="selectedSessionId()"
+        (ngModelChange)="selectedSessionId.set($event)"
+      >
+        @for (ses of sessions(); track ses.id) {
+          <option [value]="ses.id">
+            {{ ses.groupName }} — {{ ses.subject }} ({{ ses.startsAt | date:'shortTime' }} - {{ ses.endsAt | date:'shortTime' }})
+          </option>
+        }
+      </select>
+    </div>
+
+    @if (getSelectedSession(); as activeSes) {
+      <div class="session-summary-pills">
+        <span class="pill pill-room">📍 {{ activeSes.roomName || 'القاعة الرئيسية' }}</span>
+        <span class="pill pill-grace">⏱️ سماح التأخير: {{ activeSes.lateGraceMinutes }} دقيقة</span>
+        <span class="pill pill-present">حضور: {{ activeSes.presentCount }}</span>
+        <span class="pill pill-late">تأخير: {{ activeSes.lateCount }}</span>
+        <span class="pill pill-waiting">انتظار: {{ activeSes.waitingCount }}</span>
+      </div>
+    }
+  </div>
+
+  <!-- Main Scanning Center Area -->
+  <div class="scanning-grid">
+    <!-- Active Scanning Input Methods -->
+    <div class="scanner-card">
+      <div class="scanner-status-indicator">
+        <div class="radar-scan-icon">📡</div>
+        <h2 class="scanner-headline">قارئ الـ NFC في وضع الاستماع المباشر</h2>
+        <p class="scanner-instructions">
+          مرر بطاقة الطالب على قارئ USB المكتبي في أي وقت، وسيتم تسجيل الحضور تلقائياً.
+        </p>
+      </div>
+
+      <div class="alternative-inputs">
+        <div class="manual-input-box">
+          <input
+            type="text"
+            class="manual-search-input"
+            placeholder="بحث يدوي بكود الطالب (مثال: ST-1042) أو رقم ولي الأمر..."
+            [ngModel]="manualSearchQuery()"
+            (ngModelChange)="manualSearchQuery.set($event)"
+            (keyup.enter)="onManualSearchSubmit()"
+          />
+          <button type="button" class="btn-search-checkin" (click)="onManualSearchSubmit()">
+            تسجيل
+          </button>
+        </div>
+
+        <div class="action-buttons-row">
+          <button type="button" class="aux-btn qr-btn" (click)="openQrScanner()">
+            📷 مسح كود QR بالكاميرا
+          </button>
+
+          @if (webNfc.isSupported()) {
+            <button
+              type="button"
+              class="aux-btn web-nfc-btn"
+              [class.active]="webNfc.isScanning()"
+              (click)="toggleWebNfc()"
+            >
+              📱 {{ webNfc.isScanning() ? 'إيقاف قارئ NFC الموبايل' : 'تفعيل قارئ NFC الموبايل' }}
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Last Scan Live Feedback Card -->
+    <div class="feedback-container">
+      <h3 class="section-title">آخر حركة حضور مسجلة</h3>
+      <app-last-scan-card [scan]="lastScanResult()"></app-last-scan-card>
+    </div>
+  </div>
+
+  <!-- QR Viewfinder Modal -->
+  @if (isQrScannerOpen()) {
+    <app-qr-scanner
+      (qrDecoded)="onQrDecoded($event)"
+      (closed)="closeQrScanner()"
+    ></app-qr-scanner>
+  }
+
+  <!-- Cross-Group Warning Drawer -->
+  @if (isCrossGroupDrawerOpen()) {
+    <app-cross-group-drawer
+      [studentName]="crossGroupScan()?.student?.fullName || ''"
+      [studentCode]="crossGroupScan()?.student?.studentCode || ''"
+      [studentId]="crossGroupScan()?.student?.id || ''"
+      [originalGroupName]="crossGroupScan()?.originalGroupName || 'مجموعة أخرى'"
+      [targetSessionTitle]="getSelectedSession()?.groupName || 'الحصة الجارية'"
+      (confirmed)="onConfirmCrossGroup($event)"
+      (cancelled)="onCancelCrossGroup()"
+    ></app-cross-group-drawer>
+  }
+</div>

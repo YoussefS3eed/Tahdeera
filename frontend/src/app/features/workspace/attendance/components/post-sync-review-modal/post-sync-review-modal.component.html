@@ -1,0 +1,86 @@
+<div class="modal-backdrop" (click)="close()">
+  <div class="modal-card" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-header">
+      <div class="header-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+          <line x1="12" y1="9" x2="12" y2="13"></line>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+      </div>
+      <div>
+        <h3 id="modal-title" class="modal-title">مراجعة تعارضات المزامنة دون اتصال (DEC-04)</h3>
+        <p class="modal-subtitle">سجلات حضور تم تسجيلها لجلسات أُلغيت أونلاين أثناء انقطاع الاتصال</p>
+      </div>
+      <button type="button" class="btn-close" (click)="close()" aria-label="إغلاق">✕</button>
+    </div>
+
+    <div class="modal-body">
+      @if (conflicts().length === 0) {
+        <div class="empty-state">
+          <p>لا توجد تعارضات معلقة تتطلب المراجعة. جميع السجلات متزامنة بنجاح! ✅</p>
+        </div>
+      } @else {
+        <div class="conflicts-list">
+          @for (item of conflicts(); track item.operationId) {
+            <div class="conflict-item">
+              <div class="item-header">
+                <div class="student-meta">
+                  <span class="student-name font-semibold">{{ item.studentName || 'طالب غير محدد' }}</span>
+                  <span class="student-code font-mono ltr-num">{{ item.studentCode || item.studentId }}</span>
+                </div>
+                <div class="scan-time">
+                  <span class="time-label">وقت المسح دون اتصال:</span>
+                  <span class="font-mono ltr-num">{{ item.scannedAtUtc | date:'shortTime' }}</span>
+                </div>
+              </div>
+
+              <div class="conflict-detail">
+                <span class="badge badge-conflict">تعارض: جلسة ملغاة أونلاين</span>
+                <p class="reason-note">سبب الإلغاء بالسيرفر: {{ item.conflictReason || 'تم إلغاء الجلسة من قبل الإدارة' }}</p>
+              </div>
+
+              <div class="item-actions">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-success"
+                  (click)="approveExceptional(item)">
+                  اعتمد كحضور استثنائي
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-danger"
+                  (click)="toggleVoid(item.operationId)">
+                  {{ showVoidInput[item.operationId] ? 'تراجع' : 'إلغاء السجل' }}
+                </button>
+              </div>
+
+              @if (showVoidInput[item.operationId]) {
+                <div class="void-form">
+                  <input
+                    type="text"
+                    class="form-input"
+                    placeholder="سبب إلغاء السجل (5 أحرف على الأقل)..."
+                    [(ngModel)]="voidReason[item.operationId]" />
+                  @if (voidError[item.operationId]) {
+                    <p class="error-text">{{ voidError[item.operationId] }}</p>
+                  }
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-danger mt-1"
+                    (click)="confirmVoid(item)">
+                    تأكيد الإلغاء نهائياً
+                  </button>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="close()">إغلاق</button>
+    </div>
+  </div>
+</div>

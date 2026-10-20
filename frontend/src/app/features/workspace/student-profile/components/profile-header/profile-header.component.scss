@@ -1,0 +1,147 @@
+.profile-header-card {
+  background-color: var(--surface, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--radius-xl, 1rem);
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+.header-main {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+
+  .avatar-box {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4f46e5, #9333ea);
+    color: #ffffff;
+    font-size: 1.75rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .meta-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .name-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+
+      .student-name {
+        font-size: 1.375rem;
+        font-weight: 700;
+        margin: 0;
+        color: var(--text-primary, #0f172a);
+      }
+
+      .grade-badge {
+        background-color: #f1f5f9;
+        color: #475569;
+        padding-block: 0.125rem;
+        padding-inline: 0.5rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+
+      .status-badge {
+        padding-block: 0.125rem;
+        padding-inline: 0.5rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 700;
+
+        &.status-active {
+          background-color: #ecfdf5;
+          color: #059669;
+        }
+        &.status-withdrawn {
+          background-color: #fef2f2;
+          color: #dc2626;
+        }
+        &.status-suspended {
+          background-color: #fffbeb;
+          color: #d97706;
+        }
+      }
+    }
+
+    .tags-row {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+      font-size: 0.8125rem;
+
+      .meta-tag {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+
+        .tag-label {
+          color: var(--text-secondary, #64748b);
+        }
+
+        .badge-linked {
+          color: #4f46e5;
+          font-weight: 600;
+        }
+      }
+
+      .health-pill {
+        padding-block: 0.125rem;
+        padding-inline: 0.375rem;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+
+        &.health-opted-in {
+          background-color: #ecfdf5;
+          color: #059669;
+        }
+        &.health-opted-out {
+          background-color: #f1f5f9;
+          color: #94a3b8;
+        }
+      }
+    }
+  }
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  .btn {
+    padding-block: 0.5rem;
+    padding-inline: 1rem;
+    border-radius: var(--radius-md, 0.5rem);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--border-color, #cbd5e1);
+    background-color: var(--surface, #ffffff);
+    color: var(--text-primary, #0f172a);
+    transition: all 0.15s ease-in-out;
+
+    &:hover {
+      background-color: #f8fafc;
+      border-color: #94a3b8;
+    }
+  }
+}

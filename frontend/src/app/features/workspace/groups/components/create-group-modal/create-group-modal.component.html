@@ -1,0 +1,91 @@
+<div class="modal-backdrop" (click)="close()">
+  <div class="modal-card" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-header">
+      <div class="header-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+      </div>
+      <div>
+        <h3 id="modal-title" class="modal-title">إنشاء مجموعة دراسية جديدة (SCR-10)</h3>
+        <p class="modal-subtitle">تحديد المرحلة، المعلم المسؤول، والسعة الاستيعابية</p>
+      </div>
+      <button type="button" class="btn-close" (click)="close()" aria-label="إغلاق">✕</button>
+    </div>
+
+    @if (validationError()) {
+      <div class="alert-error" role="alert">
+        {{ validationError() }}
+      </div>
+    }
+
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label" for="group-name">
+          اسم المجموعة: <span class="required">*</span>
+        </label>
+        <input
+          id="group-name"
+          type="text"
+          class="form-input"
+          placeholder="مثال: فيزياء 1ث - مجموعة السبت أ"
+          [(ngModel)]="name" />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group flex-1">
+          <label class="form-label" for="group-grade">
+            المرحلة الدراسية (CONF-05): <span class="required">*</span>
+          </label>
+          <select id="group-grade" class="form-select" [(ngModel)]="grade">
+            <option value="Grade1Secondary">الصف الأول الثانوي</option>
+            <option value="Grade2Secondary">الصف الثاني الثانوي</option>
+            <option value="Grade3Secondary">الصف الثالث الثانوي</option>
+            <option value="Grade1Prep">الصف الأول الإعدادي</option>
+            <option value="Grade2Prep">الصف الثاني الإعدادي</option>
+            <option value="Grade3Prep">الصف الثالث الإعدادي</option>
+          </select>
+        </div>
+
+        <div class="form-group flex-1">
+          <label class="form-label" for="group-subject">المادة العلمية:</label>
+          <input id="group-subject" type="text" class="form-input" [(ngModel)]="subject" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group flex-1">
+          <label class="form-label" for="max-cap">أقصى سعة استيعابية:</label>
+          <input id="max-cap" type="number" class="form-input font-mono ltr-num" [(ngModel)]="maxCapacity" />
+        </div>
+
+        <div class="form-group flex-1">
+          <label class="form-label" for="late-grace">فترة سماح التأخير (دقائق):</label>
+          <input id="late-grace" type="number" class="form-input font-mono ltr-num" [(ngModel)]="lateGraceMinutes" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group flex-1">
+          <label class="form-label" for="monthly-fee">الاشتراك الشهري الافتراضي (ج.م):</label>
+          <input id="monthly-fee" type="number" class="form-input font-mono ltr-num" [(ngModel)]="defaultMonthlyFee" />
+        </div>
+
+        <div class="form-group flex-1">
+          <label class="form-label" for="teacher-name">المدرس المسؤول:</label>
+          <input id="teacher-name" type="text" class="form-input" [(ngModel)]="teacherInChargeName" />
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="close()">إلغاء</button>
+      <button type="button" class="btn btn-primary" [disabled]="!isValid" (click)="submit()">
+        إنشاء المجموعة الدراسية
+      </button>
+    </div>
+  </div>
+</div>

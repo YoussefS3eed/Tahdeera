@@ -1,5 +1,7 @@
 import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { AuthStore } from '../../../core/stores/auth.store';
 import { RouterModule } from '@angular/router';
 import { LocalizationService } from '../../../core/services/localization.service';
 import { NavigationItem } from '../../../core/models/public.models';
@@ -243,6 +245,11 @@ import { NavigationItem } from '../../../core/models/public.models';
     }
 
     .btn-exit-portal {
+      background: transparent;
+      border: none;
+      font-family: inherit;
+      width: 100%;
+      text-align: start;
       display: flex;
       align-items: center;
       gap: 0.5rem;
@@ -266,6 +273,17 @@ import { NavigationItem } from '../../../core/models/public.models';
 })
 export class SidebarComponent {
   readonly localization = inject(LocalizationService);
+  private readonly authStore = inject(AuthStore, { optional: true });
+  private readonly router = inject(Router, { optional: true });
+
+  logout(): void {
+    if (this.authStore) {
+      this.authStore.logout();
+    }
+    if (this.router) {
+      this.router.navigate(['/login']);
+    }
+  }
 
   @Output() tabSelected = new EventEmitter<string>();
 

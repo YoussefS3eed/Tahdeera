@@ -19,6 +19,7 @@ import { AttendanceStatus, SyncOperationStatus } from '../enums/domain.enums';
 import { handlePublicInquiry } from '../mock/handlers/public.mock';
 import { handleAuthMockRequest } from '../mock/handlers/auth.mock';
 import { handleDashboardMockRequest } from '../mock/handlers/dashboard.mock';
+import { handleAcademicMockRequest } from '../mocks/academic-mock.interceptor';
 
 // In-Memory Seed Data Fixture
 const MOCK_STUDENTS: Student[] = [
@@ -112,6 +113,12 @@ export const mockApiInterceptor: HttpInterceptorFn = (
   // ==========================================
   // Endpoint Routing
   // ==========================================
+
+  // Milestone F3 Academic Operations (SCR-05 to SCR-11)
+  const academicRes$ = handleAcademicMockRequest(req);
+  if (academicRes$) {
+    return academicRes$;
+  }
 
   // 1. GET /api/v1/students
   if (req.method === 'GET' && url.includes('/api/v1/students')) {
@@ -225,7 +232,7 @@ export const mockApiInterceptor: HttpInterceptorFn = (
     return of(new HttpResponse({ status: 200, body: me })).pipe(delayIf(delayMs));
   }
 
-    // 4. POST /api/v1/public/inquiries
+  // 4. POST /api/v1/public/inquiries
   if (req.method === 'POST' && url.includes('/api/v1/public/inquiries')) {
     return handlePublicInquiry(req).pipe(delayIf(delayMs));
   }

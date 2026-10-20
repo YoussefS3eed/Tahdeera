@@ -1,0 +1,140 @@
+<div class="schedule-page">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-titles">
+      <h1 class="page-title">جدول الجلسات الأسبوعية ودورة الحياة (SCR-11)</h1>
+      <p class="page-description">متابعة مواعيد الجلسات، إعادة الجدولة وإعادة التقييم (DEC-03)، وإلغاء الجلسات وإبطال الحضور (DEC-01)</p>
+    </div>
+
+    <div class="header-actions">
+      <button type="button" class="btn btn-primary" (click)="showScheduleModal.set(true)">
+        <span class="icon">➕</span>
+        <span>جدولة جلسة جديدة</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters Toolbar -->
+  <div class="toolbar-card">
+    <div class="filter-group">
+      <label class="filter-label" for="schedule-group-filter">تصفية حسب المجموعة الدراسية:</label>
+      <select
+        id="schedule-group-filter"
+        class="form-select"
+        [ngModel]="selectedGroupId()"
+        (ngModelChange)="selectedGroupId.set($event)">
+        <option value="all">جميع المجموعات</option>
+        @for (grp of groups(); track grp.id) {
+          <option [value]="grp.id">{{ grp.name }} ({{ grp.grade }})</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  <!-- Sessions Cards Grid / Timetable -->
+  @if (isLoading()) {
+    <div class="loading-state">
+      <p>جاري تحميل الجلسات الأسبوعية...</p>
+    </div>
+  } @else if (filteredSessions().length === 0) {
+    <div class="empty-state">
+      <span class="empty-icon">📅</span>
+      <h3>لا توجد جلسات مجدولة لهذه المجموعة</h3>
+      <p>يمكنك جدولة جلسة جديدة بالضغط على زر الجدولة أعلاه</p>
+    </div>
+  } @else {
+    <div class="sessions-grid">
+      @for (sess of filteredSessions(); track sess.id) {
+        <div class="session-card status-{{ sess.status | lowercase }}">
+          <div class="session-header">
+            <div class="header-meta">
+              <span class="status-badge badge-{{ sess.status | lowercase }}">
+                @switch (sess.status) {
+                  @case ('Scheduled') { مجدولة }
+                  @case ('Running') { جارية الآن 🟢 }
+                  @case ('Completed') { مكتملة }
+                  @case ('Cancelled') { ملغاة (DEC-01) }
+                  @default { {{ sess.status }} }
+                }
+              </span>
+              <span class="grade-tag">{{ sess.grade }}</span>
+            </div>
+
+            <span class="room-pill font-mono">{{ sess.roomName }}</span>
+          </div>
+
+          <div class="session-body">
+            <h3 class="group-title">{{ sess.groupName }}</h3>
+
+            <div class="time-block">
+              <div class="date-row">
+                <span class="icon">🗓️</span>
+                <span class="font-mono ltr-num font-semibold">{{ sess.startsAt | date:'yyyy-MM-dd' }}</span>
+              </div>
+              <div class="hours-row">
+                <span class="icon">⏰</span>
+                <span class="font-mono ltr-num">{{ sess.startsAt | date:'HH:mm' }} - {{ sess.endsAt | date:'HH:mm' }}</span>
+                <span class="grace-hint">(سماح: {{ sess.lateGraceMinutes }} د)</span>
+              </div>
+            </div>
+
+            @if (sess.status === 'Cancelled' && sess.cancellationReason) {
+              <div class="cancelled-banner">
+                <strong>سبب الإلغاء:</strong>
+                <p>{{ sess.cancellationReason }}</p>
+              </div>
+            }
+
+            <div class="attendance-stats">
+              <div class="stat-pill present">حاضر: <span class="font-mono ltr-num font-bold">{{ sess.presentCount }}</span></div>
+              <div class="stat-pill late">متأخر: <span class="font-mono ltr-num font-bold">{{ sess.lateCount }}</span></div>
+              <div class="stat-pill absent">غائب: <span class="font-mono ltr-num font-bold">{{ sess.absentCount }}</span></div>
+            </div>
+          </div>
+
+          <div class="session-footer">
+            @if (sess.status === 'Scheduled' || sess.status === 'Running') {
+              <button type="button" class="btn-action btn-reschedule" (click)="openReschedule(sess)">
+                <span>🔄 إعادة جدولة (DEC-03)</span>
+              </button>
+              <button type="button" class="btn-action btn-cancel" (click)="openCancel(sess)">
+                <span>🚫 إلغاء (DEC-01)</span>
+              </button>
+            } @else if (sess.status === 'Cancelled') {
+              <span class="voided-note">تم إبطال جميع سجلات الحضور للجلسة</span>
+            } @else {
+              <span class="completed-note">تم إنهاء وتثبيت الجلسة</span>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Schedule Session Modal (T039) -->
+  @if (showScheduleModal()) {
+    <app-schedule-session-modal
+      [groups]="groups()"
+      (scheduled)="onSessionScheduled($event)"
+      (closed)="showScheduleModal.set(false)">
+    </app-schedule-session-modal>
+  }
+
+  <!-- Reschedule Modal (T040) -->
+  @if (activeRescheduleSession()) {
+    <app-reschedule-modal
+      [session]="activeRescheduleSession()!"
+      (rescheduled)="onSessionRescheduled($event)"
+      (closed)="activeRescheduleSession.set(null)">
+    </app-reschedule-modal>
+  }
+
+  <!-- Cancel Session Modal (T041) -->
+  @if (activeCancelSession()) {
+    <app-cancel-session-modal
+      [session]="activeCancelSession()!"
+      (cancelled)="onSessionCancelled($event)"
+      (closed)="activeCancelSession.set(null)">
+    </app-cancel-session-modal>
+  }
+</div>

@@ -1,0 +1,67 @@
+<div class="modal-backdrop" (click)="close()">
+  <div class="modal-card" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-header">
+      <div class="header-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="15" y1="9" x2="9" y2="15"></line>
+          <line x1="9" y1="9" x2="15" y2="15"></line>
+        </svg>
+      </div>
+      <div>
+        <h3 id="modal-title" class="modal-title">إلغاء وتفويض كارت NFC (CONF-03)</h3>
+        <p class="modal-subtitle">إلغاء صلاحية الكارت نهائياً وإيقافه عن التحضير</p>
+      </div>
+      <button type="button" class="btn-close" (click)="close()" aria-label="إغلاق">✕</button>
+    </div>
+
+    @if (validationError()) {
+      <div class="alert-error" role="alert">
+        {{ validationError() }}
+      </div>
+    }
+
+    <div class="modal-body">
+      <div class="card-meta-summary">
+        <div class="meta-row">
+          <span class="label">معرف الكارت:</span>
+          <span class="value font-mono ltr-num font-bold">{{ card().cardUid }}</span>
+        </div>
+        <div class="meta-row">
+          <span class="label">الطالب المرتبط:</span>
+          <span class="value">{{ card().assignedStudentName || 'غير مرتبط' }}</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="revocation-reason-select">
+          سبب الإلغاء الإلزامي (CONF-03): <span class="required">*</span>
+        </label>
+        <select id="revocation-reason-select" class="form-select" [(ngModel)]="revocationReason">
+          <option value="Lost">فقدان الكارت من الطالب (Lost)</option>
+          <option value="Damaged">تلف في الشريحة أو الهيكل (Damaged)</option>
+          <option value="Stolen">سرقة الكارت (Stolen)</option>
+          <option value="Replaced">استبدال اختياري بكارت جديد (Replaced)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="custom-notes">ملاحظات إضافية:</label>
+        <textarea
+          id="custom-notes"
+          class="form-textarea"
+          rows="2"
+          placeholder="تفاصيل إضافية عن سبب الإلغاء (اختياري)..."
+          [(ngModel)]="customNotes">
+        </textarea>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="close()">إلغاء</button>
+      <button type="button" class="btn btn-danger" (click)="confirm()">
+        تأكيد إلغاء الكارت 🚫
+      </button>
+    </div>
+  </div>
+</div>

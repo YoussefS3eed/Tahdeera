@@ -1,0 +1,126 @@
+<div class="groups-page">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-titles">
+      <h1 class="page-title">إدارة المجموعات الدراسية (SCR-10)</h1>
+      <p class="page-description">هيكلة المراحل والمجموعات، متابعة السعة الاستيعابية، وتفويض مساعدي الحضور (CONF-09)</p>
+    </div>
+
+    <div class="header-actions">
+      <button type="button" class="btn btn-primary" (click)="showCreateModal.set(true)">
+        <span class="icon">➕</span>
+        <span>إنشاء مجموعة جديدة</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters Toolbar -->
+  <div class="toolbar-card">
+    <div class="filter-group">
+      <label class="filter-label" for="grade-filter">تصفية حسب المرحلة الدراسية:</label>
+      <select
+        id="grade-filter"
+        class="form-select"
+        [ngModel]="selectedGrade()"
+        (ngModelChange)="selectedGrade.set($event)">
+        <option value="all">جميع المراحل الدراسية</option>
+        <option value="Grade1Secondary">الصف الأول الثانوي</option>
+        <option value="Grade2Secondary">الصف الثاني الثانوي</option>
+        <option value="Grade3Secondary">الصف الثالث الثانوي</option>
+        <option value="Grade1Prep">الصف الأول الإعدادي</option>
+        <option value="Grade2Prep">الصف الثاني الإعدادي</option>
+        <option value="Grade3Prep">الصف الثالث الإعدادي</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Groups Grid -->
+  @if (isLoading()) {
+    <div class="loading-state">
+      <p>جاري تحميل المجموعات الدراسية...</p>
+    </div>
+  } @else if (filteredGroups().length === 0) {
+    <div class="empty-state">
+      <span class="empty-icon">👥</span>
+      <h3>لا توجد مجموعات مسجلة لهذه المرحلة</h3>
+      <p>يمكنك إنشاء مجموعة دراسية جديدة بالضغط على الزر أعلاه</p>
+    </div>
+  } @else {
+    <div class="groups-grid">
+      @for (grp of filteredGroups(); track grp.id) {
+        <div class="group-card">
+          <div class="card-header">
+            <div class="title-meta">
+              <h3 class="group-name">{{ grp.name }}</h3>
+              <span class="grade-tag">{{ grp.grade }}</span>
+            </div>
+            <span class="subject-badge">{{ grp.subject }}</span>
+          </div>
+
+          <div class="card-body">
+            <div class="info-row">
+              <span class="label">المدرس المسؤول:</span>
+              <span class="value font-semibold">{{ grp.teacherInChargeName }}</span>
+            </div>
+
+            <div class="info-row">
+              <span class="label">المساعد المفوض (CONF-09):</span>
+              <span class="value">
+                @if (grp.delegatedAssistantName) {
+                  <span class="delegate-tag">👤 {{ grp.delegatedAssistantName }}</span>
+                } @else {
+                  <span class="no-delegate-tag">غير مفوض</span>
+                }
+              </span>
+            </div>
+
+            <div class="info-row">
+              <span class="label">السعة الاستيعابية:</span>
+              <span class="value font-mono ltr-num">
+                <span [class.text-danger]="(grp.currentEnrollmentCount || 0) >= grp.maxCapacity">
+                  {{ grp.currentEnrollmentCount || 0 }}
+                </span> / {{ grp.maxCapacity }} طالب
+              </span>
+            </div>
+
+            <div class="capacity-bar-wrapper">
+              <div
+                class="capacity-bar"
+                [style.width.%]="((grp.currentEnrollmentCount || 0) / grp.maxCapacity) * 100"
+                [class.bar-full]="(grp.currentEnrollmentCount || 0) >= grp.maxCapacity">
+              </div>
+            </div>
+
+            <div class="info-row">
+              <span class="label">الموعد الأسبوعي:</span>
+              <span class="value font-mono ltr-num">{{ grp.weeklyScheduleSummary }}</span>
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <button type="button" class="btn btn-outline-primary" (click)="openDelegation(grp)">
+              <span>⚙️ تفويض مساعد</span>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Create Group Modal (T035) -->
+  @if (showCreateModal()) {
+    <app-create-group-modal
+      (created)="onGroupCreated($event)"
+      (closed)="showCreateModal.set(false)">
+    </app-create-group-modal>
+  }
+
+  <!-- Assistant Delegation Drawer (T036) -->
+  @if (activeDelegationGroup()) {
+    <app-assistant-delegation-drawer
+      [group]="activeDelegationGroup()!"
+      (delegated)="onAssistantDelegated($event)"
+      (closed)="activeDelegationGroup.set(null)">
+    </app-assistant-delegation-drawer>
+  }
+</div>

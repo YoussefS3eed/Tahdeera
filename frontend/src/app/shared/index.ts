@@ -1,6 +1,6 @@
 /**
  * Shared Barrel Exports
- * Milestone F2 Shared UI Primitives, Shell Components & Accessibility Directives
+ * Milestone F2 & F3 Shared UI Primitives, Shell Components & Accessibility Directives
  */
 
 // Directives
@@ -15,3 +15,4 @@ export * from './components/mobile-nav/mobile-nav.component';
 export * from './components/global-search-modal/global-search-modal.component';
 export * from './components/confirmation-modal/confirmation-modal.component';
 export * from './components/reauth-modal/reauth-modal.component';
+export * from './components/qr-scanner/qr-scanner.component';

@@ -1,0 +1,118 @@
+<div class="modal-backdrop" (click)="close()">
+  <div class="modal-card" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-header">
+      <div class="header-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+          <line x1="2" y1="10" x2="22" y2="10"></line>
+        </svg>
+      </div>
+      <div>
+        <h3 id="modal-title" class="modal-title">إدارة كارت NFC الذكي للطالب</h3>
+        <p class="modal-subtitle">{{ studentName() }} (<span class="ltr-num font-mono">{{ studentCode() }}</span>)</p>
+      </div>
+      <button type="button" class="btn-close" (click)="close()" aria-label="إغلاق">✕</button>
+    </div>
+
+    @if (validationError()) {
+      <div class="alert-error" role="alert">
+        {{ validationError() }}
+      </div>
+    }
+
+    <div class="modal-body">
+      <!-- Mode: View Status -->
+      @if (activeMode() === 'view') {
+        <div class="current-card-box">
+          <div class="card-status-info">
+            <span class="label">معرف الكارت الحالي:</span>
+            <span class="value font-mono ltr-num font-bold">
+              {{ currentCardUid() || 'لا يوجد كارت مربوط حالياً' }}
+            </span>
+          </div>
+
+          <div class="actions-grid">
+            <button type="button" class="action-tile" (click)="setMode('replace')">
+              <span class="tile-icon">🔄</span>
+              <span class="tile-title">إصدار كارت بديل / ربط كارت</span>
+              <span class="tile-desc">تمرير كارت NFC ذكي جديد للربط الفوري</span>
+            </button>
+
+            @if (currentCardUid()) {
+              <button type="button" class="action-tile tile-danger" (click)="setMode('revoke')">
+                <span class="tile-icon">🚫</span>
+                <span class="tile-title">إلغاء وتفويض الكارت (CONF-03)</span>
+                <span class="tile-desc">إيقاف الكارت بسبب الفقدان أو التلف</span>
+              </button>
+            }
+
+            <button type="button" class="action-tile" (click)="printCardStub()">
+              <span class="tile-icon">🖨️</span>
+              <span class="tile-title">طباعة بطاقة الطالب الورقية</span>
+              <span class="tile-desc">تتضمن باركود وكود QR للطالب</span>
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- Mode: Revoke Card -->
+      @if (activeMode() === 'revoke') {
+        <div class="revoke-form">
+          <div class="warning-box">
+            <strong>⚠️ تأكيد إلغاء وتفويض كارت NFC</strong>
+            <p>سيتم إلغاء الكارت <span class="font-mono ltr-num">{{ currentCardUid() }}</span> فوراً ولن يتمكن الطالب من استخدامه للتحضير.</p>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="revoke-reason">سبب الإلغاء الإلزامي (CONF-03):</label>
+            <select id="revoke-reason" class="form-select" [(ngModel)]="revocationReason">
+              <option value="Lost">فقدان الكارت (Lost)</option>
+              <option value="Damaged">تلف الكارت (Damaged)</option>
+              <option value="Stolen">سرقة الكارت (Stolen)</option>
+              <option value="Replaced">استبدال اختياري (Replaced)</option>
+            </select>
+          </div>
+        </div>
+      }
+
+      <!-- Mode: Replace Card -->
+      @if (activeMode() === 'replace') {
+        <div class="replace-form">
+          <div class="info-banner">
+            <span>📡 يرجى تمرير الكارت الذكي الجديد أمام قارئ NFC الآن أو إدخال المعرف يدوياً:</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="new-card-uid">معرف الكارت الجديد (UID):</label>
+            <input
+              id="new-card-uid"
+              type="text"
+              class="form-input font-mono ltr-num"
+              placeholder="04:XX:XX:XX"
+              [(ngModel)]="newCardUid" />
+            <span class="input-hint">سيتم إلغاء أي كارت سابق وربط الكارت الجديد فوراً للطالب</span>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="modal-footer">
+      @if (activeMode() !== 'view') {
+        <button type="button" class="btn btn-secondary" (click)="setMode('view')">رجوع</button>
+      }
+      <button type="button" class="btn btn-secondary" (click)="close()">إغلاق</button>
+
+      @if (activeMode() === 'revoke') {
+        <button type="button" class="btn btn-danger" (click)="confirmRevocation()">
+          تأكيد إلغاء الكارت نهائياً 🚫
+        </button>
+      }
+
+      @if (activeMode() === 'replace') {
+        <button type="button" class="btn btn-primary" (click)="confirmReplacement()">
+          تأكيد ربط الكارت البديل 🔄
+        </button>
+      }
+    </div>
+  </div>
+</div>

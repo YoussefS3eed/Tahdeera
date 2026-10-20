@@ -1,0 +1,70 @@
+<div class="drawer-backdrop" (click)="close()">
+  <div class="drawer-panel" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+    <div class="drawer-header">
+      <div class="header-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="8.5" cy="7.5" r="4"></circle>
+          <polyline points="17 11 19 13 23 9"></polyline>
+        </svg>
+      </div>
+      <div>
+        <h3 id="drawer-title" class="drawer-title">تفويض مساعد تسجيل الحضور (CONF-09)</h3>
+        <p class="drawer-subtitle">{{ group().name }} ({{ group().grade }})</p>
+      </div>
+      <button type="button" class="btn-close" (click)="close()" aria-label="إغلاق">✕</button>
+    </div>
+
+    <div class="drawer-body">
+      <div class="rule-box">
+        <span class="rule-icon">⚖️</span>
+        <div class="rule-text">
+          <strong>قيد أمان التفويض الأكاديمي (CONF-09):</strong>
+          <p>يسمح النظام بتفويض مساعد <strong>واحد فقط</strong> كمسؤول نشط عن تسجيل الحضور لكل مجموعة دراسية لضمان دقة وتتبع العمليات.</p>
+        </div>
+      </div>
+
+      <div class="current-status-box">
+        <span class="label">المساعد المفوض حالياً:</span>
+        @if (group().delegatedAssistantName) {
+          <div class="active-delegate-badge">
+            <span class="icon">👤</span>
+            <span class="name font-bold">{{ group().delegatedAssistantName }}</span>
+            <button type="button" class="btn-remove-delegate" (click)="revokeDelegation()">إلغاء التفويض ✕</button>
+          </div>
+        } @else {
+          <span class="no-delegate">لا يوجد مساعد مفوض حالياً (التحضير متاح للمدرس والمالك فقط)</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="assistant-select">اختر المساعد المسؤول عن المجموعة:</label>
+        <div class="assistants-list">
+          @for (asst of assistants(); track asst.id) {
+            <label class="assistant-card" [class.selected]="selectedAssistantId === asst.id">
+              <input
+                type="radio"
+                name="selectedAssistant"
+                [value]="asst.id"
+                [(ngModel)]="selectedAssistantId" />
+              <div class="asst-avatar">
+                {{ asst.name.charAt(0) }}
+              </div>
+              <div class="asst-info">
+                <span class="asst-name font-semibold">{{ asst.name }}</span>
+                <span class="asst-phone font-mono ltr-num">{{ asst.phone }}</span>
+              </div>
+            </label>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="drawer-footer">
+      <button type="button" class="btn btn-secondary" (click)="close()">إلغاء</button>
+      <button type="button" class="btn btn-primary" (click)="saveDelegation()">
+        حفظ التفويض الأكاديمي
+      </button>
+    </div>
+  </div>
+</div>

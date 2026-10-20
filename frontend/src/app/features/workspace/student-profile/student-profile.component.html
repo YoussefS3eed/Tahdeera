@@ -1,0 +1,320 @@
+<div class="student-profile-page">
+  <div class="breadcrumb-bar">
+    <button type="button" class="btn-back" (click)="goBack()">
+      ← العودة لدليل الطلاب
+    </button>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-state">
+      <p>جاري تحميل ملف الطالب الشامل 360°...</p>
+    </div>
+  } @else if (profile()) {
+    <!-- Profile Header Card Component (T026) -->
+    <app-profile-header
+      [profile]="profile()!"
+      (manageCardClicked)="showCardModal.set(true)">
+    </app-profile-header>
+
+    <!-- Sub-Tabs Navigation (T029) -->
+    <div class="tabs-nav-bar">
+      <div class="tabs-list" role="tablist">
+        <button
+          type="button"
+          role="tab"
+          class="tab-nav-btn"
+          [class.active]="activeTab() === 'attendance'"
+          (click)="setTab('attendance')">
+          📅 سجل الحضور والغياب
+        </button>
+
+        <!-- Financial Tab: Strictly role-gated per CONF-09 -->
+        @if (canViewFinances()) {
+          <button
+            type="button"
+            role="tab"
+            class="tab-nav-btn"
+            [class.active]="activeTab() === 'finances'"
+            (click)="setTab('finances')">
+            💳 المصروفات والاشتراكات
+          </button>
+        }
+
+        <button
+          type="button"
+          role="tab"
+          class="tab-nav-btn"
+          [class.active]="activeTab() === 'exams'"
+          (click)="setTab('exams')">
+          📝 درجات الاختبارات
+        </button>
+
+        <button
+          type="button"
+          role="tab"
+          class="tab-nav-btn"
+          [class.active]="activeTab() === 'homework'"
+          (click)="setTab('homework')">
+          📚 الواجبات والمهام
+        </button>
+
+        <button
+          type="button"
+          role="tab"
+          class="tab-nav-btn"
+          [class.active]="activeTab() === 'whatsapp'"
+          (click)="setTab('whatsapp')">
+          💬 سجل رسائل واتساب
+        </button>
+
+        <button
+          type="button"
+          role="tab"
+          class="tab-nav-btn"
+          [class.active]="activeTab() === 'report'"
+          (click)="setTab('report')">
+          🖨️ التقرير الأسبوعي للطباعة
+        </button>
+      </div>
+    </div>
+
+    <!-- Sub-Tabs Content Areas -->
+    <div class="tab-content-panel">
+      <!-- 1. Attendance History -->
+      @if (activeTab() === 'attendance') {
+        <div class="tab-pane">
+          <div class="pane-header">
+            <h3>سجل حضور الجلسات السابقة</h3>
+            <span class="rate-badge">نسبة الالتزام: <strong class="ltr-num font-mono">{{ profile()!.attendanceRate }}%</strong></span>
+          </div>
+
+          <div class="table-responsive">
+            <table class="profile-table">
+              <thead>
+                <tr>
+                  <th>تاريخ الجلسة</th>
+                  <th>وقت التحضير</th>
+                  <th>الحالة</th>
+                  <th>القفل التلقائي</th>
+                  <th>طريقة المسح</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of profile()!.attendanceHistory; track item.id) {
+                  <tr>
+                    <td class="font-mono ltr-num">{{ item.scannedAt ? (item.scannedAt | date:'yyyy-MM-dd') : 'جلسة مجدولة' }}</td>
+                    <td class="font-mono ltr-num">{{ item.scannedAt ? (item.scannedAt | date:'HH:mm:ss') : '-' }}</td>
+                    <td>
+                      <span class="status-pill status-{{ item.status | lowercase }}">
+                        @switch (item.status) {
+                          @case ('Present') { حاضر }
+                          @case ('Late') { متأخر }
+                          @case ('Absent') { غائب }
+                          @case ('Excused') { معذور }
+                          @default { {{ item.status }} }
+                        }
+                      </span>
+                    </td>
+                    <td>
+                      @if (item.autoEvaluationLocked) {
+                        <span class="locked-indicator">🔒 مقفل يدوياً</span>
+                      } @else {
+                        <span class="unlocked-text">تلقائي</span>
+                      }
+                    </td>
+                    <td class="font-mono ltr-num">{{ item.source }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
+      <!-- 2. Finances (Gated per CONF-09) -->
+      @if (activeTab() === 'finances' && canViewFinances()) {
+        <div class="tab-pane">
+          <div class="finances-summary-grid">
+            <div class="finance-stat-card">
+              <span class="stat-label">إجمالي المستحق</span>
+              <span class="stat-value font-mono ltr-num">
+                {{ (profile()?.tuitionBalance || 0) > 0 ? ((profile()?.tuitionBalance || 0) + 350) : 350 }} ج.م
+              </span>
+            </div>
+            <div class="finance-stat-card">
+              <span class="stat-label">المسدد</span>
+              <span class="stat-value font-mono ltr-num">350 ج.م</span>
+            </div>
+            <div class="finance-stat-card highlight" [class.has-debt]="(profile()?.tuitionBalance || 0) > 0">
+              <span class="stat-label">المتبقي / المديونية</span>
+              <span class="stat-value font-mono ltr-num">{{ profile()?.tuitionBalance || 0 }} ج.م</span>
+            </div>
+          </div>
+
+          <div class="pane-header mt-4">
+            <h3>سجل المعاملات المالية</h3>
+          </div>
+          <table class="profile-table">
+            <thead>
+              <tr>
+                <th>رقم الإيصال</th>
+                <th>التاريخ</th>
+                <th>البند</th>
+                <th>المبلغ المسدد</th>
+                <th>المتبقي</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (f of profile()!.financialLedger; track f.id) {
+                <tr>
+                  <td class="font-mono ltr-num">{{ f.receiptNumber }}</td>
+                  <td class="font-mono ltr-num">{{ f.paidAt | date:'yyyy-MM-dd' }}</td>
+                  <td>{{ f.billingMonth }}</td>
+                  <td class="font-mono ltr-num font-semibold text-success">{{ f.amountPaid }} ج.م</td>
+                  <td class="font-mono ltr-num">{{ f.remainingBalance }} ج.م</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+      <!-- 3. Exams & Scores -->
+      @if (activeTab() === 'exams') {
+        <div class="tab-pane">
+          <div class="pane-header">
+            <h3>نتائج الاختبارات والتقييمات</h3>
+          </div>
+          <table class="profile-table">
+            <thead>
+              <tr>
+                <th>عنوان الاختبار</th>
+                <th>التاريخ</th>
+                <th>الدرجة</th>
+                <th>النسبة المئوية</th>
+                <th>ملاحظات المدرس</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (ex of profile()!.examScores; track ex.id) {
+                <tr>
+                  <td class="font-semibold">{{ ex.examTitle }}</td>
+                  <td class="font-mono ltr-num">{{ ex.examDate | date:'yyyy-MM-dd' }}</td>
+                  <td class="font-mono ltr-num font-bold">{{ ex.score }} / {{ ex.maxScore }}</td>
+                  <td class="font-mono ltr-num font-bold text-primary">{{ ex.percentage }}%</td>
+                  <td>{{ ex.notes || '-' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+      <!-- 4. Homework & Tasks -->
+      @if (activeTab() === 'homework') {
+        <div class="tab-pane">
+          <div class="pane-header">
+            <h3>متابعة الواجبات المدرسية</h3>
+          </div>
+          <table class="profile-table">
+            <thead>
+              <tr>
+                <th>الواجب</th>
+                <th>تاريخ التسليم</th>
+                <th>حالة التسليم</th>
+                <th>الدرجة</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (hw of profile()!.homeworkSubmissions; track hw.id) {
+                <tr>
+                  <td class="font-semibold">{{ hw.assignmentTitle }}</td>
+                  <td class="font-mono ltr-num">{{ hw.submittedAt ? (hw.submittedAt | date:'yyyy-MM-dd') : '-' }}</td>
+                  <td>
+                    <span class="status-pill status-{{ hw.status | lowercase }}">
+                      @switch (hw.status) {
+                        @case ('Completed') { مكتمل بالكامل }
+                        @case ('Incomplete') { ناقص }
+                        @case ('Late') { متأخر }
+                        @case ('Missing') { لم يُسلَّم }
+                        @default { {{ hw.status }} }
+                      }
+                    </span>
+                  </td>
+                  <td class="font-mono ltr-num">{{ hw.score !== null ? (hw.score + ' / ' + hw.maxScore) : '-' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+      <!-- 5. WhatsApp Notification Logs -->
+      @if (activeTab() === 'whatsapp') {
+        <div class="tab-pane">
+          <div class="pane-header">
+            <h3>سجل الإشعارات المرسلة لولي الأمر</h3>
+          </div>
+          <div class="whatsapp-logs-list">
+            @for (log of profile()!.whatsappNotificationLogs; track log.id) {
+              <div class="log-card">
+                <div class="log-meta">
+                  <span class="font-mono ltr-num">{{ log.sentAtUtc | date:'yyyy-MM-dd HH:mm' }}</span>
+                  <span class="delivery-status status-{{ log.deliveryStatus | lowercase }}">
+                    {{ log.deliveryStatus === 'Delivered' ? 'تم التسليم بنجاح ✓✓' : log.deliveryStatus }}
+                  </span>
+                </div>
+                <div class="log-message font-body">
+                  {{ log.messageBody }}
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- 6. Weekly Report Preview (Printable) -->
+      @if (activeTab() === 'report') {
+        <div class="tab-pane report-preview-pane">
+          <div class="report-paper">
+            <div class="report-header">
+              <h2>تقرير الأداء الأسبوعي للطالب</h2>
+              <p>مركز تحضيرة التعليمي للتميز الأكاديمي</p>
+            </div>
+
+            <div class="report-meta-grid">
+              <div>الطالب: <strong>{{ profile()!.fullName }}</strong></div>
+              <div>الكود: <strong class="font-mono ltr-num">{{ profile()!.studentCode }}</strong></div>
+              <div>المرحلة: <strong>{{ profile()!.grade }}</strong></div>
+              <div>ولي الأمر: <strong>{{ profile()!.guardianName }}</strong></div>
+            </div>
+
+            <div class="report-scores">
+              <h4>ملخص الحضور والواجبات:</h4>
+              <p>نسبة الحضور لهذا الأسبوع: <strong class="font-mono ltr-num">{{ profile()!.attendanceRate }}%</strong></p>
+              <p>حالة المصروفات: <strong class="font-mono ltr-num">{{ (profile()?.tuitionBalance || 0) === 0 ? 'مسدد بالكامل' : ('متبقي ' + (profile()?.tuitionBalance || 0) + ' ج.م') }}</strong></p>
+            </div>
+
+            <div class="report-actions no-print">
+              <button type="button" class="btn btn-primary" onclick="window.print()">
+                🖨️ طباعة بطاقة التقرير
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Card Management Modal (T027) -->
+  @if (showCardModal() && profile()) {
+    <app-card-management-modal
+      [currentCardUid]="profile()!.activeNfcCardUid || null"
+      [studentName]="profile()!.fullName"
+      [studentCode]="profile()!.studentCode"
+      (cardRevoked)="onCardRevoked($event)"
+      (cardReplaced)="onCardReplaced($event)"
+      (closed)="showCardModal.set(false)">
+    </app-card-management-modal>
+  }
+</div>

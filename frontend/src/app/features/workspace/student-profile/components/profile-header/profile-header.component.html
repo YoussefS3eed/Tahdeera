@@ -1,0 +1,56 @@
+<div class="profile-header-card">
+  <div class="header-main">
+    <div class="avatar-box">
+      {{ profile().fullName.charAt(0) }}
+    </div>
+
+    <div class="meta-section">
+      <div class="name-row">
+        <h1 class="student-name">{{ profile().fullName }}</h1>
+        <span class="grade-badge">{{ profile().grade }}</span>
+        <span class="status-badge status-{{ profile().status | lowercase }}">
+          @switch (profile().status) {
+            @case ('Active') { نشط }
+            @case ('Withdrawn') { منسحب }
+            @case ('Suspended') { موقوف }
+            @default { {{ profile().status }} }
+          }
+        </span>
+      </div>
+
+      <div class="tags-row">
+        <div class="meta-tag">
+          <span class="tag-label">كود الطالب:</span>
+          <span class="font-mono ltr-num font-bold">{{ profile().studentCode }}</span>
+        </div>
+
+        <div class="meta-tag">
+          <span class="tag-label">كارت NFC:</span>
+          <span class="font-mono ltr-num" [class.badge-linked]="profile().activeNfcCardUid">
+            {{ profile().activeNfcCardUid || 'غير مربوط' }}
+          </span>
+        </div>
+
+        <div class="meta-tag">
+          <span class="tag-label">هاتف ولي الأمر:</span>
+          <span class="font-mono ltr-num">{{ profile().guardianPhone }}</span>
+        </div>
+
+        <div class="meta-tag whatsapp-health">
+          <span class="tag-label">واتساب:</span>
+          @if (profile().whatsappOptIn) {
+            <span class="health-pill health-opted-in">مفعّل للتقارير ✅</span>
+          } @else {
+            <span class="health-pill health-opted-out">غير مفعل</span>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="header-actions">
+    <button type="button" class="btn btn-secondary" (click)="manageCardClicked.emit()">
+      <span>💳 إدارة الكارت الذكي</span>
+    </button>
+  </div>
+</div>

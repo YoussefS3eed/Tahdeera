@@ -1,0 +1,61 @@
+<div class="modal-backdrop" (click)="close()">
+  <div class="modal-card" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-header">
+      <div class="header-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+      </div>
+      <div>
+        <h3 id="modal-title" class="modal-title">إعادة جدولة موعد الجلسة (DEC-03)</h3>
+        <p class="modal-subtitle">{{ session().groupName }} - {{ session().roomName }}</p>
+      </div>
+      <button type="button" class="btn-close" (click)="close()" aria-label="إغلاق">✕</button>
+    </div>
+
+    @if (validationError()) {
+      <div class="alert-error" role="alert">
+        {{ validationError() }}
+      </div>
+    }
+
+    <div class="modal-body">
+      <!-- DEC-03 Notice -->
+      <div class="reeval-notice">
+        <span class="notice-icon">🔄</span>
+        <div class="notice-text">
+          <strong>إعادة تقييم الحضور ديناميكياً (DEC-03):</strong>
+          <p>
+            تعديل موعد الجلسة سيعيد تقييم حالات الحضور تلقائياً (حاضر / متأخر) فقط للسجلات غير المقفلة.
+            السجلات المثبتة يدوياً (<span class="locked-text">🔒 مقفل</span>) لن تتأثر إطلاقاً.
+          </p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="resched-date">تاريخ الجلسة:</label>
+        <input id="resched-date" type="date" class="form-input font-mono ltr-num" [(ngModel)]="sessionDate" />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group flex-1">
+          <label class="form-label" for="resched-start">وقت البدء الجديد:</label>
+          <input id="resched-start" type="time" class="form-input font-mono ltr-num" [(ngModel)]="newStartTime" />
+        </div>
+
+        <div class="form-group flex-1">
+          <label class="form-label" for="resched-end">وقت الانتهاء الجديد:</label>
+          <input id="resched-end" type="time" class="form-input font-mono ltr-num" [(ngModel)]="newEndTime" />
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="close()">إلغاء</button>
+      <button type="button" class="btn btn-primary" [disabled]="!isValid" (click)="submit()">
+        تحديث الموعد وإعادة التقييم 🔄
+      </button>
+    </div>
+  </div>
+</div>

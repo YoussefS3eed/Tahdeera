@@ -1,0 +1,40 @@
+<div class="qr-scanner-overlay" role="dialog" aria-modal="true" aria-labelledby="qr-scanner-title">
+  <div class="qr-scanner-modal">
+    <div class="scanner-header">
+      <h3 id="qr-scanner-title" class="title">مسح كود QR بكاميرا الجهاز</h3>
+      <div class="header-actions">
+        <button type="button" class="action-btn" (click)="toggleCamera()" title="تبديل الكاميرا">
+          🔄 تبديل
+        </button>
+        <button type="button" class="close-btn" (click)="close()" aria-label="إغلاق">
+          ✕
+        </button>
+      </div>
+    </div>
+
+    <div class="scanner-body">
+      @if (errorMessage()) {
+        <div class="error-banner" role="alert">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <div class="viewfinder-container">
+        <video #videoPlayer playsinline muted autoplay class="video-preview"></video>
+        <canvas #scanCanvas class="hidden-canvas"></canvas>
+
+        <div class="reticle">
+          <div class="corner top-start"></div>
+          <div class="corner top-end"></div>
+          <div class="corner bottom-start"></div>
+          <div class="corner bottom-end"></div>
+          <div class="scan-laser"></div>
+        </div>
+      </div>
+
+      <div class="helper-text">
+        وجه الكاميرا نحو كود الطالب أو الكارت لتسجيل الحضور فورياً
+      </div>
+    </div>
+  </div>
+</div>

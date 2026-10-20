@@ -1,4 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { ReauthModalComponent } from '../../../shared/components/reauth-modal/reauth-modal.component';
+import { AuthStore } from '../../stores/auth.store';
+import { ReauthService } from '../../services/reauth.service';
+import { RefreshTokenResponse } from '../../models/auth.models';
 import { CommonModule } from '@angular/common';
 import { RouterModule, RouterOutlet } from '@angular/router';
 import { HeaderComponent } from '../../../shared/components/header/header.component';
@@ -14,7 +19,8 @@ import { MobileNavComponent } from '../../../shared/components/mobile-nav/mobile
     RouterOutlet,
     HeaderComponent,
     SidebarComponent,
-    MobileNavComponent
+    MobileNavComponent,
+    ReauthModalComponent
   ],
   template: `
     <div class="workspace-shell">
@@ -26,7 +32,12 @@ import { MobileNavComponent } from '../../../shared/components/mobile-nav/mobile
       <!-- Main Column -->
       <div class="main-column">
         <!-- Universal Header -->
-        <app-header (toggleSidebar)="toggleMobileDrawer()"></app-header>
+        <app-header
+          [workspaceName]="authStore.activeWorkspace()?.name || '???? ???????'"
+          [userName]="authStore.user()?.fullName || '???? ?????'"
+          [userInitials]="authStore.user()?.initials || '??'"
+          (toggleSidebar)="toggleMobileDrawer()"
+        ></app-header>
 
         <!-- Main Content Viewport -->
         <main class="content-viewport">
@@ -186,7 +197,24 @@ import { MobileNavComponent } from '../../../shared/components/mobile-nav/mobile
   `]
 })
 export class WorkspaceLayoutComponent {
+  readonly authStore = inject(AuthStore);
+  readonly reauthService = inject(ReauthService);
+  private readonly http = inject(HttpClient);
+
   isMobileDrawerOpen: boolean = false;
+
+  onReauthSubmit(password: string): void {
+    this.reauthService.isLoading.set(true);
+    this.http.post<RefreshTokenResponse>('/api/v1/auth/reauth', { password }).subscribe({
+      next: (res) => {
+        this.authStore.updateTokens(res.tokens);
+        this.reauthService.notifySuccess();
+      },
+      error: (err) => {
+        this.reauthService.notifyFailure(err?.error?.detail || '???? ?????? ??? ?????');
+      }
+    });
+  }
 
   toggleMobileDrawer(): void {
     this.isMobileDrawerOpen = !this.isMobileDrawerOpen;

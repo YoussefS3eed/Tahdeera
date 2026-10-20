@@ -1,0 +1,128 @@
+<div class="cards-page">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-titles">
+      <h1 class="page-title">سجل كروت NFC الذكية (SCR-09)</h1>
+      <p class="page-description">إدارة وتتبع مخزون الكروت الذكية، تمرير الكروت وربطها بالطلاب، وإلغاء الكروت التالفة أو المفقودة</p>
+    </div>
+
+    <div class="header-actions">
+      <button type="button" class="btn btn-primary" (click)="showLinkDialog.set(true)">
+        <span class="icon">📡</span>
+        <span>تمرير وربط كارت جديد</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters Toolbar -->
+  <div class="toolbar-card">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="بحث بمعرف الكارت UID (04:XX:XX) أو اسم الطالب..."
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event)" />
+      @if (searchQuery()) {
+        <button type="button" class="btn-clear" (click)="searchQuery.set('')">✕</button>
+      }
+    </div>
+
+    <div class="status-filter">
+      <select
+        class="form-select"
+        [ngModel]="selectedStatus()"
+        (ngModelChange)="selectedStatus.set($event)">
+        <option value="all">جميع الحالات</option>
+        <option value="Active">نشط ومفعل</option>
+        <option value="Revoked">ملغي ومفوض</option>
+        <option value="Unassigned">غير مرتبط بطالب</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Cards Table -->
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>معرف الكارت UID</th>
+          <th>اسم الكارت / الملصق</th>
+          <th>الطالب المرتبط</th>
+          <th>تاريخ الإصدار</th>
+          <th>الحالة</th>
+          <th class="actions-header">الإجراءات</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (isLoading()) {
+          <tr>
+            <td colspan="6" class="loading-cell">جاري تحميل سجل الكروت...</td>
+          </tr>
+        } @else if (filteredCards().length === 0) {
+          <tr>
+            <td colspan="6" class="empty-cell">لا توجد كروت مطابقة لمعايير البحث</td>
+          </tr>
+        } @else {
+          @for (card of filteredCards(); track card.cardUid) {
+            <tr [class.row-revoked]="card.status === 'Revoked'">
+              <td class="font-mono ltr-num font-bold">{{ card.cardUid }}</td>
+              <td>{{ card.label || '-' }}</td>
+              <td>
+                @if (card.assignedStudentName) {
+                  <span class="student-name font-semibold">{{ card.assignedStudentName }}</span>
+                } @else {
+                  <span class="unassigned-badge">غير مربوط</span>
+                }
+              </td>
+              <td class="font-mono ltr-num">
+                {{ card.issuedAt | date:'yyyy-MM-dd' }}
+              </td>
+              <td>
+                <span class="status-badge status-{{ card.status | lowercase }}">
+                  @switch (card.status) {
+                    @case ('Active') { نشط }
+                    @case ('Revoked') { ملغي }
+                    @case ('Unassigned') { غير مخصص }
+                    @default { {{ card.status }} }
+                  }
+                </span>
+                @if (card.revocationReason) {
+                  <span class="revocation-hint" [title]="card.revocationReason">({{ card.revocationReason }})</span>
+                }
+              </td>
+              <td class="actions-cell">
+                @if (card.status === 'Active') {
+                  <button type="button" class="btn-revoke" (click)="openRevoke(card)">
+                    إلغاء الكارت 🚫
+                  </button>
+                } @else if (card.status === 'Revoked') {
+                  <span class="text-muted">مفوض</span>
+                }
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Link Card Dialog (T031) -->
+  @if (showLinkDialog()) {
+    <app-link-card-dialog
+      [students]="students()"
+      (linked)="onCardLinked($event)"
+      (closed)="showLinkDialog.set(false)">
+    </app-link-card-dialog>
+  }
+
+  <!-- Revoke Card Modal (T032) -->
+  @if (activeRevokeCard()) {
+    <app-revoke-card-modal
+      [card]="activeRevokeCard()!"
+      (revoked)="onCardRevoked($event)"
+      (closed)="activeRevokeCard.set(null)">
+    </app-revoke-card-modal>
+  }
+</div>

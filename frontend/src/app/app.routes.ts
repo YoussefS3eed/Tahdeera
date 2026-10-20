@@ -85,56 +85,72 @@ export const routes: Routes = [
         canActivate: [authGuard],
         title: 'حالة الحساب — تحضيرة'
       },
+      // SCR-05: Live NFC Attendance Station
       {
         path: 'nfc-station',
         loadComponent: () =>
-          import('./features/workspace/placeholder/workspace-placeholder.component').then(
-            (m) => m.WorkspacePlaceholderComponent
+          import('./features/workspace/nfc-station/nfc-station.component').then(
+            (m) => m.NfcStationComponent
           ),
         canActivate: [authGuard, lockoutGuard],
         title: 'محطة الحضور المباشر — تحضيرة'
       },
+      // SCR-06: Daily Attendance Log & Overrides
       {
         path: 'attendance',
         loadComponent: () =>
-          import('./features/workspace/placeholder/workspace-placeholder.component').then(
-            (m) => m.WorkspacePlaceholderComponent
+          import('./features/workspace/attendance/attendance.component').then(
+            (m) => m.AttendanceComponent
           ),
         canActivate: [authGuard, lockoutGuard],
         title: 'الحضور والغياب اليومي — تحضيرة'
       },
+      // SCR-07: Students Directory
       {
         path: 'students',
         loadComponent: () =>
-          import('./features/workspace/placeholder/workspace-placeholder.component').then(
-            (m) => m.WorkspacePlaceholderComponent
+          import('./features/workspace/students/students.component').then(
+            (m) => m.StudentsComponent
           ),
         canActivate: [authGuard, lockoutGuard],
         title: 'سجل الطلاب — تحضيرة'
       },
+      // SCR-08: Unified 360° Student Profile
+      {
+        path: 'students/:id',
+        loadComponent: () =>
+          import('./features/workspace/student-profile/student-profile.component').then(
+            (m) => m.StudentProfileComponent
+          ),
+        canActivate: [authGuard, lockoutGuard],
+        title: 'الملف الأكاديمي الشامل 360° — تحضيرة'
+      },
+      // SCR-09: NFC Cards Registry
       {
         path: 'cards',
         loadComponent: () =>
-          import('./features/workspace/placeholder/workspace-placeholder.component').then(
-            (m) => m.WorkspacePlaceholderComponent
+          import('./features/workspace/cards/cards.component').then(
+            (m) => m.CardsComponent
           ),
         canActivate: [authGuard, lockoutGuard],
         title: 'بطاقات الحضور NFC — تحضيرة'
       },
+      // SCR-10: Study Groups & Assistant Delegation
       {
         path: 'groups',
         loadComponent: () =>
-          import('./features/workspace/placeholder/workspace-placeholder.component').then(
-            (m) => m.WorkspacePlaceholderComponent
+          import('./features/workspace/groups/groups.component').then(
+            (m) => m.GroupsComponent
           ),
         canActivate: [authGuard, lockoutGuard],
         title: 'المجموعات الدراسية — تحضيرة'
       },
+      // SCR-11: Weekly Schedule & Lifecycle
       {
         path: 'schedule',
         loadComponent: () =>
-          import('./features/workspace/placeholder/workspace-placeholder.component').then(
-            (m) => m.WorkspacePlaceholderComponent
+          import('./features/workspace/schedule/schedule.component').then(
+            (m) => m.ScheduleComponent
           ),
         canActivate: [authGuard, lockoutGuard],
         title: 'الجدول والمواعيد — تحضيرة'

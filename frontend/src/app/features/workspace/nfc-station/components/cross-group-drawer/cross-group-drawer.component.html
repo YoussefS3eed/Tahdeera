@@ -1,0 +1,49 @@
+<div class="drawer-overlay" (click)="close()">
+  <div class="drawer-content" (click)="$event.stopPropagation()">
+    <div class="drawer-header">
+      <h3 class="drawer-title">⚠️ تنبيه: طالب مسجل بمجموعة دراسية أخرى</h3>
+      <button type="button" class="close-btn" (click)="close()">✕</button>
+    </div>
+
+    <div class="drawer-body">
+      <div class="alert-box">
+        هذا الطالب مقيد رسمياً في <strong>{{ originalGroupName() }}</strong>، بينما الحصة الجارية حالياً تابعة لـ <strong>{{ targetSessionTitle() }}</strong>.
+      </div>
+
+      <div class="student-info-box">
+        <div class="info-row">
+          <span class="label">اسم الطالب:</span>
+          <span class="value">{{ studentName() }}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">كود الطالب:</span>
+          <span class="value ltr-num font-mono">{{ studentCode() }}</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="overrideReason" class="form-label">سبب التحضير الاستثنائي (DEC-06):</label>
+        <textarea
+          id="overrideReason"
+          [(ngModel)]="overrideReason"
+          rows="3"
+          class="form-control"
+          placeholder="اكتب سبب حضور الطالب في غير مجموعته..."
+        ></textarea>
+      </div>
+
+      <p class="hint-text">
+        * الضغط على "تحضير كبديل" يسجل حضور الطالب في حصة اليوم كحضور استثنائي موثق دون تغيير تسجيله الرسمي في مجموعته الأساسية.
+      </p>
+    </div>
+
+    <div class="drawer-footer">
+      <button type="button" class="btn-primary" (click)="confirm()">
+        تحضير كبديل / استثنائي
+      </button>
+      <button type="button" class="btn-secondary" (click)="close()">
+        إلغاء
+      </button>
+    </div>
+  </div>
+</div>

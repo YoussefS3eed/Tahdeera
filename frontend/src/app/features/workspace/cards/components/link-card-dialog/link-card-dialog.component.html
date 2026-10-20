@@ -1,0 +1,62 @@
+<div class="modal-backdrop" (click)="close()">
+  <div class="modal-card" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-header">
+      <div class="header-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+          <line x1="2" y1="10" x2="22" y2="10"></line>
+        </svg>
+      </div>
+      <div>
+        <h3 id="modal-title" class="modal-title">تمرير وربط كارت NFC جديد (SCR-09)</h3>
+        <p class="modal-subtitle">مرر الكارت على القارئ لربطه فورياً بطالب</p>
+      </div>
+      <button type="button" class="btn-close" (click)="close()" aria-label="إغلاق">✕</button>
+    </div>
+
+    @if (validationError()) {
+      <div class="alert-error" role="alert">
+        {{ validationError() }}
+      </div>
+    }
+
+    <div class="modal-body">
+      <div class="nfc-scan-banner">
+        <span class="pulse-icon">📡</span>
+        <div class="banner-text">
+          <strong>القارئ نشط وبانتظار مسح الكارت...</strong>
+          <p>عند ملامسة الكارت للقارئ، سيتم ملء المعرف (UID) تلقائياً</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="card-uid-input">معرف الكارت الذكي (UID):</label>
+        <input
+          id="card-uid-input"
+          type="text"
+          class="form-input font-mono ltr-num"
+          placeholder="04:XX:XX:XX"
+          [(ngModel)]="cardUid" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="student-select">تعيين الكارت للطالب:</label>
+        <select id="student-select" class="form-select" [(ngModel)]="selectedStudentId">
+          <option value="">اختر الطالب من القائمة...</option>
+          @for (s of students(); track s.id) {
+            <option [value]="s.id">
+              {{ s.fullName }} (<span class="font-mono ltr-num">{{ s.studentCode }}</span>) - {{ s.grade }}
+            </option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="close()">إلغاء</button>
+      <button type="button" class="btn btn-primary" (click)="submit()">
+        تأكيد ربط الكارت للطالب 💳
+      </button>
+    </div>
+  </div>
+</div>

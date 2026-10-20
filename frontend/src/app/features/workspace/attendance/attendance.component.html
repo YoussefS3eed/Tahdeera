@@ -1,0 +1,318 @@
+<div class="attendance-page">
+  <!-- Top Header with Actions & Sync Status -->
+  <div class="page-header">
+    <div class="header-titles">
+      <h1 class="page-title">سجل الحضور اليومي والمراجعات (SCR-06)</h1>
+      <p class="page-description">متابعة سجلات الحضور والانصراف، تعديل الحالات يدوياً، ومراجعة تعارضات المزامنة</p>
+    </div>
+
+    <div class="header-actions">
+      <!-- Sync Status Pill -->
+      <div class="sync-status-pill" [class.has-conflicts]="syncService.conflictCount() > 0">
+        @if (syncService.conflictCount() > 0) {
+          <span class="status-dot conflict-dot"></span>
+          <span class="pill-text">تعارضات بحاجة للمراجعة: <strong class="ltr-num font-mono">{{ syncService.conflictCount() }}</strong></span>
+          <button type="button" class="btn-review-conflicts" (click)="openConflicts()">مراجعة</button>
+        } @else if (syncService.pendingCount() > 0) {
+          <span class="status-dot pending-dot"></span>
+          <span class="pill-text">بانتظار المزامنة: <strong class="ltr-num font-mono">{{ syncService.pendingCount() }}</strong></span>
+          <button type="button" class="btn-sync-now" (click)="syncService.syncPending()">مزامنة</button>
+        } @else {
+          <span class="status-dot online-dot"></span>
+          <span class="pill-text">متصل • تمت المزامنة</span>
+        }
+      </div>
+
+      <button type="button" class="btn btn-secondary btn-export" (click)="exportToExcel()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        <span>تصدير البيانات</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Filter Controls Bar -->
+  <div class="filters-card">
+    <div class="filter-group">
+      <label class="filter-label" for="date-filter">التاريخ:</label>
+      <input
+        id="date-filter"
+        type="date"
+        class="form-control ltr-num font-mono"
+        [ngModel]="selectedDate()"
+        (ngModelChange)="selectedDate.set($event); onFilterChange()" />
+    </div>
+
+    <div class="filter-group">
+      <label class="filter-label" for="group-filter">المجموعة الدراسية:</label>
+      <select
+        id="group-filter"
+        class="form-control"
+        [ngModel]="selectedGroupId()"
+        (ngModelChange)="selectedGroupId.set($event); onFilterChange()">
+        <option value="all">جميع المجموعات</option>
+        @for (grp of groups(); track grp.id) {
+          <option [value]="grp.id">{{ grp.name }} ({{ grp.grade }})</option>
+        }
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label class="filter-label" for="session-filter">الجلسة:</label>
+      <select
+        id="session-filter"
+        class="form-control"
+        [ngModel]="selectedSessionId()"
+        (ngModelChange)="selectedSessionId.set($event); onFilterChange()">
+        <option value="all">جميع الجلسات</option>
+        @for (sess of filteredSessions(); track sess.id) {
+          <option [value]="sess.id">
+            {{ sess.roomName }} (<span class="ltr-num font-mono">{{ sess.startsAt | date:'shortTime' }}</span>) - {{ sess.status }}
+          </option>
+        }
+      </select>
+    </div>
+
+    <div class="filter-group page-size-group">
+      <label class="filter-label" for="pagesize-filter">الصفوف:</label>
+      <select
+        id="pagesize-filter"
+        class="form-control ltr-num font-mono"
+        [ngModel]="pageSize()"
+        (ngModelChange)="pageSize.set($event); currentPage.set(1)">
+        <option [value]="10">10</option>
+        <option [value]="25">25</option>
+        <option [value]="50">50</option>
+        <option [value]="100">100</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Reactive Filter Tabs -->
+  <div class="status-tabs-container">
+    <div class="tabs-list" role="tablist">
+      <button
+        type="button"
+        role="tab"
+        class="tab-btn"
+        [class.active]="activeTab() === 'All'"
+        (click)="setTab('All')">
+        الكل
+        <span class="tab-count ltr-num font-mono">{{ getCount('All') }}</span>
+      </button>
+
+      <button
+        type="button"
+        role="tab"
+        class="tab-btn tab-present"
+        [class.active]="activeTab() === 'Present'"
+        (click)="setTab('Present')">
+        حاضر
+        <span class="tab-count ltr-num font-mono">{{ getCount('Present') }}</span>
+      </button>
+
+      <button
+        type="button"
+        role="tab"
+        class="tab-btn tab-late"
+        [class.active]="activeTab() === 'Late'"
+        (click)="setTab('Late')">
+        متأخر
+        <span class="tab-count ltr-num font-mono">{{ getCount('Late') }}</span>
+      </button>
+
+      <button
+        type="button"
+        role="tab"
+        class="tab-btn tab-absent"
+        [class.active]="activeTab() === 'Absent'"
+        (click)="setTab('Absent')">
+        غائب
+        <span class="tab-count ltr-num font-mono">{{ getCount('Absent') }}</span>
+      </button>
+
+      <button
+        type="button"
+        role="tab"
+        class="tab-btn tab-excused"
+        [class.active]="activeTab() === 'Excused'"
+        (click)="setTab('Excused')">
+        معذور
+        <span class="tab-count ltr-num font-mono">{{ getCount('Excused') }}</span>
+      </button>
+
+      <button
+        type="button"
+        role="tab"
+        class="tab-btn tab-waiting"
+        [class.active]="activeTab() === 'Waiting'"
+        (click)="setTab('Waiting')">
+        قيد الانتظار
+        <span class="tab-count ltr-num font-mono">{{ getCount('Waiting') }}</span>
+      </button>
+
+      <button
+        type="button"
+        role="tab"
+        class="tab-btn tab-voided"
+        [class.active]="activeTab() === 'Voided'"
+        (click)="setTab('Voided')">
+        ملغاة (DEC-01)
+        <span class="tab-count ltr-num font-mono">{{ getCount('Voided') }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Records Data Table -->
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>كود الطالب</th>
+          <th>اسم الطالب</th>
+          <th>وقت التحضير</th>
+          <th>حالة الحضور</th>
+          <th>القفل التلقائي</th>
+          <th>طريقة التسجيل</th>
+          <th>إشعار واتساب</th>
+          <th class="actions-header">الإجراءات</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (isLoading()) {
+          <tr>
+            <td colspan="8" class="loading-cell">جاري تحميل السجلات...</td>
+          </tr>
+        } @else if (paginatedRecords().length === 0) {
+          <tr>
+            <td colspan="8" class="empty-cell">لا توجد سجلات حضور مطابقة لهذا الفلتر</td>
+          </tr>
+        } @else {
+          @for (rec of paginatedRecords(); track rec.id) {
+            <tr [class.row-voided]="rec.status === 'Voided'">
+              <td class="font-mono ltr-num font-semibold">{{ rec.studentCode }}</td>
+              <td>
+                <div class="student-name-box">
+                  <span class="name">{{ rec.studentName }}</span>
+                  @if (studentsMap().get(rec.studentId)?.status === 'Withdrawn') {
+                    <span class="withdrawn-badge">منسحب</span>
+                  }
+                </div>
+              </td>
+              <td class="font-mono ltr-num">
+                {{ rec.scannedAt ? (rec.scannedAt | date:'HH:mm:ss') : '-' }}
+              </td>
+              <td>
+                <span class="status-badge status-{{ rec.status | lowercase }}">
+                  @switch (rec.status) {
+                    @case ('Present') { حاضر }
+                    @case ('Late') { متأخر }
+                    @case ('Absent') { غائب }
+                    @case ('Excused') { معذور }
+                    @case ('Waiting') { بانتظار التحضير }
+                    @case ('Voided') { ملغاة (جلسة ملغاة) }
+                    @default { {{ rec.status }} }
+                  }
+                </span>
+              </td>
+              <td class="text-center">
+                @if (rec.autoEvaluationLocked) {
+                  <span class="locked-icon" title="تم التثبيت يدوياً - لن يتم تعديله تلقائياً">🔒 مقفل</span>
+                } @else {
+                  <span class="unlocked-text">تلقائي</span>
+                }
+              </td>
+              <td>
+                <span class="source-tag">
+                  @switch (rec.source) {
+                    @case ('NfcCard') { 💳 كارت NFC }
+                    @case ('QrCode') { 📷 كود QR }
+                    @case ('ManualOverride') { ✍️ يدوي }
+                    @default { {{ rec.source }} }
+                  }
+                </span>
+              </td>
+              <td>
+                <span class="whatsapp-pill pill-{{ rec.whatsappNotificationStatus | lowercase }}">
+                  @switch (rec.whatsappNotificationStatus) {
+                    @case ('Sent') { تم الإرسال }
+                    @case ('Queued') { قيد الانتظار }
+                    @case ('Failed') { تعذر الإرسال }
+                    @case ('Cancelled') { ملغي }
+                    @default { - }
+                  }
+                </span>
+              </td>
+              <td class="actions-cell">
+                <button
+                  type="button"
+                  class="btn-action-edit"
+                  (click)="openEditModal(rec)"
+                  [title]="studentsMap().get(rec.studentId)?.status === 'Withdrawn' ? 'تعديل استثنائي لطالب منسحب' : 'تعديل يدوي'">
+                  تعديل
+                </button>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination Bar -->
+  <div class="pagination-bar">
+    <div class="pagination-info">
+      عرض صفحة <span class="ltr-num font-mono">{{ currentPage() }}</span> من <span class="ltr-num font-mono">{{ totalPages() }}</span>
+      (إجمالي السجلات: <span class="ltr-num font-mono">{{ filteredRecords().length }}</span>)
+    </div>
+
+    <div class="pagination-controls">
+      <button
+        type="button"
+        class="btn-page"
+        [disabled]="currentPage() <= 1"
+        (click)="setPage(currentPage() - 1)">
+        السابق
+      </button>
+      <button
+        type="button"
+        class="btn-page"
+        [disabled]="currentPage() >= totalPages()"
+        (click)="setPage(currentPage() + 1)">
+        التالي
+      </button>
+    </div>
+  </div>
+
+  <!-- Standard Manual Override Modal -->
+  @if (activeOverrideRecord()) {
+    <app-manual-override-modal
+      [record]="activeOverrideRecord()!"
+      (saved)="saveOverride($event)"
+      (closed)="closeModals()">
+    </app-manual-override-modal>
+  }
+
+  <!-- Withdrawn Student Retroactive Modal (DEC-07) -->
+  @if (activeWithdrawnRecord()) {
+    <app-withdrawn-retroactive-modal
+      [record]="activeWithdrawnRecord()!"
+      [withdrawnAt]="getStudentWithdrawnDate(activeWithdrawnRecord()!.studentId)"
+      [sessionDate]="selectedDate()"
+      (saved)="saveWithdrawnOverride($event)"
+      (closed)="closeModals()">
+    </app-withdrawn-retroactive-modal>
+  }
+
+  <!-- Post Sync Conflicts Modal (DEC-04) -->
+  @if (showConflictModal()) {
+    <app-post-sync-review-modal
+      [conflicts]="conflictedItems()"
+      (resolved)="resolveConflictItem($event)"
+      (closed)="showConflictModal.set(false)">
+    </app-post-sync-review-modal>
+  }
+</div>

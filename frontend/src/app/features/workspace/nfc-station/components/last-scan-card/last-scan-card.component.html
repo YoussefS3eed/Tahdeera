@@ -1,0 +1,42 @@
+@if (scan()) {
+  <div class="last-scan-card" [ngClass]="getStatusColorClass(scan()?.outcome)">
+    <div class="card-avatar">
+      @if (scan()?.student?.photoUrl) {
+        <img [src]="scan()?.student?.photoUrl" [alt]="scan()?.student?.fullName" class="avatar-img" />
+      } @else {
+        <div class="avatar-initials">
+          {{ scan()?.student?.fullName?.slice(0, 2) || 'ط' }}
+        </div>
+      }
+    </div>
+
+    <div class="card-content">
+      <div class="student-meta">
+        <h3 class="student-name">{{ scan()?.student?.fullName || 'بيانات الكارت' }}</h3>
+        <span class="ltr-num font-mono student-code">{{ scan()?.student?.studentCode || '' }}</span>
+      </div>
+
+      <div class="scan-status-row">
+        <span class="status-badge" [ngClass]="getStatusColorClass(scan()?.outcome)">
+          {{ scan()?.messageAr }}
+        </span>
+        @if (scan()?.lateMinutes) {
+          <span class="late-pill">تأخير {{ scan()?.lateMinutes }} دقيقة</span>
+        }
+        <span class="ltr-num font-mono scan-time">{{ scan()?.scannedAtUtc | date:'HH:mm:ss' }}</span>
+      </div>
+
+      @if (scan()?.student?.whatsappOptIn) {
+        <div class="whatsapp-indicator">
+          <span class="icon">📲</span>
+          <span class="text">تم إرسال إشعار فوري لولي الأمر عبر واتساب</span>
+        </div>
+      }
+    </div>
+  </div>
+} @else {
+  <div class="last-scan-empty">
+    <div class="empty-icon">💳</div>
+    <div class="empty-text">في انتظار تمرير الكارت أو مسح الباركود...</div>
+  </div>
+}

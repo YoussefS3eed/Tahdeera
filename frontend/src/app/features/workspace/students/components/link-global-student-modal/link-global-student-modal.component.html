@@ -1,0 +1,65 @@
+<div class="modal-backdrop" (click)="close()">
+  <div class="modal-card" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-header">
+      <div class="header-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+        </svg>
+      </div>
+      <div>
+        <h3 id="modal-title" class="modal-title">ربط طالب مسجل مسبقاً (DEC-02)</h3>
+        <p class="modal-subtitle">ربط طالب موجود بالنظام العام لمركزك عبر كود الطالب والرقم السري</p>
+      </div>
+      <button type="button" class="btn-close" (click)="close()" aria-label="إغلاق">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="security-note">
+        <span class="note-icon">🛡️</span>
+        <p class="note-text">
+          لحماية خصوصية الطلاب، يتطلب الربط كود الطالب الموحد بالإضافة إلى الرقم السري الخاص (PIN) المكون من 4 أرقام من ولي الأمر أو الطالب.
+        </p>
+      </div>
+
+      @if (validationError()) {
+        <div class="alert-error" role="alert">
+          {{ validationError() }}
+        </div>
+      }
+
+      <div class="form-group">
+        <label class="form-label" for="link-student-code">كود الطالب الموحد:</label>
+        <input
+          id="link-student-code"
+          type="text"
+          class="form-input font-mono ltr-num"
+          placeholder="مثال: ST-1042"
+          [(ngModel)]="studentCode" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="link-pin">الرقم السري للربط (4 أرقام):</label>
+        <input
+          id="link-pin"
+          type="password"
+          maxlength="4"
+          class="form-input font-mono ltr-num pin-input"
+          placeholder="••••"
+          [(ngModel)]="secretPin" />
+        <span class="input-hint">رقم التحقق السري المعتمد للطالب في التطبيق</span>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="close()">إلغاء</button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        [disabled]="!isFormValid || isSubmitting()"
+        (click)="submit()">
+        {{ isSubmitting() ? 'جاري التحقق والربط...' : 'ربط الطالب بالمركز 🔗' }}
+      </button>
+    </div>
+  </div>
+</div>

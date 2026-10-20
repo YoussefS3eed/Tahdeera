@@ -1,0 +1,98 @@
+<div class="modal-backdrop" (click)="close()">
+  <div class="modal-card" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-header">
+      <div class="header-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      </div>
+      <div>
+        <h3 id="modal-title" class="modal-title">تعديل استثنائي لطالب منسحب (DEC-07)</h3>
+        <p class="modal-subtitle">تعديل سجل حضور تاريخي لطالب منسحب من المركز</p>
+      </div>
+      <button type="button" class="btn-close" (click)="close()" aria-label="إغلاق">✕</button>
+    </div>
+
+    <!-- Amber Alert Banner -->
+    <div class="alert-banner" role="alert">
+      <span class="alert-icon">⚠️</span>
+      <div class="alert-text">
+        <strong>تنبيه: الطالب منسحب حالياً من المركز الدراسي</strong>
+        <p class="alert-hint">يتطلب النظام سبباً مفصلاً وموثقاً (10 أحرف كحد أدنى) لتعديل سجل الحضور بأثر رجعي، ويمنع تسجيل جلسات بعد تاريخ الانسحاب.</p>
+      </div>
+    </div>
+
+    <div class="student-info-row">
+      <div class="info-item">
+        <span class="info-label">اسم الطالب:</span>
+        <span class="info-value font-semibold">{{ record().studentName }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">كود الطالب:</span>
+        <span class="info-value font-mono ltr-num">{{ record().studentCode }}</span>
+      </div>
+      @if (withdrawnAt()) {
+        <div class="info-item">
+          <span class="info-label">تاريخ الانسحاب:</span>
+          <span class="info-value font-mono ltr-num">{{ withdrawnAt() }}</span>
+        </div>
+      }
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">الحالة الجديدة المطلوبة:</label>
+      <div class="status-grid">
+        <label class="status-option" [class.selected]="selectedStatus === 'Present'">
+          <input type="radio" name="withdrawnStatus" value="Present" [(ngModel)]="selectedStatus" />
+          <span class="badge badge-present">حاضر</span>
+        </label>
+        <label class="status-option" [class.selected]="selectedStatus === 'Late'">
+          <input type="radio" name="withdrawnStatus" value="Late" [(ngModel)]="selectedStatus" />
+          <span class="badge badge-late">متأخر</span>
+        </label>
+        <label class="status-option" [class.selected]="selectedStatus === 'Excused'">
+          <input type="radio" name="withdrawnStatus" value="Excused" [(ngModel)]="selectedStatus" />
+          <span class="badge badge-excused">معذور</span>
+        </label>
+        <label class="status-option" [class.selected]="selectedStatus === 'Absent'">
+          <input type="radio" name="withdrawnStatus" value="Absent" [(ngModel)]="selectedStatus" />
+          <span class="badge badge-absent">غائب</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="withdrawn-reason">
+        سبب التعديل الاستثنائي الموثق:
+        <span class="required-indicator">* (10 أحرف على الأقل)</span>
+      </label>
+      <textarea
+        id="withdrawn-reason"
+        class="form-textarea font-body"
+        rows="3"
+        placeholder="أدخل مبرر التعديل الاستثنائي لطالب منسحب (10 أحرف كحد أدنى)..."
+        [(ngModel)]="overrideReason"
+        [disabled]="isBlockedByDate">
+      </textarea>
+      <div class="char-counter" [class.invalid]="!isReasonValid && overrideReason.length > 0">
+        <span class="ltr-num font-mono">{{ overrideReason.trim().length }}</span> / 10 أحرف كحد أدنى
+      </div>
+      @if (validationError) {
+        <p class="error-text" role="alert">{{ validationError }}</p>
+      }
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="close()">إلغاء</button>
+      <button
+        type="button"
+        class="btn btn-warning"
+        [disabled]="!isReasonValid || isBlockedByDate"
+        (click)="save()">
+        حفظ وتثبيت التعديل الاستثنائي 🔒
+      </button>
+    </div>
+  </div>
+</div>
