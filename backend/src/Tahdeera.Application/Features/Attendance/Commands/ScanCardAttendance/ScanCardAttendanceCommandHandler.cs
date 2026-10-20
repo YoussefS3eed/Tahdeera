@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
@@ -159,7 +160,36 @@ public sealed class ScanCardAttendanceCommandHandler : IRequestHandler<ScanCardA
             notificationStaged = true;
         }
 
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException ex) when (IsUniqueConstraintViolation(ex))
+        {
+            // Concurrent duplicate scan - reload existing record idempotently
+            var concurrentRecord = await _unitOfWork.AttendanceRecords
+                .FirstOrDefaultAsync(r => r.SessionId == session.Id && r.StudentId == credential.StudentId && r.VoidedAt == null, cancellationToken);
+
+            if (concurrentRecord != null)
+            {
+                stopwatch.Stop();
+                return Result.Success(new AttendanceScanResultDto(
+                    concurrentRecord.Id,
+                    session.Id,
+                    credential.StudentId,
+                    studentName,
+                    studentCode,
+                    concurrentRecord.Status.ToString(),
+                    concurrentRecord.CheckInAt ?? concurrentRecord.RecordedAt,
+                    concurrentRecord.IsGuestMakeup,
+                    concurrentRecord.HomeGroupId,
+                    NotificationStaged: false,
+                    stopwatch.ElapsedMilliseconds));
+            }
+
+            throw;
+        }
+
         stopwatch.Stop();
 
         return Result.Success(new AttendanceScanResultDto(
@@ -174,5 +204,22 @@ public sealed class ScanCardAttendanceCommandHandler : IRequestHandler<ScanCardA
             record.HomeGroupId,
             notificationStaged,
             stopwatch.ElapsedMilliseconds));
+    }
+
+    private static bool IsUniqueConstraintViolation(DbUpdateException ex)
+    {
+        var message = ex.InnerException?.Message ?? ex.Message;
+        if (message.Contains("ux_attendance_records_session_student") || message.Contains("23505") || message.Contains("duplicate key", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        var sqlStateProp = ex.InnerException?.GetType().GetProperty("SqlState");
+        if (sqlStateProp?.GetValue(ex.InnerException) is string sqlState && sqlState == "23505")
+        {
+            return true;
+        }
+
+        return false;
     }
 }

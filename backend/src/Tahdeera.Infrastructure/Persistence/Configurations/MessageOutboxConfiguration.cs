@@ -12,7 +12,7 @@ public class MessageOutboxConfiguration : IEntityTypeConfiguration<MessageOutbox
         builder.ToTable("message_outbox", t =>
         {
             t.HasCheckConstraint("CK_message_outbox_language_code", "language_code IN ('ar', 'en')");
-            t.HasCheckConstraint("CK_message_outbox_message_type", "message_type IN ('AttendanceCheckIn', 'AbsenceAlert', 'ExamResult', 'WeeklyParentReport', 'PaymentReceipt')");
+            t.HasCheckConstraint("CK_message_outbox_message_type", "message_type IN ('AttendanceCheckIn', 'AbsenceAlert', 'ExamResult', 'WeeklyParentReport', 'PaymentReceipt', 'AttendanceCorrection')");
             t.HasCheckConstraint("CK_message_outbox_status", "status IN ('Pending', 'PublishedToBroker', 'Processing', 'Sent', 'Delivered', 'FailedTransient', 'FailedPermanent', 'Cancelled')");
             t.HasCheckConstraint("CK_message_outbox_failure_category", "failure_category IS NULL OR failure_category IN ('Transient', 'Permanent')");
             t.HasCheckConstraint("CK_message_outbox_attempts", "attempts >= 0 AND attempts <= 10");

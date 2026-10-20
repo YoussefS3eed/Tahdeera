@@ -203,7 +203,7 @@ public sealed class RegisterGuestMakeupAttendanceCommandHandler : IRequestHandle
                 studentId: request.StudentId,
                 attendanceRecordId: guestRecord.Id,
                 recipientPhone: workspaceStudent.GuardianPhone,
-                messageType: "AttendanceGuestMakeup",
+                messageType: "AttendanceCheckIn",
                 payload: payload,
                 idempotencyKey: idempotencyKey,
                 languageCode: "ar");

@@ -45,6 +45,9 @@ public static class DomainErrors
 
         public static Error CorrectionReasonRequired =>
             Error.Validation("CORRECTION_REASON_REQUIRED", "سبب التعديل إلزامي عند تعديل حالة الطالب أو السجل.");
+
+        public static Error ConcurrentDelegationConflict =>
+            Error.Conflict("CONCURRENT_DELEGATION_CONFLICT", "تم تعديل تفويض المجموعة بالتزامن. يرجى إعادة المحاولة.");
     }
 
     public static class Sessions

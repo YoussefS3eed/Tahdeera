@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Mapster;
 using MediatR;
 using Tahdeera.Application.Features.Groups.DTOs;
@@ -42,7 +43,15 @@ public sealed class AssignAttendanceDelegateCommandHandler : IRequestHandler<Ass
             request.TeacherUserId);
 
         await _unitOfWork.GroupAttendanceDelegations.AddAsync(newDelegation, cancellationToken);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        try
+        {
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException ex) when (IsUniqueConstraintViolation(ex))
+        {
+            return DomainErrors.Groups.ConcurrentDelegationConflict;
+        }
 
         // 3. Resolve assistant user name
         var assistantUser = await _unitOfWork.AppUsers.GetByIdAsync(request.AssistantUserId, cancellationToken);
@@ -53,5 +62,22 @@ public sealed class AssignAttendanceDelegateCommandHandler : IRequestHandler<Ass
         };
 
         return Result.Success(dto);
+    }
+
+    private static bool IsUniqueConstraintViolation(DbUpdateException ex)
+    {
+        var message = ex.InnerException?.Message ?? ex.Message;
+        if (message.Contains("ux_one_active_attendance_delegate_per_group") || message.Contains("23505") || message.Contains("duplicate key", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        var sqlStateProp = ex.InnerException?.GetType().GetProperty("SqlState");
+        if (sqlStateProp?.GetValue(ex.InnerException) is string sqlState && sqlState == "23505")
+        {
+            return true;
+        }
+
+        return false;
     }
 }

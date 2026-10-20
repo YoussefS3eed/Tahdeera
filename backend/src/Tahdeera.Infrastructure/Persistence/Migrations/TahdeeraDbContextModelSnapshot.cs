@@ -1312,7 +1312,7 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
 
                             t.HasCheckConstraint("CK_message_outbox_max_attempts", "max_attempts >= 1 AND max_attempts <= 10");
 
-                            t.HasCheckConstraint("CK_message_outbox_message_type", "message_type IN ('AttendanceCheckIn', 'AbsenceAlert', 'ExamResult', 'WeeklyParentReport', 'PaymentReceipt')");
+                            t.HasCheckConstraint("CK_message_outbox_message_type", "message_type IN ('AttendanceCheckIn', 'AbsenceAlert', 'ExamResult', 'WeeklyParentReport', 'PaymentReceipt', 'AttendanceCorrection')");
 
                             t.HasCheckConstraint("CK_message_outbox_status", "status IN ('Pending', 'PublishedToBroker', 'Processing', 'Sent', 'Delivered', 'FailedTransient', 'FailedPermanent', 'Cancelled')");
                         });
