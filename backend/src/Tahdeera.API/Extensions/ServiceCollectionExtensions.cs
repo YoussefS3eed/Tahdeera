@@ -100,6 +100,12 @@ public static class ServiceCollectionExtensions
 
             options.AddPolicy(Tahdeera.Application.Common.Security.Permissions.CredentialsManage, policy =>
                 policy.Requirements.Add(new WorkspacePermissionRequirement(Tahdeera.Application.Common.Security.Permissions.CredentialsManage)));
+
+            options.AddPolicy(Tahdeera.Application.Common.Security.Permissions.WhatsAppManage, policy =>
+                policy.Requirements.Add(new WorkspacePermissionRequirement(Tahdeera.Application.Common.Security.Permissions.WhatsAppManage)));
+
+            options.AddPolicy(Tahdeera.Application.Common.Security.Permissions.WhatsAppView, policy =>
+                policy.Requirements.Add(new WorkspacePermissionRequirement(Tahdeera.Application.Common.Security.Permissions.WhatsAppView)));
         });
 
         // 7. Application + Infrastructure layers

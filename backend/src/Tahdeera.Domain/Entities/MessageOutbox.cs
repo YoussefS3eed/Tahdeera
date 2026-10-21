@@ -411,10 +411,17 @@ public class MessageOutbox : BaseEntity
     public void ResetForManualRetry(string refreshedPhone)
     {
         if (Status == OutboxMessageStatus.Sent || Status == OutboxMessageStatus.Delivered)
-            throw new DomainValidationException("MESSAGE_ALREADY_SENT", "The message has already been processed and cannot be re-sent.");
+            throw new DomainValidationException("MESSAGE_ALREADY_SENT", "The message has already been processed and delivered.");
 
-        RecipientPhone = refreshedPhone;
+        if (Status == OutboxMessageStatus.PublishedToBroker || Status == OutboxMessageStatus.Processing)
+            throw new DomainValidationException("MESSAGE_IN_FLIGHT", "The message is currently in-flight in the broker and cannot be retried.");
+
+        if (Status != OutboxMessageStatus.FailedPermanent && Status != OutboxMessageStatus.FailedTransient)
+            throw new DomainValidationException("INVALID_STATUS_FOR_RETRY", $"Cannot retry message from status '{Status}'. Only FailedPermanent or FailedTransient messages can be retried.");
+
+        RecipientPhone = refreshedPhone.Trim();
         Status = OutboxMessageStatus.Pending;
+        FailureCategory = null;
         Attempts = 0;
         LeaseRecoveryAttempts = 0;
         ErrorCode = null;

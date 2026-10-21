@@ -614,4 +614,64 @@
   <data name="WEBHOOK_MODE_INVALID_Detail" xml:space="preserve">
     <value>hub.mode query parameter must be set to 'subscribe' for handshake verification.</value>
   </data>
+
+  <data name="INVALID_TEMPLATE_VARIABLE" xml:space="preserve">
+    <value>The payload contains unapproved or unregistered template variables.</value>
+  </data>
+  <data name="INVALID_TEMPLATE_VARIABLE_Title" xml:space="preserve">
+    <value>Invalid Template Variable</value>
+  </data>
+  <data name="INVALID_TEMPLATE_VARIABLE_Detail" xml:space="preserve">
+    <value>The payload contains unapproved or unregistered template variables.</value>
+  </data>
+
+  <data name="MESSAGE_IN_FLIGHT" xml:space="preserve">
+    <value>The message is currently being processed by the messaging broker. Please wait.</value>
+  </data>
+  <data name="MESSAGE_IN_FLIGHT_Title" xml:space="preserve">
+    <value>Message In Flight</value>
+  </data>
+  <data name="MESSAGE_IN_FLIGHT_Detail" xml:space="preserve">
+    <value>The message is currently being processed by the messaging broker. Please wait.</value>
+  </data>
+
+  <data name="INVALID_STATUS_FOR_RETRY" xml:space="preserve">
+    <value>Only messages in FailedPermanent or FailedTransient status can be retried.</value>
+  </data>
+  <data name="INVALID_STATUS_FOR_RETRY_Title" xml:space="preserve">
+    <value>Invalid Status For Retry</value>
+  </data>
+  <data name="INVALID_STATUS_FOR_RETRY_Detail" xml:space="preserve">
+    <value>Only messages in FailedPermanent or FailedTransient status can be retried.</value>
+  </data>
+
+  <data name="STUDENT_NOT_FOUND" xml:space="preserve">
+    <value>Associated student profile was not found in this workspace.</value>
+  </data>
+  <data name="STUDENT_NOT_FOUND_Title" xml:space="preserve">
+    <value>Student Not Found</value>
+  </data>
+  <data name="STUDENT_NOT_FOUND_Detail" xml:space="preserve">
+    <value>Associated student profile was not found in this workspace.</value>
+  </data>
+
+  <data name="META_SERVICE_UNAVAILABLE" xml:space="preserve">
+    <value>Unable to communicate with Meta Graph API OAuth service. Please retry.</value>
+  </data>
+  <data name="META_SERVICE_UNAVAILABLE_Title" xml:space="preserve">
+    <value>Meta Service Unavailable</value>
+  </data>
+  <data name="META_SERVICE_UNAVAILABLE_Detail" xml:space="preserve">
+    <value>Unable to communicate with Meta Graph API OAuth service. Please retry.</value>
+  </data>
+
+  <data name="WABA_CONNECTION_NOT_FOUND" xml:space="preserve">
+    <value>No active WhatsApp sender connection found for this workspace.</value>
+  </data>
+  <data name="WABA_CONNECTION_NOT_FOUND_Title" xml:space="preserve">
+    <value>WABA Connection Not Found</value>
+  </data>
+  <data name="WABA_CONNECTION_NOT_FOUND_Detail" xml:space="preserve">
+    <value>No active WhatsApp sender connection found for this workspace.</value>
+  </data>
 </root>

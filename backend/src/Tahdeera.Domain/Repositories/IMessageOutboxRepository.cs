@@ -11,4 +11,5 @@ public interface IMessageOutboxRepository
     Task<MessageOutbox?> GetByProviderMessageIdAsync(string providerMessageId, CancellationToken ct = default);
     Task AddAsync(MessageOutbox message, CancellationToken ct = default);
     Task CancelPendingForSessionAsync(Guid sessionId, string reason, CancellationToken ct = default);
+    Task<int> CancelPendingAndTransientForWorkspaceAsync(Guid workspaceId, string reason, CancellationToken ct = default);
 }

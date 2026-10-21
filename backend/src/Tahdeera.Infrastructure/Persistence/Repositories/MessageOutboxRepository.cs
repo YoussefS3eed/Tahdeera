@@ -74,4 +74,22 @@ public class MessageOutboxRepository : GenericRepository<MessageOutbox>, IMessag
             message.Cancel(reason);
         }
     }
+
+    public async Task<int> CancelPendingAndTransientForWorkspaceAsync(
+        Guid workspaceId,
+        string reason,
+        CancellationToken ct = default)
+    {
+        var now = DateTimeOffset.UtcNow;
+        var errorDetails = $"Cancelled: {reason}";
+
+        return await _dbSet
+            .Where(m => m.WorkspaceId == workspaceId &&
+                       (m.Status == OutboxMessageStatus.Pending || m.Status == OutboxMessageStatus.FailedTransient))
+            .ExecuteUpdateAsync(s => s
+                .SetProperty(m => m.Status, OutboxMessageStatus.Cancelled)
+                .SetProperty(m => m.ErrorDetails, errorDetails)
+                .SetProperty(m => m.NextAttemptAt, (DateTimeOffset?)null)
+                .SetProperty(m => m.UpdatedAt, now), ct);
+    }
 }

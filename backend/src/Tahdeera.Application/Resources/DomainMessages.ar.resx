@@ -614,4 +614,64 @@
   <data name="WEBHOOK_MODE_INVALID_Detail" xml:space="preserve">
     <value>يجب أن تكون قيمة hub.mode مساوية لـ subscribe للتحقق من الاتصال بميتا.</value>
   </data>
+
+  <data name="INVALID_TEMPLATE_VARIABLE" xml:space="preserve">
+    <value>يحتوي الطلب على متغيرات قوالب غير معتمدة أو غير مسجلة.</value>
+  </data>
+  <data name="INVALID_TEMPLATE_VARIABLE_Title" xml:space="preserve">
+    <value>متغيرات القالب غير صالحة</value>
+  </data>
+  <data name="INVALID_TEMPLATE_VARIABLE_Detail" xml:space="preserve">
+    <value>يحتوي الطلب على متغيرات قوالب غير معتمدة أو غير مسجلة.</value>
+  </data>
+
+  <data name="MESSAGE_IN_FLIGHT" xml:space="preserve">
+    <value>الرسالة قيد المعالجة حالياً في وسيط الرسائل. برجاء الانتظار.</value>
+  </data>
+  <data name="MESSAGE_IN_FLIGHT_Title" xml:space="preserve">
+    <value>الرسالة قيد المعالجة</value>
+  </data>
+  <data name="MESSAGE_IN_FLIGHT_Detail" xml:space="preserve">
+    <value>الرسالة قيد المعالجة حالياً في وسيط الرسائل. برجاء الانتظار.</value>
+  </data>
+
+  <data name="INVALID_STATUS_FOR_RETRY" xml:space="preserve">
+    <value>يمكن إعادة محاولة الإرسال فقط للرسائل التي فشلت بشكل دائم أو مؤقت.</value>
+  </data>
+  <data name="INVALID_STATUS_FOR_RETRY_Title" xml:space="preserve">
+    <value>حالة الرسالة لا تسمح بإعادة المحاولة</value>
+  </data>
+  <data name="INVALID_STATUS_FOR_RETRY_Detail" xml:space="preserve">
+    <value>يمكن إعادة محاولة الإرسال فقط للرسائل التي فشلت بشكل دائم أو مؤقت.</value>
+  </data>
+
+  <data name="STUDENT_NOT_FOUND" xml:space="preserve">
+    <value>لم يتم العثور على ملف الطالب المرتبط بالرسالة في هذا السنتر.</value>
+  </data>
+  <data name="STUDENT_NOT_FOUND_Title" xml:space="preserve">
+    <value>ملف الطالب غير موجود</value>
+  </data>
+  <data name="STUDENT_NOT_FOUND_Detail" xml:space="preserve">
+    <value>لم يتم العثور على ملف الطالب المرتبط بالرسالة في هذا السنتر.</value>
+  </data>
+
+  <data name="META_SERVICE_UNAVAILABLE" xml:space="preserve">
+    <value>تعذر الاتصال بخدمة Meta Graph API OAuth. برجاء المحاولة لاحقاً.</value>
+  </data>
+  <data name="META_SERVICE_UNAVAILABLE_Title" xml:space="preserve">
+    <value>خدمة ميتا غير متاحة</value>
+  </data>
+  <data name="META_SERVICE_UNAVAILABLE_Detail" xml:space="preserve">
+    <value>تعذر الاتصال بخدمة Meta Graph API OAuth. برجاء المحاولة لاحقاً.</value>
+  </data>
+
+  <data name="WABA_CONNECTION_NOT_FOUND" xml:space="preserve">
+    <value>لا يوجد اتصال نشط لحساب واتساب للأعمال في هذا السنتر.</value>
+  </data>
+  <data name="WABA_CONNECTION_NOT_FOUND_Title" xml:space="preserve">
+    <value>الاتصال غير موجود</value>
+  </data>
+  <data name="WABA_CONNECTION_NOT_FOUND_Detail" xml:space="preserve">
+    <value>لا يوجد اتصال نشط لحساب واتساب للأعمال في هذا السنتر.</value>
+  </data>
 </root>

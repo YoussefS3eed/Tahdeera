@@ -98,6 +98,10 @@ public static class DependencyInjection
         {
             client.Timeout = TimeSpan.FromSeconds(10);
         });
+        services.AddHttpClient<Tahdeera.Application.Common.Interfaces.Services.IMetaOAuthClient, Tahdeera.Infrastructure.Services.MetaOAuthClient>(client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(15);
+        });
 
         // MassTransit & Messaging Infrastructure
         services.AddMessagingInfrastructure(configuration);

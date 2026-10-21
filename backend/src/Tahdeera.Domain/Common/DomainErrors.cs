@@ -126,5 +126,38 @@ public static class DomainErrors
 
         public static Error QuotaExceeded =>
             Error.Validation("WORKSPACE_QUOTA_EXCEEDED", "استنفذت مساحة العمل الحد الأقصى الشهري لرسائل الواتساب، وتم إيقاف الإرسال مؤقتاً.");
+
+        public static readonly Error SenderNotConfigured =
+            Error.Unprocessable("SENDER_NOT_CONFIGURED", "Workspace-owned sender requires an active, connected WhatsApp Business Account.");
+
+        public static readonly Error InvalidTemplateVariable =
+            Error.Validation("INVALID_TEMPLATE_VARIABLE", "The payload contains unapproved or unregistered template variables.");
+
+        public static readonly Error OptInMissing =
+            Error.Unprocessable("OPT_IN_MISSING", "Guardian has opted out of WhatsApp notifications for this student.");
+
+        public static readonly Error MessageAlreadySent =
+            Error.Conflict("MESSAGE_ALREADY_SENT", "The message has already been processed and delivered. Manual retry is not permitted.");
+
+        public static readonly Error MessageInFlight =
+            Error.Conflict("MESSAGE_IN_FLIGHT", "The message is currently being processed by the messaging broker. Please wait.");
+
+        public static readonly Error InvalidStatusForRetry =
+            Error.Unprocessable("INVALID_STATUS_FOR_RETRY", "Only messages in FailedPermanent or FailedTransient status can be retried.");
+
+        public static readonly Error StudentNotFound =
+            Error.NotFound("STUDENT_NOT_FOUND", "Associated student profile was not found in this workspace.");
+
+        public static readonly Error RetryUnauthorizedRole =
+            Error.Forbidden("RETRY_UNAUTHORIZED_ROLE", "You do not have permission to retry WhatsApp attendance messages.");
+
+        public static readonly Error MetaServiceUnavailable =
+            Error.Failure("META_SERVICE_UNAVAILABLE", "Unable to communicate with Meta Graph API OAuth service. Please retry.");
+
+        public static readonly Error WabaConnectionNotFound =
+            Error.NotFound("WABA_CONNECTION_NOT_FOUND", "No active WhatsApp sender connection found for this workspace.");
+
+        public static readonly Error TemplateNotFound =
+            Error.NotFound("TEMPLATE_NOT_FOUND", "Requested WhatsApp template is not registered or approved.");
     }
 }

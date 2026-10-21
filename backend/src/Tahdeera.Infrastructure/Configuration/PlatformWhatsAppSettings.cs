@@ -9,6 +9,7 @@ public sealed class PlatformWhatsAppSettings
     public string AccessToken { get; set; } = string.Empty;
     public string BusinessDisplayName { get; set; } = "Tahdeera";
     public bool IsEnabled { get; set; } = false;
+    public string AppId { get; set; } = string.Empty;
     public string AppSecret { get; set; } = string.Empty;
     public string WebhookVerifyToken { get; set; } = string.Empty;
 }
