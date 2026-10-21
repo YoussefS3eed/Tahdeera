@@ -464,4 +464,144 @@
   <data name="SESSION_NOT_ACTIVE_Detail" xml:space="preserve">
     <value>تسجيل الحضور المباشر متاح فقط للحصص المجدولة أو الجارية حالياً.</value>
   </data>
+  <!-- Milestone B4 Phase 1 & 2 Canonical Error Codes -->
+  <data name="OPT_IN_MISSING" xml:space="preserve">
+    <value>لم يوافق ولي الأمر على استقبال رسائل الإشعارات عبر تطبيق واتساب.</value>
+  </data>
+  <data name="OPT_IN_MISSING_Title" xml:space="preserve">
+    <value>موافقة ولي الأمر مطلوبة</value>
+  </data>
+  <data name="OPT_IN_MISSING_Detail" xml:space="preserve">
+    <value>لم يوافق ولي الأمر على استقبال رسائل الإشعارات عبر تطبيق واتساب.</value>
+  </data>
+
+  <data name="SENDER_NOT_CONFIGURED" xml:space="preserve">
+    <value>لم يتم ربط أو تهيئة رقم إرسال واتساب نشط لمساحة العمل هذه.</value>
+  </data>
+  <data name="SENDER_NOT_CONFIGURED_Title" xml:space="preserve">
+    <value>مرسل واتساب غير مهيأ</value>
+  </data>
+  <data name="SENDER_NOT_CONFIGURED_Detail" xml:space="preserve">
+    <value>لم يتم ربط أو تهيئة رقم إرسال واتساب نشط لمساحة العمل هذه.</value>
+  </data>
+
+  <data name="SENDER_CONNECTION_UNAVAILABLE" xml:space="preserve">
+    <value>رقم إرسال مساحة العمل غير متصل أو مقيد من قبل ميتا.</value>
+  </data>
+  <data name="SENDER_CONNECTION_UNAVAILABLE_Title" xml:space="preserve">
+    <value>رقم الإرسال غير متاح</value>
+  </data>
+  <data name="SENDER_CONNECTION_UNAVAILABLE_Detail" xml:space="preserve">
+    <value>رقم إرسال مساحة العمل غير متصل أو مقيد من قبل ميتا.</value>
+  </data>
+
+  <data name="WORKSPACE_QUOTA_EXCEEDED" xml:space="preserve">
+    <value>استنفدت مساحة العمل الحد الشهري المخصص لرسائل الواتساب.</value>
+  </data>
+  <data name="WORKSPACE_QUOTA_EXCEEDED_Title" xml:space="preserve">
+    <value>تم استنفاد باقة الرسائل</value>
+  </data>
+  <data name="WORKSPACE_QUOTA_EXCEEDED_Detail" xml:space="preserve">
+    <value>استنفدت مساحة العمل الحد الشهري المخصص لرسائل الواتساب.</value>
+  </data>
+
+  <data name="STALE_LEASE_EXCEEDED" xml:space="preserve">
+    <value>تجاوزت الرسالة الحد الأقصى لمحاولات استرداد حالة المعالجة دون اكتمالها.</value>
+  </data>
+  <data name="STALE_LEASE_EXCEEDED_Title" xml:space="preserve">
+    <value>تجاوز مهلة المعالجة القصوى</value>
+  </data>
+  <data name="STALE_LEASE_EXCEEDED_Detail" xml:space="preserve">
+    <value>تجاوزت الرسالة الحد الأقصى لمحاولات استرداد حالة المعالجة دون اكتمالها.</value>
+  </data>
+
+  <data name="TEMPLATE_NOT_FOUND" xml:space="preserve">
+    <value>لم يتم العثور على قالب رسائل الواتساب المطلوب أو لم تتم الموافقة عليه.</value>
+  </data>
+  <data name="TEMPLATE_NOT_FOUND_Title" xml:space="preserve">
+    <value>قالب الرسائل غير موجود</value>
+  </data>
+  <data name="TEMPLATE_NOT_FOUND_Detail" xml:space="preserve">
+    <value>لم يتم العثور على قالب رسائل الواتساب المطلوب أو لم تتم الموافقة عليه.</value>
+  </data>
+
+  <data name="TEMPLATE_INVALID_PLACEHOLDER" xml:space="preserve">
+    <value>يحتوي نص القالب على متغيرات ديناميكية غير مصرح بها.</value>
+  </data>
+  <data name="TEMPLATE_INVALID_PLACEHOLDER_Title" xml:space="preserve">
+    <value>متغير قالب غير صالح</value>
+  </data>
+  <data name="TEMPLATE_INVALID_PLACEHOLDER_Detail" xml:space="preserve">
+    <value>يحتوي نص القالب على متغيرات ديناميكية غير مصرح بها.</value>
+  </data>
+
+  <data name="WEBHOOK_SIGNATURE_INVALID" xml:space="preserve">
+    <value>فشل التحقق الأمني من توقيع HMAC-SHA256 المشفر للطلب الوارد.</value>
+  </data>
+  <data name="WEBHOOK_SIGNATURE_INVALID_Title" xml:space="preserve">
+    <value>توقيع الويب هوك غير صالح</value>
+  </data>
+  <data name="WEBHOOK_SIGNATURE_INVALID_Detail" xml:space="preserve">
+    <value>فشل التحقق الأمني من توقيع HMAC-SHA256 المشفر للطلب الوارد.</value>
+  </data>
+
+  <data name="WEBHOOK_VERIFY_TOKEN_MISMATCH" xml:space="preserve">
+    <value>رمز التحدي المرسل لا يطابق رمز التحقق المعتمد في إعدادات الخادم.</value>
+  </data>
+  <data name="WEBHOOK_VERIFY_TOKEN_MISMATCH_Title" xml:space="preserve">
+    <value>رمز التحقق غير متطابق</value>
+  </data>
+  <data name="WEBHOOK_VERIFY_TOKEN_MISMATCH_Detail" xml:space="preserve">
+    <value>رمز التحدي المرسل لا يطابق رمز التحقق المعتمد في إعدادات الخادم.</value>
+  </data>
+
+  <data name="MESSAGE_ALREADY_SENT" xml:space="preserve">
+    <value>تم إرسال هذه الرسالة مسبقاً وتأكيد استلامها ولا يمكن إعادة إرسالها.</value>
+  </data>
+  <data name="MESSAGE_ALREADY_SENT_Title" xml:space="preserve">
+    <value>الرسالة مرسلة بالفعل</value>
+  </data>
+  <data name="MESSAGE_ALREADY_SENT_Detail" xml:space="preserve">
+    <value>تم إرسال هذه الرسالة مسبقاً وتأكيد استلامها ولا يمكن إعادة إرسالها.</value>
+  </data>
+
+  <data name="PROVIDER_RATE_LIMITED" xml:space="preserve">
+    <value>تم بلوغ حد إرسال الرسائل لدى منصة ميتا؛ تمت جدولة الإرسال لإعادة المحاولة.</value>
+  </data>
+  <data name="PROVIDER_RATE_LIMITED_Title" xml:space="preserve">
+    <value>تجاوز معدل إرسال المزود</value>
+  </data>
+  <data name="PROVIDER_RATE_LIMITED_Detail" xml:space="preserve">
+    <value>تم بلوغ حد إرسال الرسائل لدى منصة ميتا؛ تمت جدولة الإرسال لإعادة المحاولة.</value>
+  </data>
+
+  <data name="PROVIDER_AUTHENTICATION_FAILED" xml:space="preserve">
+    <value>رمز وصول منصة ميتا غير صالح أو منتهي الصلاحية.</value>
+  </data>
+  <data name="PROVIDER_AUTHENTICATION_FAILED_Title" xml:space="preserve">
+    <value>فشل مصادقة مزود الخدمة</value>
+  </data>
+  <data name="PROVIDER_AUTHENTICATION_FAILED_Detail" xml:space="preserve">
+    <value>رمز وصول منصة ميتا غير صالح أو منتهي الصلاحية.</value>
+  </data>
+
+  <data name="RABBITMQ_BROKER_UNAVAILABLE" xml:space="preserve">
+    <value>تعذر الاتصال بوسيط الرسائل RabbitMQ؛ تم إبقاء الرسائل في جدول Outbox.</value>
+  </data>
+  <data name="RABBITMQ_BROKER_UNAVAILABLE_Title" xml:space="preserve">
+    <value>وسيط الرسائل غير متاح</value>
+  </data>
+  <data name="RABBITMQ_BROKER_UNAVAILABLE_Detail" xml:space="preserve">
+    <value>تعذر الاتصال بوسيط الرسائل RabbitMQ؛ تم إبقاء الرسائل في جدول Outbox.</value>
+  </data>
+
+  <data name="RETRY_UNAUTHORIZED_ROLE" xml:space="preserve">
+    <value>يقتصر حق إعادة المحاولة على مالك السنتر أو المدير أو مدرس المجموعة المسؤول.</value>
+  </data>
+  <data name="RETRY_UNAUTHORIZED_ROLE_Title" xml:space="preserve">
+    <value>غير مصرح بإعادة المحاولة</value>
+  </data>
+  <data name="RETRY_UNAUTHORIZED_ROLE_Detail" xml:space="preserve">
+    <value>يقتصر حق إعادة المحاولة على مالك السنتر أو المدير أو مدرس المجموعة المسؤول.</value>
+  </data>
 </root>

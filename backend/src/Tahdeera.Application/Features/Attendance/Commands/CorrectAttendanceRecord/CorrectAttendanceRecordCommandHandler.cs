@@ -87,7 +87,7 @@ public sealed class CorrectAttendanceRecordCommandHandler : IRequestHandler<Corr
         }
 
         var oldStatus = record.Status;
-        var actorUserId = _currentUserService.UserId ?? Guid.Empty;
+        var actorUserId = _currentUserService.UserId; if (actorUserId == Guid.Empty) actorUserId = null;
 
         // 6. Mutate domain entity
         record.ManualOverride(request.NewStatus, actorUserId, now, request.Reason);
@@ -148,7 +148,7 @@ public sealed class CorrectAttendanceRecordCommandHandler : IRequestHandler<Corr
             record.Status.ToString(),
             record.AutoEvaluationLocked,
             now,
-            actorUserId,
+            actorUserId ?? Guid.Empty,
             consecutiveAbsences,
             suspensionReconciled,
             notificationStaged));

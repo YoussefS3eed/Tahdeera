@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Tahdeera.Domain.Entities;
 using Tahdeera.Domain.Enums;
+using Tahdeera.Domain.Exceptions;
 
 namespace Tahdeera.Domain.UnitTests.Entities;
 
@@ -147,5 +148,153 @@ public class MessageOutboxTests
 
         act.Should().Throw<InvalidOperationException>()
             .WithMessage("Cannot claim outbox message for processing from status 'Sent'.");
+    }
+
+    // ==========================================
+    // Milestone B4 Phase 1 & 2 Specific Tests
+    // ==========================================
+
+    [Fact]
+    public void TransitionToProcessing_SetsStatusAndIncrementsAttempts()
+    {
+        var outbox = MessageOutbox.Create(
+            _workspaceId,
+            "+201019482687",
+            "AttendanceCheckIn",
+            "attendance_checkin",
+            "ar",
+            "{}",
+            "idem_123");
+
+        outbox.TransitionToProcessing(TimeSpan.FromMinutes(5));
+
+        outbox.Status.Should().Be(OutboxMessageStatus.Processing);
+        outbox.Attempts.Should().Be(1);
+        outbox.LastAttemptAt.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void RecoverLease_FirstAndSecondCycle_ResetsToPending()
+    {
+        var outbox = MessageOutbox.Create(
+            _workspaceId,
+            "+201019482687",
+            "AttendanceCheckIn",
+            "attendance_checkin",
+            "ar",
+            "{}",
+            "idem_123");
+
+        outbox.TransitionToProcessing(TimeSpan.FromMinutes(5));
+
+        // Cycle 1
+        outbox.RecoverLease();
+        outbox.LeaseRecoveryAttempts.Should().Be(1);
+        outbox.Status.Should().Be(OutboxMessageStatus.Pending);
+
+        // Cycle 2
+        outbox.TransitionToProcessing(TimeSpan.FromMinutes(5));
+        outbox.RecoverLease();
+        outbox.LeaseRecoveryAttempts.Should().Be(2);
+        outbox.Status.Should().Be(OutboxMessageStatus.Pending);
+    }
+
+    [Fact]
+    public void RecoverLease_ThirdCycle_TransitionsToFailedPermanent()
+    {
+        var outbox = MessageOutbox.Create(
+            _workspaceId,
+            "+201019482687",
+            "AttendanceCheckIn",
+            "attendance_checkin",
+            "ar",
+            "{}",
+            "idem_123");
+
+        // Cycle 1
+        outbox.TransitionToProcessing(TimeSpan.FromMinutes(5));
+        outbox.RecoverLease();
+
+        // Cycle 2
+        outbox.TransitionToProcessing(TimeSpan.FromMinutes(5));
+        outbox.RecoverLease();
+
+        // Cycle 3 (Exceeds limit)
+        outbox.TransitionToProcessing(TimeSpan.FromMinutes(5));
+        outbox.RecoverLease();
+
+        outbox.LeaseRecoveryAttempts.Should().Be(3);
+        outbox.Status.Should().Be(OutboxMessageStatus.FailedPermanent);
+        outbox.ErrorCode.Should().Be("STALE_LEASE_EXCEEDED");
+        outbox.NextAttemptAt.Should().BeNull();
+    }
+
+    [Fact]
+    public void TransitionToDelivered_WhenPrecedingSent_PreservesDelivered()
+    {
+        var outbox = MessageOutbox.Create(
+            _workspaceId,
+            "+201019482687",
+            "AttendanceCheckIn",
+            "attendance_checkin",
+            "ar",
+            "{}",
+            "idem_123");
+
+        var deliveredAt = DateTimeOffset.UtcNow;
+        outbox.TransitionToDelivered(deliveredAt);
+
+        // Out-of-order Sent webhook arriving afterwards
+        outbox.TransitionToSent("wamid.12345", 1.35m);
+
+        outbox.Status.Should().Be(OutboxMessageStatus.Delivered);
+        outbox.ProviderMessageId.Should().Be("wamid.12345");
+        outbox.CostEgp.Should().Be(1.35m);
+        outbox.DeliveredAt.Should().Be(deliveredAt);
+    }
+
+    [Fact]
+    public void ResetForManualRetry_WhenFailedPermanent_ResetsCounters()
+    {
+        var outbox = MessageOutbox.Create(
+            _workspaceId,
+            "+201019482687",
+            "AttendanceCheckIn",
+            "attendance_checkin",
+            "ar",
+            "{}",
+            "idem_123");
+
+        outbox.TransitionToFailedPermanent("STALE_LEASE_EXCEEDED", "Test failure");
+
+        outbox.ResetForManualRetry("+201099998888");
+
+        outbox.Status.Should().Be(OutboxMessageStatus.Pending);
+        outbox.Attempts.Should().Be(0);
+        outbox.LeaseRecoveryAttempts.Should().Be(0);
+        outbox.RecipientPhone.Should().Be("+201099998888");
+        outbox.ErrorCode.Should().BeNull();
+        outbox.ErrorMessage.Should().BeNull();
+        outbox.NextAttemptAt.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void ResetForManualRetry_WhenAlreadyDelivered_ThrowsDomainValidationException()
+    {
+        var outbox = MessageOutbox.Create(
+            _workspaceId,
+            "+201019482687",
+            "AttendanceCheckIn",
+            "attendance_checkin",
+            "ar",
+            "{}",
+            "idem_123");
+
+        outbox.TransitionToDelivered(DateTimeOffset.UtcNow);
+
+        var act = () => outbox.ResetForManualRetry("+201099998888");
+
+        var exception = act.Should().Throw<DomainValidationException>().Which;
+        exception.ErrorCode.Should().Be("MESSAGE_ALREADY_SENT");
     }
 }

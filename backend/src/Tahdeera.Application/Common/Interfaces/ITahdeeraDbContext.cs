@@ -33,6 +33,11 @@ public interface ITahdeeraDbContext
     DbSet<AttendanceHistory> AttendanceHistories { get; }
     DbSet<MessageOutbox> MessageOutboxes { get; }
 
+    // Milestone B4 WhatsApp DbSets
+    DbSet<WorkspaceWhatsAppConfig> WorkspaceWhatsAppConfigs { get; }
+    DbSet<WhatsAppSenderConnection> WhatsAppSenderConnections { get; }
+    DbSet<WorkspaceWhatsAppUsageLedger> WorkspaceWhatsAppUsageLedgers { get; }
+
     DatabaseFacade Database { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);

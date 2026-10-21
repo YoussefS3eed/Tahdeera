@@ -1157,10 +1157,8 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Tahdeera.Domain.Entities.MessageOutbox", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                        .HasColumnName("id");
 
                     b.Property<short>("Attempts")
                         .ValueGeneratedOnAdd()
@@ -1173,9 +1171,13 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                         .HasColumnName("attendance_record_id");
 
                     b.Property<string>("BrokerMessageId")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
+                        .HasColumnType("text")
                         .HasColumnName("broker_message_id");
+
+                    b.Property<decimal?>("CostEgp")
+                        .HasPrecision(10, 4)
+                        .HasColumnType("numeric(10,4)")
+                        .HasColumnName("cost_egp");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -1201,8 +1203,7 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                         .HasColumnName("exam_submission_id");
 
                     b.Property<string>("FailureCategory")
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
+                        .HasColumnType("text")
                         .HasColumnName("failure_category");
 
                     b.Property<string>("IdempotencyKey")
@@ -1222,6 +1223,12 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                     b.Property<DateTimeOffset?>("LastAttemptAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_attempt_at");
+
+                    b.Property<short>("LeaseRecoveryAttempts")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("smallint")
+                        .HasDefaultValue((short)0)
+                        .HasColumnName("lease_recovery_attempts");
 
                     b.Property<short>("MaxAttempts")
                         .ValueGeneratedOnAdd()
@@ -1255,9 +1262,25 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(32)")
                         .HasColumnName("recipient_phone");
 
+                    b.Property<Guid?>("SenderConnectionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("sender_connection_id");
+
+                    b.Property<string>("SenderMode")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasDefaultValue("PlatformManaged")
+                        .HasColumnName("sender_mode");
+
                     b.Property<DateTimeOffset?>("SentAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("sent_at");
+
+                    b.Property<Guid?>("SessionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("session_id");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -1270,6 +1293,12 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                     b.Property<Guid?>("StudentId")
                         .HasColumnType("uuid")
                         .HasColumnName("student_id");
+
+                    b.Property<string>("TemplateName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("template_name");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .ValueGeneratedOnAdd()
@@ -1291,6 +1320,12 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_message_outbox_idempotency_key");
 
+                    b.HasIndex("SenderConnectionId")
+                        .HasDatabaseName("ix_message_outbox_sender_connection_id");
+
+                    b.HasIndex("SessionId")
+                        .HasDatabaseName("ix_message_outbox_session");
+
                     b.HasIndex("StudentId")
                         .HasDatabaseName("ix_message_outbox_student_id");
 
@@ -1305,8 +1340,6 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                     b.ToTable("message_outbox", null, t =>
                         {
                             t.HasCheckConstraint("CK_message_outbox_attempts", "attempts >= 0 AND attempts <= 10");
-
-                            t.HasCheckConstraint("CK_message_outbox_failure_category", "failure_category IS NULL OR failure_category IN ('Transient', 'Permanent')");
 
                             t.HasCheckConstraint("CK_message_outbox_language_code", "language_code IN ('ar', 'en')");
 
@@ -1911,6 +1944,104 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Tahdeera.Domain.Entities.WhatsAppSenderConnection", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset?>("ConnectedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("connected_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<DateTimeOffset?>("DisconnectedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("disconnected_at");
+
+                    b.Property<string>("DisplayPhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("display_phone_number");
+
+                    b.Property<string>("EncryptedAccessToken")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("encrypted_access_token");
+
+                    b.Property<string>("MetadataJson")
+                        .HasColumnType("jsonb")
+                        .HasColumnName("metadata_json");
+
+                    b.Property<string>("OwnershipType")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("ownership_type");
+
+                    b.Property<string>("PhoneNumberId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("phone_number_id");
+
+                    b.Property<string>("RevocationReason")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("revocation_reason");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("status");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<string>("VerifiedBusinessName")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("verified_business_name");
+
+                    b.Property<string>("WabaId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("waba_id");
+
+                    b.Property<Guid>("WorkspaceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("workspace_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_whatsapp_sender_connections");
+
+                    b.HasIndex("WorkspaceId")
+                        .HasDatabaseName("ix_whatsapp_sender_active")
+                        .HasFilter("status = 'Connected'");
+
+                    b.ToTable("whatsapp_sender_connections", null, t =>
+                        {
+                            t.HasCheckConstraint("chk_whatsapp_sender_ownership", "ownership_type IN ('Platform', 'Workspace')");
+
+                            t.HasCheckConstraint("chk_whatsapp_sender_phone", "display_phone_number ~ '^\\+?[0-9\\s\\-]+$'");
+
+                            t.HasCheckConstraint("chk_whatsapp_sender_status", "status IN ('PendingSetup', 'Connected', 'Disconnected', 'Restricted', 'Failed')");
+                        });
+                });
+
             modelBuilder.Entity("Tahdeera.Domain.Entities.Workspace", b =>
                 {
                     b.Property<Guid>("Id")
@@ -2278,6 +2409,153 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Tahdeera.Domain.Entities.WorkspaceWhatsAppConfig", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid?>("ActiveSenderConnectionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("active_sender_connection_id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<bool>("IsNotificationsEnabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_notifications_enabled");
+
+                    b.Property<int>("MessagesUsedThisMonth")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0)
+                        .HasColumnName("messages_used_this_month");
+
+                    b.Property<int>("MonthlyMessageQuota")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1000)
+                        .HasColumnName("monthly_message_quota");
+
+                    b.Property<string>("SenderMode")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("sender_mode");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<Guid>("WorkspaceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("workspace_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_workspace_whatsapp_configs");
+
+                    b.HasIndex("ActiveSenderConnectionId")
+                        .HasDatabaseName("ix_workspace_whatsapp_configs_active_sender_connection_id");
+
+                    b.HasIndex("WorkspaceId")
+                        .IsUnique()
+                        .HasDatabaseName("ux_workspace_whatsapp_configs_workspace_id");
+
+                    b.ToTable("workspace_whatsapp_configs", null, t =>
+                        {
+                            t.HasCheckConstraint("chk_whatsapp_monthly_quota", "monthly_message_quota >= 0");
+
+                            t.HasCheckConstraint("chk_whatsapp_sender_mode", "sender_mode IN ('PlatformManaged', 'WorkspaceOwned', 'Disabled')");
+
+                            t.HasCheckConstraint("chk_whatsapp_used_messages", "messages_used_this_month >= 0");
+                        });
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.WorkspaceWhatsAppUsageLedger", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<decimal>("EstimatedCostEgp")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(10, 4)
+                        .HasColumnType("numeric(10,4)")
+                        .HasDefaultValue(0m)
+                        .HasColumnName("estimated_cost_egp");
+
+                    b.Property<decimal>("EstimatedCostUsd")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(10, 4)
+                        .HasColumnType("numeric(10,4)")
+                        .HasDefaultValue(0m)
+                        .HasColumnName("estimated_cost_usd");
+
+                    b.Property<int>("MessagesDeliveredCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0)
+                        .HasColumnName("messages_delivered_count");
+
+                    b.Property<int>("MessagesDispatchedCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0)
+                        .HasColumnName("messages_dispatched_count");
+
+                    b.Property<int>("MessagesFailedCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0)
+                        .HasColumnName("messages_failed_count");
+
+                    b.Property<string>("RateCardSnapshotJson")
+                        .HasColumnType("jsonb")
+                        .HasColumnName("rate_card_snapshot_json");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<Guid>("WorkspaceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("workspace_id");
+
+                    b.Property<string>("YearMonth")
+                        .IsRequired()
+                        .HasMaxLength(7)
+                        .HasColumnType("character varying(7)")
+                        .HasColumnName("year_month");
+
+                    b.HasKey("Id")
+                        .HasName("pk_workspace_whatsapp_usage_ledgers");
+
+                    b.HasIndex("WorkspaceId", "YearMonth")
+                        .IsUnique()
+                        .HasDatabaseName("ix_whatsapp_usage_workspace_month");
+
+                    b.ToTable("workspace_whatsapp_usage_ledgers", null, t =>
+                        {
+                            t.HasCheckConstraint("chk_whatsapp_usage_year_month", "year_month ~ '^[0-9]{4}-(0[1-9]|1[0-2])$'");
+                        });
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
@@ -2616,6 +2894,17 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("fk_message_outbox_attendance_records_attendance_record_id");
 
+                    b.HasOne("Tahdeera.Domain.Entities.WhatsAppSenderConnection", "SenderConnection")
+                        .WithMany()
+                        .HasForeignKey("SenderConnectionId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_message_outbox_whats_app_sender_connections_sender_connecti");
+
+                    b.HasOne("Tahdeera.Domain.Entities.Session", "Session")
+                        .WithMany()
+                        .HasForeignKey("SessionId")
+                        .HasConstraintName("fk_message_outbox_sessions_session_id");
+
                     b.HasOne("Tahdeera.Domain.Entities.Student", "Student")
                         .WithMany("OutboxMessages")
                         .HasForeignKey("StudentId")
@@ -2630,6 +2919,10 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                         .HasConstraintName("fk_message_outbox_workspaces_workspace_id");
 
                     b.Navigation("AttendanceRecord");
+
+                    b.Navigation("SenderConnection");
+
+                    b.Navigation("Session");
 
                     b.Navigation("Student");
 
@@ -2773,6 +3066,18 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                     b.Navigation("Subscription");
                 });
 
+            modelBuilder.Entity("Tahdeera.Domain.Entities.WhatsAppSenderConnection", b =>
+                {
+                    b.HasOne("Tahdeera.Domain.Entities.Workspace", "Workspace")
+                        .WithMany()
+                        .HasForeignKey("WorkspaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_whatsapp_sender_connections_workspaces_workspace_id");
+
+                    b.Navigation("Workspace");
+                });
+
             modelBuilder.Entity("Tahdeera.Domain.Entities.Workspace", b =>
                 {
                     b.HasOne("Tahdeera.Domain.Entities.AppUser", "CreatedByUser")
@@ -2874,6 +3179,38 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                     b.Navigation("ManualSuspendedByUser");
 
                     b.Navigation("Plan");
+
+                    b.Navigation("Workspace");
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.WorkspaceWhatsAppConfig", b =>
+                {
+                    b.HasOne("Tahdeera.Domain.Entities.WhatsAppSenderConnection", "ActiveSenderConnection")
+                        .WithMany()
+                        .HasForeignKey("ActiveSenderConnectionId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_workspace_whatsapp_configs_whatsapp_sender_connections_acti");
+
+                    b.HasOne("Tahdeera.Domain.Entities.Workspace", "Workspace")
+                        .WithMany()
+                        .HasForeignKey("WorkspaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_workspace_whatsapp_configs_workspaces_workspace_id");
+
+                    b.Navigation("ActiveSenderConnection");
+
+                    b.Navigation("Workspace");
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.WorkspaceWhatsAppUsageLedger", b =>
+                {
+                    b.HasOne("Tahdeera.Domain.Entities.Workspace", "Workspace")
+                        .WithMany()
+                        .HasForeignKey("WorkspaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_workspace_whatsapp_usage_ledgers_workspaces_workspace_id");
 
                     b.Navigation("Workspace");
                 });

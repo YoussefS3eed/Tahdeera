@@ -83,7 +83,9 @@ public class LiveScanThroughputIntegrationTests : IAsyncLifetime
                 WorkspaceId = workspace.Id,
                 StudentId = student.Id,
                 
-                Status = WorkspaceStudentStatus.Active
+                Status = WorkspaceStudentStatus.Active,
+                WhatsappOptIn = true,
+                GuardianPhone = $"+20101111{i:D4}"
             };
             await db.WorkspaceStudents.AddAsync(wsStudent);
 

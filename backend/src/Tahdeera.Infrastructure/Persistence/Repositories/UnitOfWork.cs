@@ -16,7 +16,7 @@ public class UnitOfWork : IUnitOfWork
     private IAuditLogRepository? _auditLogs;
     private IGenericRepository<RefreshToken>? _refreshTokens;
 
-    // Milestone B2 domain repositories
+    // domain repositories
     private IStudentRepository? _students;
     private IWorkspaceStudentRepository? _workspaceStudents;
     private IGenericRepository<StudentAcademicHistory>? _studentAcademicHistories;
@@ -24,7 +24,7 @@ public class UnitOfWork : IUnitOfWork
     private IGradeRepository? _grades;
     private IAcademicYearRepository? _academicYears;
 
-    // Milestone B3 domain repositories
+    // domain repositories
     private IGroupRepository? _groups;
     private ISessionRepository? _sessions;
     private IAttendanceRecordRepository? _attendanceRecords;
@@ -34,6 +34,12 @@ public class UnitOfWork : IUnitOfWork
     private IGenericRepository<GroupWorkspaceAccess>? _groupWorkspaceAccesses;
     private IGenericRepository<AttendanceHistory>? _attendanceHistories;
     private IGenericRepository<MessageOutbox>? _messageOutboxes;
+
+    // WhatsApp & Outbox Repositories
+    private IMessageOutboxRepository? _messageOutbox;
+    private IWorkspaceWhatsAppConfigRepository? _workspaceWhatsAppConfigs;
+    private IWhatsAppSenderConnectionRepository? _whatsAppSenderConnections;
+    private IWorkspaceWhatsAppUsageLedgerRepository? _workspaceWhatsAppUsageLedgers;
 
     public UnitOfWork(TahdeeraDbContext context)
     {
@@ -64,7 +70,7 @@ public class UnitOfWork : IUnitOfWork
     public IGenericRepository<RefreshToken> RefreshTokens =>
         _refreshTokens ??= new GenericRepository<RefreshToken>(_context);
 
-    // Milestone B2 domain repositories
+    // domain repositories
     public IStudentRepository Students =>
         _students ??= new StudentRepository(_context);
 
@@ -83,7 +89,7 @@ public class UnitOfWork : IUnitOfWork
     public IAcademicYearRepository AcademicYears =>
         _academicYears ??= new AcademicYearRepository(_context);
 
-    // Milestone B3 domain repositories
+    // domain repositories
     public IGroupRepository Groups =>
         _groups ??= new GroupRepository(_context);
 
@@ -110,6 +116,19 @@ public class UnitOfWork : IUnitOfWork
 
     public IGenericRepository<MessageOutbox> MessageOutboxes =>
         _messageOutboxes ??= new GenericRepository<MessageOutbox>(_context);
+
+    // WhatsApp & Outbox Repositories
+    public IMessageOutboxRepository MessageOutbox =>
+        _messageOutbox ??= new MessageOutboxRepository(_context);
+
+    public IWorkspaceWhatsAppConfigRepository WorkspaceWhatsAppConfigs =>
+        _workspaceWhatsAppConfigs ??= new WorkspaceWhatsAppConfigRepository(_context);
+
+    public IWhatsAppSenderConnectionRepository WhatsAppSenderConnections =>
+        _whatsAppSenderConnections ??= new WhatsAppSenderConnectionRepository(_context);
+
+    public IWorkspaceWhatsAppUsageLedgerRepository WorkspaceWhatsAppUsageLedgers =>
+        _workspaceWhatsAppUsageLedgers ??= new WorkspaceWhatsAppUsageLedgerRepository(_context);
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

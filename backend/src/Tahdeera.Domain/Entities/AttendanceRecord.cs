@@ -125,7 +125,7 @@ public class AttendanceRecord
 
     public void ManualOverride(
         AttendanceStatus newStatus,
-        Guid actorUserId,
+        Guid? actorUserId,
         DateTimeOffset modifiedAt,
         string reason)
     {
@@ -133,7 +133,7 @@ public class AttendanceRecord
 
         Status = newStatus;
         AutoEvaluationLocked = true;
-        LastModifiedByUserId = actorUserId;
+        LastModifiedByUserId = actorUserId == Guid.Empty ? null : actorUserId;
         LastModifiedAt = modifiedAt;
         RetroactiveReason = reason.Trim();
     }

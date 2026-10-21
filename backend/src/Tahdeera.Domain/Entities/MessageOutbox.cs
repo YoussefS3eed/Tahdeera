@@ -1,18 +1,26 @@
+using Tahdeera.Domain.Common;
 using Tahdeera.Domain.Enums;
+using Tahdeera.Domain.Exceptions;
 
 namespace Tahdeera.Domain.Entities;
 
-public class MessageOutbox
+public class MessageOutbox : BaseEntity
 {
-    public Guid Id { get; set; } = Guid.NewGuid();
     public Guid WorkspaceId { get; set; }
     public Guid? StudentId { get; set; }
+    public Guid? SessionId { get; set; }
     public Guid? AttendanceRecordId { get; set; }
     public Guid? ExamSubmissionId { get; set; }
     public string RecipientPhone { get; set; } = string.Empty;
     public string LanguageCode { get; set; } = "ar";
     public string MessageType { get; set; } = string.Empty;
+    public string TemplateName { get; set; } = string.Empty;
     public string Payload { get; set; } = "{}";
+    public string PayloadJson
+    {
+        get => Payload;
+        set => Payload = value;
+    }
     public string IdempotencyKey { get; set; } = string.Empty;
     public string? BrokerMessageId { get; set; }
     public string? ProviderMessageId { get; set; }
@@ -26,13 +34,26 @@ public class MessageOutbox
     public DateTimeOffset? DeliveredAt { get; set; }
     public string? ErrorCode { get; set; }
     public string? ErrorDetails { get; set; }
-    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
-    public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
+    public string? ErrorMessage
+    {
+        get => ErrorDetails;
+        set => ErrorDetails = value;
+    }
+
+    // Milestone B4 Hybrid Fields
+    public string SenderMode { get; set; } = "PlatformManaged";
+    public Guid? SenderConnectionId { get; set; }
+    public short LeaseRecoveryAttempts { get; set; } = 0;
+    public decimal? CostEgp { get; set; }
 
     // Navigation properties
-    public Workspace Workspace { get; set; } = null!;
-    public Student? Student { get; set; }
-    public AttendanceRecord? AttendanceRecord { get; set; }
+    public virtual Workspace? Workspace { get; set; }
+    public virtual Student? Student { get; set; }
+    public virtual Session? Session { get; set; }
+    public virtual AttendanceRecord? AttendanceRecord { get; set; }
+    public virtual WhatsAppSenderConnection? SenderConnection { get; set; }
+
+    public MessageOutbox() { } // EF Core
 
     public static MessageOutbox CreateForAttendance(
         Guid workspaceId,
@@ -58,15 +79,67 @@ public class MessageOutbox
             AttendanceRecordId = attendanceRecordId,
             RecipientPhone = recipientPhone.Trim(),
             MessageType = messageType.Trim(),
+            TemplateName = messageType.Trim(),
             Payload = payload,
             IdempotencyKey = idempotencyKey.Trim(),
             LanguageCode = languageCode,
+            SenderMode = "PlatformManaged",
             Status = OutboxMessageStatus.Pending,
             Attempts = 0,
             MaxAttempts = 5,
+            LeaseRecoveryAttempts = 0,
             CreatedAt = now,
             UpdatedAt = now
         };
+    }
+
+    public static MessageOutbox Create(
+        Guid workspaceId,
+        string recipientPhone,
+        string messageType,
+        string templateName,
+        string languageCode,
+        string payloadJson,
+        string idempotencyKey,
+        string senderMode = "PlatformManaged",
+        Guid? senderConnectionId = null,
+        Guid? studentId = null,
+        Guid? sessionId = null,
+        Guid? attendanceRecordId = null,
+        short maxAttempts = 5)
+    {
+        var now = DateTimeOffset.UtcNow;
+        return new MessageOutbox
+        {
+            Id = Guid.NewGuid(),
+            WorkspaceId = workspaceId,
+            StudentId = studentId,
+            SessionId = sessionId,
+            AttendanceRecordId = attendanceRecordId,
+            RecipientPhone = recipientPhone,
+            MessageType = messageType,
+            TemplateName = templateName,
+            LanguageCode = languageCode,
+            Payload = payloadJson,
+            IdempotencyKey = idempotencyKey,
+            SenderMode = senderMode,
+            SenderConnectionId = senderConnectionId,
+            Status = OutboxMessageStatus.Pending,
+            Attempts = 0,
+            MaxAttempts = maxAttempts,
+            LeaseRecoveryAttempts = 0,
+            NextAttemptAt = null,
+            CreatedAt = now,
+            UpdatedAt = now
+        };
+    }
+
+    public void TransitionToProcessing(TimeSpan leaseDuration)
+    {
+        Status = OutboxMessageStatus.Processing;
+        Attempts++;
+        LastAttemptAt = DateTimeOffset.UtcNow;
+        UpdatedAt = DateTimeOffset.UtcNow;
     }
 
     public void ClaimForProcessing(DateTimeOffset claimedAt)
@@ -98,25 +171,21 @@ public class MessageOutbox
         UpdatedAt = publishedAt;
     }
 
-    public void ReleaseStaleLease(DateTimeOffset now, string reason)
+    public void TransitionToSent(string providerMessageId, decimal costEgp)
     {
-        if (Status != OutboxMessageStatus.Processing)
+        // Guard against out-of-order webhook delivery race condition
+        if (Status != OutboxMessageStatus.Delivered)
         {
-            throw new InvalidOperationException($"Cannot release stale lease for message not in 'Processing' status. Current: '{Status}'.");
+            Status = OutboxMessageStatus.Sent;
         }
 
-        if (Attempts >= MaxAttempts)
-        {
-            MarkPermanentFailure("LEASE_EXHAUSTED", $"Lease timed out and maximum attempts reached ({Attempts}/{MaxAttempts}): {reason}");
-            return;
-        }
-
-        Status = OutboxMessageStatus.FailedTransient;
-        FailureCategory = "Transient";
-        ErrorCode = "LEASE_TIMEOUT";
-        ErrorDetails = $"Lease recovered after timeout: {reason}";
-        NextAttemptAt = now;
-        UpdatedAt = now;
+        ProviderMessageId = providerMessageId;
+        SentAt = DateTimeOffset.UtcNow;
+        CostEgp = costEgp;
+        NextAttemptAt = null;
+        ErrorCode = null;
+        ErrorDetails = null;
+        UpdatedAt = DateTimeOffset.UtcNow;
     }
 
     public void MarkSent(string providerMessageId, DateTimeOffset sentAt)
@@ -135,6 +204,14 @@ public class MessageOutbox
         UpdatedAt = sentAt;
     }
 
+    public void TransitionToDelivered(DateTimeOffset deliveredAt)
+    {
+        Status = OutboxMessageStatus.Delivered;
+        DeliveredAt = deliveredAt;
+        NextAttemptAt = null;
+        UpdatedAt = DateTimeOffset.UtcNow;
+    }
+
     public void MarkDelivered(DateTimeOffset deliveredAt)
     {
         if (Status != OutboxMessageStatus.Sent && Status != OutboxMessageStatus.Processing)
@@ -146,6 +223,16 @@ public class MessageOutbox
         DeliveredAt = deliveredAt;
         NextAttemptAt = null;
         UpdatedAt = deliveredAt;
+    }
+
+    public void TransitionToFailedTransient(string errorCode, string errorMessage, TimeSpan retryDelay)
+    {
+        Status = OutboxMessageStatus.FailedTransient;
+        FailureCategory = "Transient";
+        ErrorCode = errorCode;
+        ErrorDetails = errorMessage;
+        NextAttemptAt = DateTimeOffset.UtcNow.Add(retryDelay);
+        UpdatedAt = DateTimeOffset.UtcNow;
     }
 
     public void ScheduleRetry(DateTimeOffset now, string errorCode, string errorDetails, int jitterSeconds = 0)
@@ -171,6 +258,16 @@ public class MessageOutbox
         UpdatedAt = now;
     }
 
+    public void TransitionToFailedPermanent(string errorCode, string errorMessage)
+    {
+        Status = OutboxMessageStatus.FailedPermanent;
+        FailureCategory = "Permanent";
+        ErrorCode = errorCode;
+        ErrorDetails = errorMessage;
+        NextAttemptAt = null;
+        UpdatedAt = DateTimeOffset.UtcNow;
+    }
+
     public void MarkPermanentFailure(string errorCode, string errorDetails)
     {
         Status = OutboxMessageStatus.FailedPermanent;
@@ -179,6 +276,44 @@ public class MessageOutbox
         ErrorCode = errorCode;
         ErrorDetails = errorDetails;
         UpdatedAt = DateTimeOffset.UtcNow;
+    }
+
+    public void RecoverLease()
+    {
+        LeaseRecoveryAttempts++;
+        if (LeaseRecoveryAttempts >= 3)
+        {
+            TransitionToFailedPermanent(
+                "STALE_LEASE_EXCEEDED",
+                "Message processing exceeded maximum 3 lease recovery cycles without completion.");
+        }
+        else
+        {
+            Status = OutboxMessageStatus.Pending;
+            NextAttemptAt = DateTimeOffset.UtcNow;
+        }
+        UpdatedAt = DateTimeOffset.UtcNow;
+    }
+
+    public void ReleaseStaleLease(DateTimeOffset now, string reason)
+    {
+        if (Status != OutboxMessageStatus.Processing)
+        {
+            throw new InvalidOperationException($"Cannot release stale lease for message not in 'Processing' status. Current: '{Status}'.");
+        }
+
+        if (Attempts >= MaxAttempts)
+        {
+            MarkPermanentFailure("LEASE_EXHAUSTED", $"Lease timed out and maximum attempts reached ({Attempts}/{MaxAttempts}): {reason}");
+            return;
+        }
+
+        Status = OutboxMessageStatus.FailedTransient;
+        FailureCategory = "Transient";
+        ErrorCode = "LEASE_TIMEOUT";
+        ErrorDetails = $"Lease recovered after timeout: {reason}";
+        NextAttemptAt = now;
+        UpdatedAt = now;
     }
 
     public void Cancel(string reason)
@@ -193,6 +328,21 @@ public class MessageOutbox
         Status = OutboxMessageStatus.Cancelled;
         NextAttemptAt = null;
         ErrorDetails = $"Cancelled: {reason}";
+        UpdatedAt = DateTimeOffset.UtcNow;
+    }
+
+    public void ResetForManualRetry(string refreshedPhone)
+    {
+        if (Status == OutboxMessageStatus.Sent || Status == OutboxMessageStatus.Delivered)
+            throw new DomainValidationException("MESSAGE_ALREADY_SENT", "The message has already been processed and cannot be re-sent.");
+
+        RecipientPhone = refreshedPhone;
+        Status = OutboxMessageStatus.Pending;
+        Attempts = 0;
+        LeaseRecoveryAttempts = 0;
+        ErrorCode = null;
+        ErrorDetails = null;
+        NextAttemptAt = DateTimeOffset.UtcNow;
         UpdatedAt = DateTimeOffset.UtcNow;
     }
 }

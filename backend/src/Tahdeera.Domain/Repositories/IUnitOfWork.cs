@@ -32,5 +32,11 @@ public interface IUnitOfWork : IDisposable
     IGenericRepository<AttendanceHistory> AttendanceHistories { get; }
     IGenericRepository<MessageOutbox> MessageOutboxes { get; }
 
+    // Milestone B4 WhatsApp & Outbox Repositories
+    IMessageOutboxRepository MessageOutbox { get; }
+    IWorkspaceWhatsAppConfigRepository WorkspaceWhatsAppConfigs { get; }
+    IWhatsAppSenderConnectionRepository WhatsAppSenderConnections { get; }
+    IWorkspaceWhatsAppUsageLedgerRepository WorkspaceWhatsAppUsageLedgers { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

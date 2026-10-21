@@ -40,6 +40,11 @@ public class TahdeeraDbContext : IdentityDbContext<IdentityUser<Guid>, IdentityR
     public DbSet<AttendanceHistory> AttendanceHistories => Set<AttendanceHistory>();
     public DbSet<MessageOutbox> MessageOutboxes => Set<MessageOutbox>();
 
+    // Milestone B4 WhatsApp DbSets
+    public DbSet<WorkspaceWhatsAppConfig> WorkspaceWhatsAppConfigs => Set<WorkspaceWhatsAppConfig>();
+    public DbSet<WhatsAppSenderConnection> WhatsAppSenderConnections => Set<WhatsAppSenderConnection>();
+    public DbSet<WorkspaceWhatsAppUsageLedger> WorkspaceWhatsAppUsageLedgers => Set<WorkspaceWhatsAppUsageLedger>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
