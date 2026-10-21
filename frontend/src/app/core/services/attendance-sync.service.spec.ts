@@ -16,7 +16,8 @@ describe('AttendanceSyncService (DEC-04 Offline Sync & Conflict Engine)', () => 
       'updateSyncStatus',
       'refreshPendingCount'
     ]);
-    academicServiceMock = jasmine.createSpyObj('AcademicService', ['syncBatch']);
+    academicServiceMock = jasmine.createSpyObj('AcademicService', ['syncBatch', 'resolveConflict']);
+    academicServiceMock.resolveConflict.and.returnValue(of({ resolved: true }));
 
     offlineStorageMock.getSyncQueue.and.returnValue(Promise.resolve([]));
 

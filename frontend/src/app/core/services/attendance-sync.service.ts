@@ -84,6 +84,11 @@ export class AttendanceSyncService {
     }
   }
 
+  async getConflictedItems(): Promise<LocalAttendanceRow[]> {
+    const queue: LocalAttendanceRow[] = await this.offlineStorage.getSyncQueue();
+    return queue.filter((item: LocalAttendanceRow) => item.syncStatus === 'Conflict');
+  }
+
   async resolveConflict(
     operationId: string,
     decision: 'ApproveExceptional' | 'Void',
@@ -97,6 +102,18 @@ export class AttendanceSyncService {
       await this.offlineStorage.updateSyncStatus(target.localId, 'Synced');
     } else {
       await this.offlineStorage.updateSyncStatus(target.localId, 'Synced', `Voided: ${justificationReason || 'User action'}`);
+    }
+
+    try {
+      await firstValueFrom(
+        this.academicService.resolveConflict({
+          operationId,
+          decision,
+          justificationReason
+        })
+      );
+    } catch (err) {
+      console.warn('Remote conflict resolution failed, persisted in Dexie:', err);
     }
 
     await this.refreshCounts();

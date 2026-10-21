@@ -108,11 +108,12 @@ export class IdentificationPipelineService {
       studentId,
       sessionId,
       newStatus: 'Present',
+      substituteReason: reason || 'تحضير كبديل مجموعة استثنائي (DEC-06)',
       reason: reason || 'تحضير كبديل مجموعة استثنائي (DEC-06)'
     };
 
     const res = await firstValueFrom(
-      this.http.post('/api/v1/attendance/manual-override', payload)
+      this.http.post('/api/v1/attendance/exceptional-substitute', payload)
     );
     this.audioFeedback.playPresentTone();
     return res;

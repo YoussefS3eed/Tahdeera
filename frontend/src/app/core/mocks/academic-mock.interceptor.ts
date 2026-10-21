@@ -347,11 +347,12 @@ export function handleAcademicMockRequest(req: HttpRequest<any>): Observable<any
   }
 
   // 6. POST /api/v1/attendance/manual-override (DEC-07)
-  if (url === '/api/v1/attendance/manual-override' && method === 'POST') {
-    const { recordId, newStatus, reason, studentId, sessionId } = req.body || {};
+  if ((url === '/api/v1/attendance/manual-override' || url === '/api/v1/attendance/exceptional-substitute') && method === 'POST') {
+    const { recordId, newStatus, reason, substituteReason, studentId, sessionId } = req.body || {};
+    const effectiveReason = reason || substituteReason || '';
     const student = studentsStore.find(s => s.id === studentId);
     if (student && student.status === 'Withdrawn') {
-      if (!reason || reason.trim().length < 10) {
+      if (!effectiveReason || effectiveReason.trim().length < 10) {
         return throwError(() => createProblem(422, 'Validation Error', 'سبب التعديل للطالب المنسحب يجب ألا يقل عن 10 أحرف غير فارغة', 'INVALID_REASON_LENGTH', url));
       }
       const session = sessionsStore.find(s => s.id === sessionId);
@@ -359,7 +360,7 @@ export function handleAcademicMockRequest(req: HttpRequest<any>): Observable<any
         return throwError(() => createProblem(422, 'Historical Boundary Error', 'لا يمكن تسجيل حضور لطالب بعد تاريخ انسحابه الرسمي', 'ATTENDANCE_AFTER_WITHDRAWAL', url));
       }
     } else {
-      if (!reason || reason.trim().length < 5) {
+      if (!effectiveReason || effectiveReason.trim().length < 5) {
         return throwError(() => createProblem(422, 'Validation Error', 'سبب التعديل يجب ألا يقل عن 5 أحرف', 'INVALID_REASON_LENGTH', url));
       }
     }
@@ -378,13 +379,13 @@ export function handleAcademicMockRequest(req: HttpRequest<any>): Observable<any
         checkInAt: new Date().toISOString(),
         autoEvaluationLocked: true,
         isLocked: true,
-        overrideReason: reason,
+        overrideReason: effectiveReason,
         lockedAtUtc: new Date().toISOString()
       };
       attendanceStore.unshift(record);
     } else {
       record.status = newStatus;
-      record.overrideReason = reason;
+      record.overrideReason = effectiveReason;
       record.autoEvaluationLocked = true;
       record.isLocked = true;
       record.lockedAtUtc = new Date().toISOString();
@@ -435,12 +436,12 @@ export function handleAcademicMockRequest(req: HttpRequest<any>): Observable<any
   }
 
   // 9. GET /api/v1/schedule/sessions
-  if (url.startsWith('/api/v1/schedule/sessions') && method === 'GET') {
+  if ((url.startsWith('/api/v1/schedule/sessions') || url.startsWith('/api/v1/sessions')) && method === 'GET') {
     return of(new HttpResponse({ status: 200, body: sessionsStore })).pipe(delay(50));
   }
 
   // 10. POST /api/v1/schedule/sessions (Schedule session)
-  if (url === '/api/v1/schedule/sessions' && method === 'POST') {
+  if ((url === '/api/v1/schedule/sessions' || url === '/api/v1/sessions') && method === 'POST') {
     const body = req.body || {};
     const newSession: ClassSessionItem = {
       id: `ses-${Date.now().toString().slice(-4)}`,

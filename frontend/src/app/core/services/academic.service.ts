@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import {
   StudentListItem,
   Student360Profile,
@@ -25,7 +26,9 @@ export class AcademicService {
     if (params?.search) httpParams = httpParams.set('search', params.search);
     if (params?.grade) httpParams = httpParams.set('grade', params.grade);
     if (params?.status) httpParams = httpParams.set('status', params.status);
-    return this.http.get<StudentListItem[]>('/api/v1/students', { params: httpParams });
+    return this.http.get<any>('/api/v1/students', { params: httpParams }).pipe(
+      map(res => Array.isArray(res) ? res : (res?.items || []))
+    );
   }
 
   getStudent360(id: string): Observable<Student360Profile> {
@@ -69,22 +72,24 @@ export class AcademicService {
   getClassSessions(groupId?: string): Observable<ClassSessionItem[]> {
     let params = new HttpParams();
     if (groupId) params = params.set('groupId', groupId);
-    return this.http.get<ClassSessionItem[]>('/api/v1/sessions', { params });
+    return this.http.get<any>('/api/v1/schedule/sessions', { params }).pipe(
+      map(res => Array.isArray(res) ? res : (res?.items || []))
+    );
   }
 
   createClassSession(payload: Partial<ClassSessionItem>): Observable<ClassSessionItem> {
-    return this.http.post<ClassSessionItem>('/api/v1/sessions', payload);
+    return this.http.post<ClassSessionItem>('/api/v1/schedule/sessions', payload);
   }
 
   rescheduleSession(sessionId: string, newStartTime: string, newEndTime: string): Observable<ClassSessionItem> {
-    return this.http.post<ClassSessionItem>(`/api/v1/sessions/${sessionId}/reschedule`, {
+    return this.http.post<ClassSessionItem>(`/api/v1/schedule/sessions/${sessionId}/reschedule`, {
       newStartTime,
       newEndTime
     });
   }
 
   cancelSession(sessionId: string, reason: string): Observable<ClassSessionItem> {
-    return this.http.post<ClassSessionItem>(`/api/v1/sessions/${sessionId}/cancel`, {
+    return this.http.post<ClassSessionItem>(`/api/v1/schedule/sessions/${sessionId}/cancel`, {
       reason
     });
   }
@@ -131,5 +136,18 @@ export class AcademicService {
   // --- Offline Batch Sync ---
   syncBatch(payload: SyncBatchRequest): Observable<SyncBatchResponse> {
     return this.http.post<SyncBatchResponse>('/api/v1/sync/batch', payload);
+  }
+
+  // --- Conflict Resolution (DEC-04) ---
+  resolveConflict(payload: {
+    operationId: string;
+    decision: 'ApproveExceptional' | 'Void';
+    justificationReason?: string;
+  }): Observable<any> {
+    return this.http.post('/api/v1/attendance/resolve-conflict', {
+      operationId: payload.operationId,
+      decision: payload.decision,
+      reason: payload.justificationReason
+    });
   }
 }

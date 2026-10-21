@@ -15,6 +15,8 @@ import { NfcWedgeAdapterService } from '../../../core/services/nfc-wedge-adapter
 import { WebNfcAdapterService } from '../../../core/services/web-nfc-adapter.service';
 import { AudioFeedbackService } from '../../../core/services/audio-feedback.service';
 import { OfflineStorageService } from '../../../core/services/offline-storage.service';
+import { AttendanceSyncService } from '../../../core/services/attendance-sync.service';
+import { PostSyncReviewModalComponent, ConflictedSyncItem } from '../attendance/components/post-sync-review-modal/post-sync-review-modal.component';
 import { LastScanCardComponent } from './components/last-scan-card/last-scan-card.component';
 import { CrossGroupDrawerComponent } from './components/cross-group-drawer/cross-group-drawer.component';
 import { QrScannerComponent } from '../../../shared/components/qr-scanner/qr-scanner.component';
@@ -31,7 +33,8 @@ import {
     FormsModule,
     LastScanCardComponent,
     CrossGroupDrawerComponent,
-    QrScannerComponent
+    QrScannerComponent,
+    PostSyncReviewModalComponent
   ],
   templateUrl: './nfc-station.component.html',
   styleUrls: ['./nfc-station.component.scss']
@@ -43,6 +46,7 @@ export class NfcStationComponent implements OnInit, OnDestroy {
   readonly webNfc = inject(WebNfcAdapterService);
   readonly audio = inject(AudioFeedbackService);
   readonly offlineStorage = inject(OfflineStorageService);
+  readonly syncService = inject(AttendanceSyncService);
 
   readonly sessions: WritableSignal<ClassSessionItem[]> = signal<ClassSessionItem[]>([]);
   readonly selectedSessionId: WritableSignal<string> = signal<string>('');
@@ -54,6 +58,8 @@ export class NfcStationComponent implements OnInit, OnDestroy {
 
   readonly manualSearchQuery = signal<string>('');
   readonly isSyncing = signal<boolean>(false);
+  readonly showConflictModal: WritableSignal<boolean> = signal<boolean>(false);
+  readonly conflictedItems: WritableSignal<ConflictedSyncItem[]> = signal<ConflictedSyncItem[]>([]);
 
   private subscriptions: Subscription = new Subscription();
 
@@ -150,12 +156,44 @@ export class NfcStationComponent implements OnInit, OnDestroy {
   async syncNow(): Promise<void> {
     this.isSyncing.set(true);
     try {
+      const res = await this.syncService.syncPending();
       await this.offlineStorage.refreshPendingCount();
-      setTimeout(() => {
-        this.isSyncing.set(false);
-      }, 600);
-    } catch {
+      if (res.conflicts > 0) {
+        await this.openConflicts();
+      }
+    } catch (err) {
+      console.error('Station sync failed', err);
+    } finally {
       this.isSyncing.set(false);
+    }
+  }
+
+  async openConflicts(): Promise<void> {
+    const rawConflicts = await this.syncService.getConflictedItems();
+    if (rawConflicts && rawConflicts.length > 0) {
+      const mapped: ConflictedSyncItem[] = rawConflicts.map(item => ({
+        operationId: item.operationId,
+        workspaceId: item.workspaceId,
+        sessionId: item.sessionId,
+        studentId: item.studentId,
+        identifier: item.identifier,
+        method: item.method,
+        scannedAtUtc: item.scannedAtUtc,
+        syncStatus: 'Conflict',
+        conflictReason: item.conflictReason || 'SessionCancelledOnline',
+        studentName: item.studentName || 'طالب مسجل محلياً',
+        studentCode: item.studentCode || 'ST-OFFLINE'
+      }));
+      this.conflictedItems.set(mapped);
+    }
+    this.showConflictModal.set(true);
+  }
+
+  resolveConflictItem(event: { operationId: string; decision: 'ApproveExceptional' | 'Void'; justificationReason?: string }): void {
+    this.syncService.resolveConflict(event.operationId, event.decision, event.justificationReason);
+    this.conflictedItems.update(prev => prev.filter(i => i.operationId !== event.operationId));
+    if (this.conflictedItems().length === 0) {
+      this.showConflictModal.set(false);
     }
   }
 

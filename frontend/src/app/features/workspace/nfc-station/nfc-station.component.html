@@ -134,6 +134,16 @@
     ></app-qr-scanner>
   }
 
+  <!-- Post-Sync Review Modal (DEC-04) -->
+  @if (showConflictModal()) {
+    <app-post-sync-review-modal
+      [conflicts]="conflictedItems()"
+      (resolved)="resolveConflictItem($event)"
+      (closed)="showConflictModal.set(false)"
+    >
+    </app-post-sync-review-modal>
+  }
+
   <!-- Cross-Group Warning Drawer -->
   @if (isCrossGroupDrawerOpen()) {
     <app-cross-group-drawer

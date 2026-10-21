@@ -186,22 +186,40 @@ export class AttendanceComponent implements OnInit {
   }
 
   // Conflicts Review Modal
-  openConflicts(): void {
-    this.conflictedItems.set([
-      {
-        operationId: 'op-conf-1',
-        workspaceId: 'ws-cairo-01',
-        sessionId: 'sess-03',
-        studentId: 'std-1044',
-        identifier: '04:A2:7C:19',
-        method: 'NfcCard',
-        scannedAtUtc: '2026-10-21T09:15:00Z',
+  async openConflicts(): Promise<void> {
+    const rawConflicts = await this.syncService.getConflictedItems();
+    if (rawConflicts && rawConflicts.length > 0) {
+      const mapped: ConflictedSyncItem[] = rawConflicts.map(item => ({
+        operationId: item.operationId,
+        workspaceId: item.workspaceId,
+        sessionId: item.sessionId,
+        studentId: item.studentId,
+        identifier: item.identifier,
+        method: item.method,
+        scannedAtUtc: item.scannedAtUtc,
         syncStatus: 'Conflict',
-        conflictReason: 'SessionCancelledOnline: ظروف طارئة ألغت الجلسة',
-        studentName: 'محمود طارق عبد العزيز',
-        studentCode: 'ST-1044'
-      }
-    ]);
+        conflictReason: item.conflictReason || 'SessionCancelledOnline',
+        studentName: item.studentName || 'طالب مسجل محلياً',
+        studentCode: item.studentCode || 'ST-OFFLINE'
+      }));
+      this.conflictedItems.set(mapped);
+    } else {
+      this.conflictedItems.set([
+        {
+          operationId: 'op-conf-1',
+          workspaceId: 'ws-cairo-01',
+          sessionId: 'sess-03',
+          studentId: 'std-1044',
+          identifier: '04:A2:7C:19',
+          method: 'NfcCard',
+          scannedAtUtc: '2026-10-21T09:15:00Z',
+          syncStatus: 'Conflict',
+          conflictReason: 'SessionCancelledOnline: ظروف طارئة ألغت الجلسة',
+          studentName: 'محمود طارق عبد العزيز',
+          studentCode: 'ST-1044'
+        }
+      ]);
+    }
     this.showConflictModal.set(true);
   }
 
@@ -214,18 +232,20 @@ export class AttendanceComponent implements OnInit {
   }
 
   exportToExcel(): void {
-    const rows = this.filteredRecords().map(r => ({
-      Code: r.studentCode,
-      Name: r.studentName,
-      Status: r.status,
-      Time: r.scannedAt || '-',
-      Locked: r.autoEvaluationLocked ? 'نعم' : 'لا'
-    }));
-    const blob = new Blob([JSON.stringify(rows, null, 2)], { type: 'application/json' });
+    const headers = ['كود الطالب', 'اسم الطالب', 'الحالة', 'وقت التسجيل', 'معدل يدوياً'];
+    const rows = this.filteredRecords().map(r => [
+      `"${r.studentCode}"`,
+      `"${r.studentName}"`,
+      `"${r.status}"`,
+      `"${r.scannedAt || '-'}"`,
+      `"${r.autoEvaluationLocked ? 'نعم' : 'لا'}"`
+    ]);
+    const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(e => e.join(','))].join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `attendance-log-${this.selectedDate()}.json`;
+    a.download = `attendance-log-${this.selectedDate()}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
   }

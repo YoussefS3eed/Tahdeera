@@ -12,6 +12,7 @@ import { By } from '@angular/platform-browser';
 import { LocalizationService } from '../../../core/services/localization.service';
 import { AuthStore } from '../../../core/stores/auth.store';
 import { ThemeService } from '../../../core/services/theme.service';
+import { SupportedLanguage } from '../../../core/enums/domain.enums';
 
 describe('LandingComponent', () => {
   let component: LandingComponent;
