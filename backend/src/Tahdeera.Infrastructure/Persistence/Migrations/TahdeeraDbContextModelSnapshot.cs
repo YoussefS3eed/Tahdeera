@@ -1320,6 +1320,10 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_message_outbox_idempotency_key");
 
+                    b.HasIndex("ProviderMessageId")
+                        .HasDatabaseName("ix_message_outbox_provider_message_id")
+                        .HasFilter("provider_message_id IS NOT NULL");
+
                     b.HasIndex("SenderConnectionId")
                         .HasDatabaseName("ix_message_outbox_sender_connection_id");
 

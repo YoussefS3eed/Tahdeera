@@ -205,25 +205,66 @@ public class MessageOutbox : BaseEntity
         UpdatedAt = sentAt;
     }
 
-    public void TransitionToDelivered(DateTimeOffset deliveredAt)
+    public bool TransitionToDelivered(DateTimeOffset deliveredAt)
     {
-        Status = OutboxMessageStatus.Delivered;
-        DeliveredAt = deliveredAt;
-        NextAttemptAt = null;
-        UpdatedAt = DateTimeOffset.UtcNow;
-    }
-
-    public void MarkDelivered(DateTimeOffset deliveredAt)
-    {
-        if (Status != OutboxMessageStatus.Sent && Status != OutboxMessageStatus.Processing)
+        if (Status == OutboxMessageStatus.Delivered)
         {
-            throw new InvalidOperationException($"Cannot mark message delivered from status '{Status}'.");
+            return false;
+        }
+
+        if (SentAt == null)
+        {
+            SentAt = deliveredAt;
         }
 
         Status = OutboxMessageStatus.Delivered;
         DeliveredAt = deliveredAt;
         NextAttemptAt = null;
-        UpdatedAt = deliveredAt;
+        ErrorCode = null;
+        ErrorDetails = null;
+        UpdatedAt = DateTimeOffset.UtcNow;
+        return true;
+    }
+
+    public void RecordReadReceipt(DateTimeOffset readAt)
+    {
+        try
+        {
+            var node = string.IsNullOrWhiteSpace(Payload)
+                ? new System.Text.Json.Nodes.JsonObject()
+                : System.Text.Json.Nodes.JsonNode.Parse(Payload) ?? new System.Text.Json.Nodes.JsonObject();
+
+            if (node is System.Text.Json.Nodes.JsonObject obj)
+            {
+                obj["meta_read_at"] = readAt.ToString("O");
+                Payload = obj.ToJsonString();
+            }
+            else
+            {
+                var fallback = new System.Text.Json.Nodes.JsonObject
+                {
+                    ["payload"] = node,
+                    ["meta_read_at"] = readAt.ToString("O")
+                };
+                Payload = fallback.ToJsonString();
+            }
+            UpdatedAt = DateTimeOffset.UtcNow;
+        }
+        catch
+        {
+            var fallback = new System.Text.Json.Nodes.JsonObject
+            {
+                ["raw_payload"] = Payload,
+                ["meta_read_at"] = readAt.ToString("O")
+            };
+            Payload = fallback.ToJsonString();
+            UpdatedAt = DateTimeOffset.UtcNow;
+        }
+    }
+
+    public void MarkDelivered(DateTimeOffset deliveredAt)
+    {
+        TransitionToDelivered(deliveredAt);
     }
 
     public void TransitionToFailedTransient(string errorCode, string errorMessage, TimeSpan retryDelay)

@@ -81,6 +81,7 @@ public static class ServiceCollectionExtensions
         services.AddLocalization();
 
         services.AddScoped<IAuthorizationHandler, WorkspacePermissionAuthorizationHandler>();
+        services.AddScoped<MetaWebhookHmacAttribute>();
 
         // 6. Authorization Policies (Layer 2 & Layer 4 zero-trust RBAC)
         services.AddAuthorization(options =>

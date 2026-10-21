@@ -112,4 +112,19 @@ public static class DomainErrors
         public static Error SessionNotActive =>
             Error.Validation("SESSION_NOT_ACTIVE", "تسجيل الحضور المباشر متاح فقط للحصص المجدولة أو الجارية حالياً.");
     }
+
+    public static class WhatsApp
+    {
+        public static Error WebhookModeInvalid =>
+            Error.Validation("WEBHOOK_MODE_INVALID", "يجب أن تكون قيمة hub.mode مساوية لـ subscribe.");
+
+        public static Error WebhookVerifyTokenMismatch =>
+            Error.Forbidden("WEBHOOK_VERIFY_TOKEN_MISMATCH", "رمز التحقق hub.verify_token لا يتطابق مع الرمز السري المعتمد للمنصة.");
+
+        public static Error WebhookSignatureInvalid =>
+            Error.Unauthorized("WEBHOOK_SIGNATURE_INVALID", "التوقيع المشفر X-Hub-Signature-256 غير متطابق أو مفقود من الترويسة.");
+
+        public static Error QuotaExceeded =>
+            Error.Validation("WORKSPACE_QUOTA_EXCEEDED", "استنفذت مساحة العمل الحد الأقصى الشهري لرسائل الواتساب، وتم إيقاف الإرسال مؤقتاً.");
+    }
 }

@@ -604,4 +604,14 @@
   <data name="RETRY_UNAUTHORIZED_ROLE_Detail" xml:space="preserve">
     <value>يقتصر حق إعادة المحاولة على مالك السنتر أو المدير أو مدرس المجموعة المسؤول.</value>
   </data>
+
+  <data name="WEBHOOK_MODE_INVALID" xml:space="preserve">
+    <value>يجب أن تكون قيمة hub.mode مساوية لـ subscribe.</value>
+  </data>
+  <data name="WEBHOOK_MODE_INVALID_Title" xml:space="preserve">
+    <value>وضع إشعار الويب غير صالح</value>
+  </data>
+  <data name="WEBHOOK_MODE_INVALID_Detail" xml:space="preserve">
+    <value>يجب أن تكون قيمة hub.mode مساوية لـ subscribe للتحقق من الاتصال بميتا.</value>
+  </data>
 </root>

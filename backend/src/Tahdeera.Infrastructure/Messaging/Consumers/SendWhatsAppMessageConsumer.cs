@@ -10,12 +10,10 @@ namespace Tahdeera.Infrastructure.Messaging.Consumers;
 
 public sealed class SendWhatsAppMessageConsumer : IConsumer<SendWhatsAppMessageCommand>
 {
-    private const decimal UtilityCostUsd = 0.0356m;
-    private const decimal UtilityCostEgp = 1.3500m;
-
     private readonly IUnitOfWork _unitOfWork;
     private readonly IWhatsAppSenderResolver _senderResolver;
     private readonly IMetaWhatsAppCloudApiClient _metaApiClient;
+    private readonly IWhatsAppRateCardService _rateCardService;
     private readonly ILogger<SendWhatsAppMessageConsumer> _logger;
 
     public SendWhatsAppMessageConsumer(
@@ -23,10 +21,21 @@ public sealed class SendWhatsAppMessageConsumer : IConsumer<SendWhatsAppMessageC
         IWhatsAppSenderResolver senderResolver,
         IMetaWhatsAppCloudApiClient metaApiClient,
         ILogger<SendWhatsAppMessageConsumer> logger)
+        : this(unitOfWork, senderResolver, metaApiClient, new WhatsAppRateCardService(Microsoft.Extensions.Options.Options.Create(new Configuration.WhatsAppRateCardOptions())), logger)
+    {
+    }
+
+    public SendWhatsAppMessageConsumer(
+        IUnitOfWork unitOfWork,
+        IWhatsAppSenderResolver senderResolver,
+        IMetaWhatsAppCloudApiClient metaApiClient,
+        IWhatsAppRateCardService rateCardService,
+        ILogger<SendWhatsAppMessageConsumer> logger)
     {
         _unitOfWork = unitOfWork;
         _senderResolver = senderResolver;
         _metaApiClient = metaApiClient;
+        _rateCardService = rateCardService;
         _logger = logger;
     }
 
@@ -63,7 +72,26 @@ public sealed class SendWhatsAppMessageConsumer : IConsumer<SendWhatsAppMessageC
             return;
         }
 
-        // 2. Resolve Active Sender Credentials (Zero Silent Fallback - CONF-07)
+        // 2. Rate Card & Monthly Quota Hard Cap Enforcement
+        var (costUsd, costEgp) = _rateCardService.CalculateCost(cmd.TemplateName);
+        var config = await _unitOfWork.WorkspaceWhatsAppConfigs.GetByWorkspaceIdAsync(cmd.WorkspaceId, ct);
+        var monthlyQuota = config?.MonthlyMessageQuota ?? 1000;
+        var yearMonth = DateTimeOffset.UtcNow.ToString("yyyy-MM");
+        var ledger = await _unitOfWork.WorkspaceWhatsAppUsageLedgers.GetOrCreateCurrentMonthAsync(cmd.WorkspaceId, yearMonth, ct);
+        var currentDispatched = ledger?.MessagesDispatchedCount ?? config?.MessagesUsedThisMonth ?? 0;
+
+        if (currentDispatched >= monthlyQuota)
+        {
+            _logger.LogWarning("Workspace {WorkspaceId} WhatsApp monthly quota reached or exceeded ({Current}/{Quota}). Halting delivery for outbox message {OutboxId}.",
+                cmd.WorkspaceId, currentDispatched, monthlyQuota, cmd.OutboxMessageId);
+
+            outbox.TransitionToFailedPermanent("WORKSPACE_QUOTA_EXCEEDED", $"Monthly WhatsApp message quota ({monthlyQuota}) has been exceeded for workspace {cmd.WorkspaceId}.");
+            ledger?.RecordFailed();
+            await _unitOfWork.SaveChangesAsync(ct);
+            return;
+        }
+
+        // 3. Resolve Active Sender Credentials (Zero Silent Fallback - CONF-07)
         var sender = await _senderResolver.ResolveSenderAsync(cmd.WorkspaceId, ct);
         if (sender is null || !sender.CanSend)
         {
@@ -72,14 +100,15 @@ public sealed class SendWhatsAppMessageConsumer : IConsumer<SendWhatsAppMessageC
                 cmd.WorkspaceId, reason, cmd.OutboxMessageId);
 
             outbox.TransitionToFailedPermanent("ERR_WA_NO_SENDER_CONFIGURED", reason);
+            ledger?.RecordFailed();
             await _unitOfWork.SaveChangesAsync(ct);
             return;
         }
 
-        // 3. Record Attempt Metadata
+        // 4. Record Attempt Metadata
         outbox.RecordAttempt(sender.SenderMode, sender.PhoneNumberId);
 
-        // 4. Dispatch Meta Template Message via HTTP Client
+        // 5. Dispatch Meta Template Message via HTTP Client
         try
         {
             var response = await _metaApiClient.SendTemplateMessageAsync(
@@ -92,9 +121,11 @@ public sealed class SendWhatsAppMessageConsumer : IConsumer<SendWhatsAppMessageC
 
             if (response.IsSuccess)
             {
-                outbox.TransitionToSent(response.ProviderMessageId!, UtilityCostUsd, UtilityCostEgp, DateTimeOffset.UtcNow);
-                _logger.LogInformation("Outbox message {OutboxId} delivered via Meta. Provider ID: {ProviderId}",
-                    cmd.OutboxMessageId, response.ProviderMessageId);
+                outbox.TransitionToSent(response.ProviderMessageId!, costUsd, costEgp, DateTimeOffset.UtcNow);
+                ledger?.RecordDispatch(costUsd, costEgp);
+                config?.IncrementUsage();
+                _logger.LogInformation("Outbox message {OutboxId} dispatched via Meta. Provider ID: {ProviderId}, Cost USD: {CostUsd}, Cost EGP: {CostEgp}",
+                    cmd.OutboxMessageId, response.ProviderMessageId, costUsd, costEgp);
             }
             else if (response.IsTransient)
             {
@@ -110,6 +141,7 @@ public sealed class SendWhatsAppMessageConsumer : IConsumer<SendWhatsAppMessageC
                 else
                 {
                     outbox.TransitionToFailedPermanent("ERR_MAX_ATTEMPTS_EXCEEDED", $"Exceeded maximum 5 delivery attempts. Last error: {response.ErrorMessage}");
+                    ledger?.RecordFailed();
                     _logger.LogError("Outbox message {OutboxId} exceeded max retry attempts. Marking FailedPermanent.", cmd.OutboxMessageId);
                 }
             }
@@ -117,6 +149,7 @@ public sealed class SendWhatsAppMessageConsumer : IConsumer<SendWhatsAppMessageC
             {
                 // Permanent Failure (131026 phone not on WA, 132001 template paused, auth expired)
                 outbox.TransitionToFailedPermanent(response.ErrorCode ?? "ERR_WA_PERMANENT", response.ErrorMessage ?? "Permanent failure");
+                ledger?.RecordFailed();
                 _logger.LogError("Outbox message {OutboxId} encountered permanent error {Code}: {Message}. Halting retries.",
                     cmd.OutboxMessageId, response.ErrorCode, response.ErrorMessage);
             }
@@ -132,10 +165,11 @@ public sealed class SendWhatsAppMessageConsumer : IConsumer<SendWhatsAppMessageC
             else
             {
                 outbox.TransitionToFailedPermanent("ERR_MAX_ATTEMPTS_EXCEEDED", ex.Message);
+                ledger?.RecordFailed();
             }
         }
 
-        // 5. Persist State Transition
+        // 6. Persist State Transition
         await _unitOfWork.SaveChangesAsync(ct);
     }
 }

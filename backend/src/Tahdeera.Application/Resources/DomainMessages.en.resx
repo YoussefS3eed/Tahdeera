@@ -604,4 +604,14 @@
   <data name="RETRY_UNAUTHORIZED_ROLE_Detail" xml:space="preserve">
     <value>Only Workspace Owners, Admins, and Group Responsible Teachers can retry failed messages.</value>
   </data>
+
+  <data name="WEBHOOK_MODE_INVALID" xml:space="preserve">
+    <value>hub.mode must equal 'subscribe'.</value>
+  </data>
+  <data name="WEBHOOK_MODE_INVALID_Title" xml:space="preserve">
+    <value>Invalid Webhook Mode</value>
+  </data>
+  <data name="WEBHOOK_MODE_INVALID_Detail" xml:space="preserve">
+    <value>hub.mode query parameter must be set to 'subscribe' for handshake verification.</value>
+  </data>
 </root>

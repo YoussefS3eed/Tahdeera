@@ -1,8 +1,5 @@
 namespace Tahdeera.Infrastructure.Configuration;
 
-/// <summary>
-/// Platform-level default WhatsApp credentials for workspaces operating in PlatformManaged sender mode.
-/// </summary>
 public sealed class PlatformWhatsAppSettings
 {
     public const string SectionName = "PlatformWhatsApp";
@@ -12,4 +9,6 @@ public sealed class PlatformWhatsAppSettings
     public string AccessToken { get; set; } = string.Empty;
     public string BusinessDisplayName { get; set; } = "Tahdeera";
     public bool IsEnabled { get; set; } = false;
+    public string AppSecret { get; set; } = string.Empty;
+    public string WebhookVerifyToken { get; set; } = string.Empty;
 }

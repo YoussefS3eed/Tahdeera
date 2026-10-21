@@ -113,6 +113,10 @@ public class MessageOutboxConfiguration : IEntityTypeConfiguration<MessageOutbox
         builder.HasIndex(m => m.IdempotencyKey)
             .IsUnique();
 
+        builder.HasIndex(m => m.ProviderMessageId)
+            .HasFilter("provider_message_id IS NOT NULL")
+            .HasDatabaseName("ix_message_outbox_provider_message_id");
+
         builder.HasIndex(m => new { m.Status, m.NextAttemptAt })
             .HasFilter("status IN ('Pending', 'FailedTransient')")
             .HasDatabaseName("ix_message_outbox_relay");

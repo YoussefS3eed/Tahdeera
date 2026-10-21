@@ -91,6 +91,8 @@ public static class DependencyInjection
 
         // WhatsApp Infrastructure & Services
         services.Configure<Tahdeera.Infrastructure.Configuration.PlatformWhatsAppSettings>(configuration.GetSection(Tahdeera.Infrastructure.Configuration.PlatformWhatsAppSettings.SectionName));
+        services.Configure<Tahdeera.Infrastructure.Configuration.WhatsAppRateCardOptions>(configuration.GetSection(Tahdeera.Infrastructure.Configuration.WhatsAppRateCardOptions.SectionName));
+        services.AddSingleton<Tahdeera.Application.Common.Interfaces.Services.IWhatsAppRateCardService, Tahdeera.Infrastructure.Services.WhatsAppRateCardService>();
         services.AddScoped<Tahdeera.Application.Common.Interfaces.Services.IWhatsAppSenderResolver, Tahdeera.Infrastructure.Services.WhatsAppSenderResolver>();
         services.AddHttpClient<Tahdeera.Application.Common.Interfaces.Services.IMetaWhatsAppCloudApiClient, Tahdeera.Infrastructure.Services.MetaWhatsAppCloudApiClient>(client =>
         {

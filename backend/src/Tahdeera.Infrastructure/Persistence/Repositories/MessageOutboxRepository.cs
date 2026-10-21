@@ -53,6 +53,11 @@ public class MessageOutboxRepository : GenericRepository<MessageOutbox>, IMessag
         return await _dbSet.FirstOrDefaultAsync(m => m.IdempotencyKey == idempotencyKey, ct);
     }
 
+    public async Task<MessageOutbox?> GetByProviderMessageIdAsync(string providerMessageId, CancellationToken ct = default)
+    {
+        return await _dbSet.FirstOrDefaultAsync(m => m.ProviderMessageId == providerMessageId, ct);
+    }
+
     public new async Task AddAsync(MessageOutbox message, CancellationToken ct = default)
     {
         await base.AddAsync(message, ct);
