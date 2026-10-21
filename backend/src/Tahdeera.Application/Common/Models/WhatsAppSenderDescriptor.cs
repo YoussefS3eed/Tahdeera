@@ -13,6 +13,9 @@ public sealed record WhatsAppSenderDescriptor
     public required bool IsActive { get; init; }
     public string? InactiveReason { get; init; }
 
+    public bool CanSend => IsActive;
+    public string? RejectionReason => InactiveReason;
+
     public static WhatsAppSenderDescriptor Platform(
         Guid workspaceId,
         string phoneNumberId,
@@ -69,4 +72,7 @@ public sealed record WhatsAppSenderDescriptor
         IsActive = false,
         InactiveReason = reason
     };
+
+    public override string ToString() =>
+        $"WhatsAppSenderDescriptor [WorkspaceId={WorkspaceId}, Mode={SenderMode}, PhoneId={PhoneNumberId}, IsActive={IsActive}]";
 }

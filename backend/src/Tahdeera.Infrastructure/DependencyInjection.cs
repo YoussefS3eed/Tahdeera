@@ -1,3 +1,4 @@
+using Tahdeera.Infrastructure.Messaging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -84,7 +85,20 @@ public static class DependencyInjection
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<ICredentialSecurityService, CredentialSecurityService>();
         services.AddScoped<IAttendanceReconciliationService, AttendanceReconciliationService>();
-        services.AddScoped<IMessageOutboxPublisher, LoggingOutboxMessagePublisher>();
+        // Memory Cache & Data Protection
+        services.AddMemoryCache();
+        services.AddDataProtection();
+
+        // WhatsApp Infrastructure & Services
+        services.Configure<Tahdeera.Infrastructure.Configuration.PlatformWhatsAppSettings>(configuration.GetSection(Tahdeera.Infrastructure.Configuration.PlatformWhatsAppSettings.SectionName));
+        services.AddScoped<Tahdeera.Application.Common.Interfaces.Services.IWhatsAppSenderResolver, Tahdeera.Infrastructure.Services.WhatsAppSenderResolver>();
+        services.AddHttpClient<Tahdeera.Application.Common.Interfaces.Services.IMetaWhatsAppCloudApiClient, Tahdeera.Infrastructure.Services.MetaWhatsAppCloudApiClient>(client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(10);
+        });
+
+        // MassTransit & Messaging Infrastructure
+        services.AddMessagingInfrastructure(configuration);
 
         // Background Workers
         services.Configure<AttendanceWorkerOptions>(configuration.GetSection(AttendanceWorkerOptions.SectionName));

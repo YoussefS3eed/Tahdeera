@@ -143,10 +143,11 @@ public sealed class SessionCompletionWorker : BackgroundService
                         studentId: student.StudentId,
                         attendanceRecordId: absence.Id,
                         recipientPhone: wsStudent.GuardianPhone,
-                        messageType: "AbsenceNotification",
+                        messageType: "AbsenceAlert",
                         payload: payload,
                         idempotencyKey: idempotencyKey,
                         languageCode: "ar");
+                    outbox.TemplateName = "absence_alert_v1";
 
                     context.MessageOutboxes.Add(outbox);
                 }

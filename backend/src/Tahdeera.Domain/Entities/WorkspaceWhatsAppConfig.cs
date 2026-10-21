@@ -9,6 +9,7 @@ public class WorkspaceWhatsAppConfig : BaseEntity
     public Guid WorkspaceId { get; private set; }
     public WhatsAppSenderMode SenderMode { get; private set; }
     public bool IsNotificationsEnabled { get; private set; }
+    public bool NotificationsEnabled => IsNotificationsEnabled;
     public int MonthlyMessageQuota { get; private set; }
     public int MessagesUsedThisMonth { get; private set; }
     public Guid? ActiveSenderConnectionId { get; private set; }

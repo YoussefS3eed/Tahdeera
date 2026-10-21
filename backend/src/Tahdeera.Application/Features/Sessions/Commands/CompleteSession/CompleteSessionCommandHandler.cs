@@ -112,10 +112,11 @@ public sealed class CompleteSessionCommandHandler : IRequestHandler<CompleteSess
                     studentId: unattended.StudentId,
                     attendanceRecordId: absenceRecord.Id,
                     recipientPhone: contact.GuardianPhone,
-                    messageType: "AbsenceNotification",
+                    messageType: "AbsenceAlert",
                     payload: payload,
                     idempotencyKey: idempotencyKey,
                     languageCode: "ar");
+                outboxMessage.TemplateName = "absence_alert_v1";
 
                 await _unitOfWork.MessageOutboxes.AddAsync(outboxMessage, cancellationToken);
                 stagedOutboxMessagesCount++;

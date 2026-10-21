@@ -27,6 +27,7 @@ public class MessageOutbox : BaseEntity
     public OutboxMessageStatus Status { get; set; } = OutboxMessageStatus.Pending;
     public string? FailureCategory { get; set; }
     public short Attempts { get; set; } = 0;
+    public int AttemptCount => Attempts;
     public short MaxAttempts { get; set; } = 5;
     public DateTimeOffset? NextAttemptAt { get; set; }
     public DateTimeOffset? LastAttemptAt { get; set; }
@@ -331,6 +332,41 @@ public class MessageOutbox : BaseEntity
         UpdatedAt = DateTimeOffset.UtcNow;
     }
 
+    
+    public void RecordAttempt(WhatsAppSenderMode mode, string? phoneNumberId)
+    {
+        SenderMode = mode.ToString();
+        Attempts++;
+        LastAttemptAt = DateTimeOffset.UtcNow;
+        UpdatedAt = DateTimeOffset.UtcNow;
+    }
+
+    public void ScheduleRetryAt(DateTimeOffset nextAttemptAt, string? errorCode, string? errorMessage)
+    {
+        Attempts++;
+        Status = OutboxMessageStatus.FailedTransient;
+        FailureCategory = "Transient";
+        ErrorCode = errorCode;
+        ErrorDetails = errorMessage;
+        NextAttemptAt = nextAttemptAt;
+        UpdatedAt = DateTimeOffset.UtcNow;
+    }
+
+    public void TransitionToSent(string providerMessageId, decimal costUsd, decimal costEgp, DateTimeOffset sentAt)
+    {
+        if (Status != OutboxMessageStatus.Delivered)
+        {
+            Status = OutboxMessageStatus.Sent;
+        }
+
+        ProviderMessageId = providerMessageId;
+        SentAt = sentAt;
+        CostEgp = costEgp;
+        NextAttemptAt = null;
+        ErrorCode = null;
+        ErrorDetails = null;
+        UpdatedAt = DateTimeOffset.UtcNow;
+    }
     public void ResetForManualRetry(string refreshedPhone)
     {
         if (Status == OutboxMessageStatus.Sent || Status == OutboxMessageStatus.Delivered)

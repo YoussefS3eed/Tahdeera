@@ -12,6 +12,7 @@ public class WhatsAppSenderConnection : BaseEntity
     public string PhoneNumberId { get; private set; } = string.Empty;
     public string DisplayPhoneNumber { get; private set; } = string.Empty;
     public string? VerifiedBusinessName { get; private set; }
+    public string? BusinessDisplayName => VerifiedBusinessName;
     public string EncryptedAccessToken { get; private set; } = string.Empty;
     public SenderConnectionStatus Status { get; private set; }
     public DateTimeOffset? ConnectedAt { get; private set; }

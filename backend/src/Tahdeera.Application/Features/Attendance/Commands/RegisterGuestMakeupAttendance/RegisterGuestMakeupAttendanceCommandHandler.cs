@@ -207,6 +207,7 @@ public sealed class RegisterGuestMakeupAttendanceCommandHandler : IRequestHandle
                 payload: payload,
                 idempotencyKey: idempotencyKey,
                 languageCode: "ar");
+            outboxMessage.TemplateName = "attendance_check_in_v1";
 
             await _unitOfWork.MessageOutboxes.AddAsync(outboxMessage, cancellationToken);
             notificationStaged = true;
