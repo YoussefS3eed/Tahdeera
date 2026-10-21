@@ -1,0 +1,73 @@
+<div class="settings-card">
+  <div class="card-header">
+    <div class="header-info">
+      <h3 class="card-title">⏱️ سياسات الحضور والغياب (Attendance Policies)</h3>
+      <p class="card-subtitle">قواعد احتساب التأخير والغياب التلقائي وإشعارات أولياء الأمور</p>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label" for="lateThreshold">مهلة التأخير (بالدقائق) *</label>
+        <input
+          id="lateThreshold"
+          type="number"
+          min="5"
+          max="60"
+          class="form-input ltr-num font-mono"
+          [ngModel]="lateThresholdMinutes()"
+          (ngModelChange)="lateThresholdMinutes.set($event)" />
+        <span class="hint-text">يتم اعتبار الطالب متأخراً إذا سجل حضوره بعد هذه المدة من موعد الحصة.</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="absentThreshold">مهلة الغياب التلقائي (بالدقائق) *</label>
+        <input
+          id="absentThreshold"
+          type="number"
+          min="15"
+          max="120"
+          class="form-input ltr-num font-mono"
+          [ngModel]="autoAbsentThresholdMinutes()"
+          (ngModelChange)="autoAbsentThresholdMinutes.set($event)" />
+        <span class="hint-text">يتم اعتبار الطالب غائباً إذا لم يسجل حضوره خلال هذه المدة.</span>
+      </div>
+    </div>
+
+    <div class="checkbox-list mt-4">
+      <label class="checkbox-item">
+        <input
+          type="checkbox"
+          [checked]="autoSendCheckInWhatsApp()"
+          (change)="autoSendCheckInWhatsApp.set(!autoSendCheckInWhatsApp())" />
+        <span>إرسال إشعار حضور فوري لولي الأمر عبر الواتساب عند مسح بطاقة الطالب (NFC / QR)</span>
+      </label>
+
+      <label class="checkbox-item mt-2">
+        <input
+          type="checkbox"
+          [checked]="autoSendAbsenceWhatsApp()"
+          (change)="autoSendAbsenceWhatsApp.set(!autoSendAbsenceWhatsApp())" />
+        <span>إرسال تنبيه غياب تلقائي لولي الأمر بعد تجاوز مهلة الحصة المحددة</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="card-footer">
+    @if (saveSuccess()) {
+      <span class="save-msg">✓ تم حفظ سياسات الحضور بنجاح</span>
+    }
+    <button
+      type="button"
+      class="btn btn-primary"
+      [disabled]="store.isSaving()"
+      (click)="savePolicies()">
+      @if (store.isSaving()) {
+        <span class="spinner"></span> جاري الحفظ...
+      } @else {
+        💾 حفظ السياسات
+      }
+    </button>
+  </div>
+</div>

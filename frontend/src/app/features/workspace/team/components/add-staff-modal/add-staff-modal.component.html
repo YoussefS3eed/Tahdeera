@@ -1,0 +1,118 @@
+@if (isOpen) {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal-dialog" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2 class="modal-title">إضافة عضو فريق جديد للمركز (SCR-17)</h2>
+        <button type="button" class="btn-close" (click)="closeModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        @if (errorMessage()) {
+          <div class="alert alert-danger">{{ errorMessage() }}</div>
+        }
+
+        @if (teamStore.isQuotaReached()) {
+          <div class="quota-warning-banner">
+            <span>🚨 تم بلوغ الحد الأقصى للموظفين المسموح به في باقتك الحالية ({{ teamStore.maxStaffQuota() }} موظفين).</span>
+          </div>
+        }
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label" for="staffName">الاسم الكامل *</label>
+            <input
+              id="staffName"
+              type="text"
+              class="form-input"
+              placeholder="مثال: منى حامد"
+              [ngModel]="displayName()"
+              (ngModelChange)="displayName.set($event)" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="staffUser">اسم المستخدم للدخول (Username) *</label>
+            <input
+              id="staffUser"
+              type="text"
+              class="form-input ltr-num font-mono"
+              placeholder="مثال: mona.reception"
+              [ngModel]="username()"
+              (ngModelChange)="username.set($event)" />
+          </div>
+        </div>
+
+        <div class="form-grid mt-3">
+          <div class="form-group">
+            <label class="form-label" for="staffEmail">البريد الإلكتروني *</label>
+            <input
+              id="staffEmail"
+              type="email"
+              class="form-input ltr-num font-mono"
+              placeholder="name@center.com"
+              [ngModel]="email()"
+              (ngModelChange)="email.set($event)" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="staffPhone">رقم هاتف الموظف (مصري) *</label>
+            <input
+              id="staffPhone"
+              type="tel"
+              class="form-input ltr-num font-mono"
+              placeholder="010XXXXXXXX"
+              [ngModel]="phone()"
+              (ngModelChange)="phone.set($event)" />
+          </div>
+        </div>
+
+        <div class="form-group mt-3">
+          <label class="form-label" for="staffRole">الدور والصلاحيات الوظيفية (Role) * (CONF-09)</label>
+          <select
+            id="staffRole"
+            class="form-select"
+            [ngModel]="role()"
+            (ngModelChange)="role.set($event)">
+            <option value="Assistant">مساعد تعليمي (Assistant) - تحضير وإدارة الطلاب</option>
+            <option value="Reception">موظف استقبال (Reception) - تسجيل الحضور والبطاقات</option>
+            <option value="Accountant">محاسب مالي (Accountant) - تسجيل السداد والرسوم</option>
+            <option value="Teacher">معلم (Teacher) - إدارة الاختبارات والنتائج</option>
+          </select>
+        </div>
+
+        <div class="form-group mt-3">
+          <div class="label-with-action">
+            <label class="form-label" for="staffPwd">كلمة المرور الابتدائية * (Q5)</label>
+            <button type="button" class="btn-text-action" (click)="generateStrongPassword()">
+              🔑 توليد كلمة مرور عشوائية
+            </button>
+          </div>
+          <input
+            id="staffPwd"
+            type="text"
+            class="form-input ltr-num font-mono"
+            placeholder="كلمة مرور الدخول"
+            [ngModel]="password()"
+            (ngModelChange)="password.set($event)" />
+          <span class="hint-text">سيتمكن المالك من إرسال بطاقة بيانات الدخول للموظف عبر الواتساب فور الحفظ.</span>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()" [disabled]="isSubmitting()">
+          إلغاء
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="submit()"
+          [disabled]="isSubmitting() || teamStore.isQuotaReached()">
+          @if (isSubmitting()) {
+            <span class="spinner"></span> جاري الحفظ...
+          } @else {
+            إضافة الموظف واستخراج بطاقة الواتساب ✓
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

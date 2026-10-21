@@ -1,0 +1,75 @@
+@if (response) {
+  <div class="response-card" [class.is-out-of-scope]="response.isOutOfScope">
+    <div class="card-header">
+      <div class="header-main">
+        <span class="ai-avatar">✨</span>
+        <div class="query-info">
+          <span class="question-label">الاستفسار:</span>
+          <h3 class="question-title">{{ response.question }}</h3>
+        </div>
+      </div>
+      <button type="button" class="btn-dismiss" (click)="dismiss.emit()">✕</button>
+    </div>
+
+    <div class="card-body">
+      <!-- Out of scope fallback banner (Q4) -->
+      @if (response.isOutOfScope) {
+        <div class="out-of-scope-banner">
+          <span class="scope-icon">🛡️</span>
+          <div class="scope-text">
+            <strong>تنبيه نطاق الاستعلام الآمن (Safe Fallback):</strong>
+            <p>{{ response.answerAr }}</p>
+          </div>
+        </div>
+      } @else {
+        <!-- Standard Answer -->
+        <div class="answer-content">
+          <p class="answer-text">{{ response.answerAr }}</p>
+        </div>
+      }
+
+      <!-- Key Metrics Badges -->
+      @if (response.metrics && response.metrics.length > 0) {
+        <div class="metrics-grid">
+          @for (m of response.metrics; track m.label) {
+            <div class="metric-pill">
+              <span class="m-label">{{ m.label }}</span>
+              <span class="m-val ltr-num font-mono font-bold">{{ m.value }}</span>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Collapsible SQL Snippet -->
+      @if (response.sqlSnippet) {
+        <div class="sql-section">
+          <button type="button" class="btn-toggle-sql" (click)="toggleSql()">
+            <span>🔍 استعلام SQL المنفذ خلف الكواليس:</span>
+            <span>{{ showSql() ? '▲ إخفاء' : '▼ عرض' }}</span>
+          </button>
+
+          @if (showSql()) {
+            <pre class="sql-box ltr-num font-mono"><code>{{ response.sqlSnippet }}</code></pre>
+          }
+        </div>
+      }
+
+      <!-- Suggested Chips when out-of-scope or follow-ups -->
+      @if (response.suggestedChips && response.suggestedChips.length > 0) {
+        <div class="fallback-chips-section">
+          <span class="fallback-label">💡 استفسارات تشغيلية بديلة مقترحة:</span>
+          <div class="chips-container">
+            @for (chip of response.suggestedChips; track chip.id) {
+              <button
+                type="button"
+                class="suggested-chip"
+                (click)="onSelectChip(chip)">
+                {{ chip.titleAr }}
+              </button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+}

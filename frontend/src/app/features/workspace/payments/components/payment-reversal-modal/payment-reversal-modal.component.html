@@ -1,0 +1,71 @@
+@if (isOpen && transaction) {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal-dialog" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div class="header-titles">
+          <h2 class="modal-title text-danger">⚠️ إلغاء استلام سداد مالي (Reversal)</h2>
+          <p class="modal-subtitle">المعاملة: <span class="ltr-num font-mono">{{ transaction.id }}</span></p>
+        </div>
+        <button type="button" class="btn-close" (click)="closeModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        @if (errorMessage()) {
+          <div class="alert alert-danger">{{ errorMessage() }}</div>
+        }
+
+        <div class="warning-callout">
+          <span class="callout-icon">🚨</span>
+          <div class="callout-text">
+            <strong>تحذير رقابي ومحاسبي (DEC-04):</strong>
+            <p>إلغاء المعاملة سيقوم بتغيير حالتها إلى <code>Reversed</code> وإلغاء توزيعاتها المرتبطة، مع إعادة الرصيد كدين مستحق على الطالب. لن يتم حذف السجل من قاعدة البيانات حرصاً على سلامة المراجعة المالية.</p>
+          </div>
+        </div>
+
+        <div class="transaction-summary-card">
+          <div class="summary-row">
+            <span class="label">اسم الطالب:</span>
+            <span class="value font-bold">{{ transaction.studentName }}</span>
+          </div>
+          <div class="summary-row">
+            <span class="label">المبلغ:</span>
+            <span class="value text-danger ltr-num font-mono font-bold">{{ transaction.amount | number:'1.2-2' }} ج.م</span>
+          </div>
+          <div class="summary-row">
+            <span class="label">تاريخ السداد:</span>
+            <span class="value ltr-num font-mono">{{ transaction.createdAt | date:'yyyy/MM/dd - hh:mm a' }}</span>
+          </div>
+        </div>
+
+        <div class="form-group mt-3">
+          <label class="form-label" for="reversalReason">سبب الإلغاء الإلزامي * (5 أحرف على الأقل)</label>
+          <textarea
+            id="reversalReason"
+            class="form-textarea"
+            rows="3"
+            placeholder="مثال: تسجيل خاطئ بالخطأ لمبلغ طالب آخر / استرداد المبلغ نقداً للولي..."
+            [ngModel]="reason()"
+            (ngModelChange)="reason.set($event)"></textarea>
+          <span class="hint-text">يجب توثيق سبب الإلغاء لأغراض التدقيق المحاسبي.</span>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()" [disabled]="isSubmitting()">
+          تراجع
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          (click)="confirmReversal()"
+          [disabled]="isSubmitting() || reason().trim().length < 5">
+          @if (isSubmitting()) {
+            <span class="spinner"></span> جاري الإلغاء...
+          } @else {
+            تأكيد الإلغاء المحاسبي
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

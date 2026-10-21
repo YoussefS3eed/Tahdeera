@@ -20,6 +20,7 @@ import { handlePublicInquiry } from '../mock/handlers/public.mock';
 import { handleAuthMockRequest } from '../mock/handlers/auth.mock';
 import { handleDashboardMockRequest } from '../mock/handlers/dashboard.mock';
 import { handleAcademicMockRequest } from '../mocks/academic-mock.interceptor';
+import { handleF4MockRequest } from '../mocks/f4-mock.interceptor';
 
 // In-Memory Seed Data Fixture
 const MOCK_STUDENTS: Student[] = [
@@ -118,6 +119,12 @@ export const mockApiInterceptor: HttpInterceptorFn = (
   const academicRes$ = handleAcademicMockRequest(req);
   if (academicRes$) {
     return academicRes$;
+  }
+
+  // Milestone F4 Operations (SCR-12 to SCR-18)
+  const f4Res$ = handleF4MockRequest(req);
+  if (f4Res$) {
+    return f4Res$;
   }
 
   // 1. GET /api/v1/students

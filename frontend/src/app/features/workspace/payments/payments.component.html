@@ -1,0 +1,302 @@
+<div class="payments-page">
+  <!-- Top Header -->
+  <div class="page-header">
+    <div class="header-titles">
+      <h1 class="page-title">المدفوعات والاشتراكات المالية (SCR-12)</h1>
+      <p class="page-description">إدارة تحصيل الرسوم الدراسية، تسجيل الإيصالات، وتوزيع المستحقات التلقائي (FIFO)</p>
+    </div>
+  </div>
+
+  <!-- KPI Stat Cards -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-icon icon-blue">💰</div>
+      <div class="kpi-content">
+        <span class="kpi-label">إجمالي الرسوم المطلوبة</span>
+        <span class="kpi-value ltr-num font-mono font-bold">
+          {{ (financeStore.kpis()?.totalRequiredEgp || 0) | number:'1.2-2' }} ج.م
+        </span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon icon-green">💵</div>
+      <div class="kpi-content">
+        <span class="kpi-label">إجمالي المحصل الفعلي</span>
+        <span class="kpi-value text-success ltr-num font-mono font-bold">
+          {{ (financeStore.kpis()?.totalCollectedEgp || 0) | number:'1.2-2' }} ج.م
+        </span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon icon-red">⏳</div>
+      <div class="kpi-content">
+        <span class="kpi-label">المتبقي والمتأخرات</span>
+        <span class="kpi-value text-danger ltr-num font-mono font-bold">
+          {{ (financeStore.kpis()?.totalRemainingEgp || 0) | number:'1.2-2' }} ج.م
+        </span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon icon-purple">📈</div>
+      <div class="kpi-content">
+        <span class="kpi-label">نسبة التحصيل الإجمالية</span>
+        <span class="kpi-value text-purple ltr-num font-mono font-bold">
+          {{ (financeStore.kpis()?.collectionRatePercent || 0) | number:'1.1-1' }}%
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sub Tabs Navigation -->
+  <div class="tabs-nav-bar">
+    <button
+      type="button"
+      class="tab-btn"
+      [class.active]="activeTab() === 'roster'"
+      (click)="activeTab.set('roster')">
+      👥 سجل اشتراكات الطلاب
+      <span class="tab-count font-mono">{{ filteredRoster().length }}</span>
+    </button>
+    <button
+      type="button"
+      class="tab-btn"
+      [class.active]="activeTab() === 'ledger'"
+      (click)="activeTab.set('ledger')">
+      📑 دفتر اليومية والمعاملات
+      <span class="tab-count font-mono">{{ filteredLedger().length }}</span>
+    </button>
+  </div>
+
+  <!-- Search & Filter Controls -->
+  <div class="filter-bar">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="بحث بالاسم، كود الطالب، أو رقم الإيصال..."
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event)" />
+      @if (searchQuery()) {
+        <button type="button" class="btn-clear" (click)="searchQuery.set('')">✕</button>
+      }
+    </div>
+
+    @if (activeTab() === 'roster') {
+      <div class="filter-controls">
+        <select
+          class="form-select"
+          [ngModel]="gradeFilter()"
+          (ngModelChange)="gradeFilter.set($event)">
+          <option value="all">جميع المراحل</option>
+          <option value="الصف الأول الثانوي">الصف الأول الثانوي</option>
+          <option value="الصف الثاني الثانوي">الصف الثاني الثانوي</option>
+          <option value="الصف الثالث الثانوي">الصف الثالث الثانوي</option>
+        </select>
+
+        <select
+          class="form-select"
+          [ngModel]="statusFilter()"
+          (ngModelChange)="statusFilter.set($event)">
+          <option value="all">جميع حالات السداد</option>
+          <option value="Paid">مسدد بالكامل</option>
+          <option value="Partial">مسدد جزئياً</option>
+          <option value="Unpaid">غير مسدد</option>
+          <option value="Overdue">متأخر</option>
+        </select>
+      </div>
+    }
+  </div>
+
+  <!-- Tab 1: Billing Roster -->
+  @if (activeTab() === 'roster') {
+    <div class="table-container">
+      @if (financeStore.isLoading()) {
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <p>جاري تحميل سجل الاشتراكات...</p>
+        </div>
+      } @else if (filteredRoster().length === 0) {
+        <div class="empty-state">
+          <span class="empty-icon">📂</span>
+          <p>لا توجد سجلات مطابقة للبحث أو التصفية الحالية.</p>
+        </div>
+      } @else {
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>كود الطالب</th>
+              <th>اسم الطالب</th>
+              <th>المرحلة الدراسية</th>
+              <th>المطلوب</th>
+              <th>المسدد</th>
+              <th>المتبقي</th>
+              <th>حالة السداد</th>
+              <th>الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (student of filteredRoster(); track student.studentId) {
+              <tr>
+                <td>
+                  <span class="student-code ltr-num font-mono">{{ student.studentCode }}</span>
+                </td>
+                <td class="font-bold">{{ student.studentName }}</td>
+                <td>{{ student.gradeName }} ({{ student.groupName }})</td>
+                <td>
+                  <span class="ltr-num font-mono">{{ student.requiredFee | number:'1.2-2' }}</span> ج.م
+                </td>
+                <td>
+                  <span class="text-success ltr-num font-mono font-bold">{{ student.paidAmount | number:'1.2-2' }}</span> ج.م
+                </td>
+                <td>
+                  <span
+                    class="ltr-num font-mono font-bold"
+                    [class.text-danger]="student.remainingFee > 0">
+                    {{ student.remainingFee | number:'1.2-2' }}
+                  </span> ج.م
+                </td>
+                <td>
+                  <span class="badge" [class]="'badge-' + student.paymentStatus.toLowerCase()">
+                    @switch (student.paymentStatus) {
+                      @case ('Paid') { مسدد بالكامل ✓ }
+                      @case ('Partial') { مسدد جزئياً ⏳ }
+                      @case ('Unpaid') { غير مسدد ✕ }
+                      @case ('Overdue') { متأخر ⚠️ }
+                    }
+                  </span>
+                </td>
+                <td>
+                  <button
+                    type="button"
+                    class="btn-action btn-pay"
+                    (click)="openRecordPayment(student)">
+                    💳 تسجيل سداد
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+  }
+
+  <!-- Tab 2: Ledger Transactions -->
+  @if (activeTab() === 'ledger') {
+    <div class="table-container">
+      @if (financeStore.isLoading()) {
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <p>جاري تحميل دفتر اليومية...</p>
+        </div>
+      } @else if (filteredLedger().length === 0) {
+        <div class="empty-state">
+          <span class="empty-icon">📑</span>
+          <p>لا توجد معاملات مسجلة حتى الآن.</p>
+        </div>
+      } @else {
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>رقم الإيصال</th>
+              <th>تاريخ المعاملة</th>
+              <th>الطالب</th>
+              <th>النوع</th>
+              <th>طريقة السداد</th>
+              <th>المبلغ</th>
+              <th>الحالة</th>
+              <th>الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (tx of filteredLedger(); track tx.id) {
+              <tr [class.row-reversed]="tx.status === 'Reversed'">
+                <td>
+                  <span class="ltr-num font-mono font-bold">{{ tx.receiptNumber || tx.id }}</span>
+                </td>
+                <td>
+                  <span class="ltr-num font-mono">{{ tx.createdAt | date:'yyyy/MM/dd hh:mm a' }}</span>
+                </td>
+                <td>
+                  <strong>{{ tx.studentName }}</strong>
+                  <div class="sub-text ltr-num font-mono">{{ tx.studentCode }}</div>
+                </td>
+                <td>
+                  <span class="tx-type-pill" [class]="'type-' + (tx.type ? tx.type.toLowerCase() : 'payment')">
+                    @switch (tx.type) {
+                      @case ('Payment') { سداد نقدية }
+                      @case ('Charge') { رسم مستحق }
+                      @case ('Reversal') { إلغاء سداد }
+                    }
+                  </span>
+                </td>
+                <td>{{ tx.paymentMethod || '-' }}</td>
+                <td>
+                  <span
+                    class="ltr-num font-mono font-bold"
+                    [class.text-success]="tx.type === 'Payment' && tx.status !== 'Reversed'"
+                    [class.text-danger]="tx.type === 'Reversal' || tx.status === 'Reversed'">
+                    {{ tx.amount | number:'1.2-2' }} ج.م
+                  </span>
+                </td>
+                <td>
+                  <span class="badge" [class]="'badge-status-' + tx.status.toLowerCase()">
+                    @switch (tx.status) {
+                      @case ('Completed') { مكتملة }
+                      @case ('Reversed') { ملغاة (Reversed) }
+                      @case ('Pending') { قيد الانتظار }
+                    }
+                  </span>
+                </td>
+                <td class="actions-cell">
+                  @if (tx.type === 'Payment' && tx.status !== 'Reversed') {
+                    <button
+                      type="button"
+                      class="btn-icon"
+                      title="عرض وطباعة الإيصال"
+                      (click)="openReceipt(tx)">
+                      🖨️
+                    </button>
+                    <button
+                      type="button"
+                      class="btn-icon btn-reverse"
+                      title="إلغاء المعاملة (DEC-04)"
+                      (click)="openReversal(tx)">
+                      ↩️
+                    </button>
+                  } @else {
+                    <span class="text-muted">-</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+  }
+
+  <!-- Modals -->
+  <app-record-payment-modal
+    [isOpen]="showRecordModal()"
+    [student]="selectedStudent()"
+    (close)="showRecordModal.set(false)"
+    (paymentSuccess)="onPaymentRecorded($event)">
+  </app-record-payment-modal>
+
+  <app-printable-receipt-modal
+    [isOpen]="showReceiptModal()"
+    [transaction]="selectedTransaction()"
+    (close)="showReceiptModal.set(false)">
+  </app-printable-receipt-modal>
+
+  <app-payment-reversal-modal
+    [isOpen]="showReversalModal()"
+    [transaction]="reversalTarget()"
+    (close)="showReversalModal.set(false)">
+  </app-payment-reversal-modal>
+</div>

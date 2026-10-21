@@ -1,0 +1,145 @@
+@if (isOpen && student) {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal-dialog" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div class="header-info">
+          <h2 class="modal-title">تسجيل سداد مالي (SCR-12)</h2>
+          <p class="modal-subtitle">
+            الطالب: <strong>{{ student.studentName }}</strong> - كود:
+            <span class="ltr-num font-mono">{{ student.studentCode }}</span>
+          </p>
+        </div>
+        <button type="button" class="btn-close" (click)="closeModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        @if (errorMessage()) {
+          <div class="alert alert-danger">
+            {{ errorMessage() }}
+          </div>
+        }
+
+        <!-- Student Current Balance Card -->
+        <div class="balance-summary-card">
+          <div class="balance-item">
+            <span class="label">المطلوب سداده:</span>
+            <span class="value ltr-num font-mono">{{ student.requiredFee | number:'1.2-2' }} ج.م</span>
+          </div>
+          <div class="balance-item">
+            <span class="label">المسدد سابقاً:</span>
+            <span class="value text-success ltr-num font-mono">{{ student.paidAmount | number:'1.2-2' }} ج.م</span>
+          </div>
+          <div class="balance-item highlight">
+            <span class="label">المتبقي حالياً:</span>
+            <span class="value text-danger ltr-num font-mono font-bold">{{ student.remainingFee | number:'1.2-2' }} ج.م</span>
+          </div>
+        </div>
+
+        <!-- Payment Input Form -->
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label" for="paymentAmount">المبلغ المسدد (ج.م) *</label>
+            <div class="input-with-addon">
+              <input
+                id="paymentAmount"
+                type="number"
+                min="1"
+                class="form-input font-mono"
+                [ngModel]="amountEgp()"
+                (ngModelChange)="amountEgp.set($event)"
+                placeholder="0.00" />
+              <span class="addon">ج.م</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="paymentMethod">طريقة السداد *</label>
+            <select
+              id="paymentMethod"
+              class="form-select"
+              [ngModel]="method()"
+              (ngModelChange)="method.set($event)">
+              <option value="Cash">نقداً (Cash)</option>
+              <option value="VodafoneCash">فودافون كاش (Vodafone Cash)</option>
+              <option value="InstaPay">إنستاباي (InstaPay)</option>
+              <option value="BankTransfer">تحويل بنكي (Bank Transfer)</option>
+              <option value="POS">بطاقة / POS</option>
+            </select>
+          </div>
+        </div>
+
+        @if (method() !== 'Cash') {
+          <div class="form-group mt-3">
+            <label class="form-label" for="refNum">رقم المعاملة / المرجع الإلكتروني *</label>
+            <input
+              id="refNum"
+              type="text"
+              class="form-input font-mono"
+              placeholder="مثال: REF-99214732"
+              [ngModel]="referenceNumber()"
+              (ngModelChange)="referenceNumber.set($event)" />
+          </div>
+        }
+
+        <div class="form-group mt-3">
+          <label class="form-label" for="notes">ملاحظات إضافية (اختياري)</label>
+          <textarea
+            id="notes"
+            class="form-textarea"
+            rows="2"
+            placeholder="ملاحظات حول هذا السداد أو رقم الهاتف المحول منه..."
+            [ngModel]="notes()"
+            (ngModelChange)="notes.set($event)"></textarea>
+        </div>
+
+        <!-- FIFO Allocation Live Preview (Q1) -->
+        <div class="fifo-preview-card mt-4">
+          <div class="preview-header">
+            <span class="preview-title">📊 التوزيع التلقائي حسب الأقدمية (FIFO Auto-Allocation)</span>
+            <span class="preview-badge">معتمد باللائحة</span>
+          </div>
+
+          @if (fifoPreview().allocations.length > 0) {
+            <div class="allocations-list">
+              @for (item of fifoPreview().allocations; track $index) {
+                <div class="allocation-row">
+                  <div class="charge-title">{{ item.title }}</div>
+                  <div class="charge-allocation text-success font-mono font-bold">
+                    +{{ item.allocatedAmount | number:'1.2-2' }} ج.م
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="empty-allocations">لا توجد رسوم مستحقة حالياً، سيتم إيداع المبلغ كرصيد دائن للطالب.</p>
+          }
+
+          @if (fifoPreview().surplusCredit > 0) {
+            <div class="surplus-banner mt-2">
+              <span class="surplus-icon">💡</span>
+              <span>فائض سداد بقيمة <strong class="ltr-num font-mono">{{ fifoPreview().surplusCredit | number:'1.2-2' }} ج.م</strong> سيتم إضافته كرصيد دائن لحساب الطالب (DEC-04).</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()" [disabled]="isSubmitting()">
+          إلغاء
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="submitPayment()"
+          [disabled]="isSubmitting() || amountEgp() <= 0">
+          @if (isSubmitting()) {
+            <span class="spinner"></span>
+            جاري التسجيل...
+          } @else {
+            تأكيد واستخراج الإيصال ✓
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

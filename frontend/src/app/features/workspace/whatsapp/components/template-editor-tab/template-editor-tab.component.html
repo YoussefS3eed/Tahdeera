@@ -1,0 +1,104 @@
+<div class="template-editor-layout">
+  <!-- Left Side / Form Column: Type Selector & Editor -->
+  <div class="editor-column">
+    <!-- Message Type Selector Badges -->
+    <div class="type-selector">
+      <label class="section-label">نوع الرسالة التلقائية:</label>
+      <div class="types-pill-group">
+        @for (item of messageTypes; track item.key) {
+          <button
+            type="button"
+            class="pill-btn"
+            [class.active]="activeType() === item.key"
+            (click)="selectType(item.key)">
+            {{ item.label }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Token Chips -->
+    <div class="token-chips-section">
+      <span class="chips-label">المتغيرات المتاحة (اضغط للإدراج):</span>
+      <div class="chips-container">
+        @for (token of (currentTemplate()?.availableTokens || ['StudentName', 'SessionTime', 'CenterName']); track token) {
+          <button
+            type="button"
+            class="token-chip"
+            (click)="insertToken(token)">
+            + {{ '{' + token + '}' }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Textarea Editor -->
+    <div class="textarea-card">
+      <div class="textarea-header">
+        <label for="templateEditor" class="textarea-label">نص القالب (عربي):</label>
+        <span class="char-count ltr-num font-mono">
+          {{ (templateText() || currentTemplate()?.rawText || '').length }} حرف
+        </span>
+      </div>
+
+      <textarea
+        id="templateEditor"
+        class="form-textarea"
+        rows="6"
+        [ngModel]="templateText() || currentTemplate()?.rawText || ''"
+        (ngModelChange)="templateText.set($event)"></textarea>
+
+      <div class="editor-footer">
+        @if (saveSuccess()) {
+          <span class="save-success-msg">✓ تم حفظ القالب بنجاح</span>
+        }
+        <button
+          type="button"
+          class="btn btn-primary"
+          [disabled]="isSaving()"
+          (click)="saveTemplate()">
+          @if (isSaving()) {
+            <span class="spinner"></span> جاري الحفظ...
+          } @else {
+            💾 حفظ تعديل القالب
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Side / Realistic Emerald WhatsApp Chat Mockup -->
+  <div class="preview-column">
+    <div class="whatsapp-mockup-frame">
+      <div class="whatsapp-header">
+        <div class="contact-info">
+          <div class="avatar">🏫</div>
+          <div class="contact-name">
+            <strong>سنتر الأوائل التعليمي</strong>
+            <span class="status-online">متصل الآن</span>
+          </div>
+        </div>
+        <div class="header-icons">
+          <span>📹</span>
+          <span>📞</span>
+          <span>⋮</span>
+        </div>
+      </div>
+
+      <div class="whatsapp-chat-body">
+        <div class="chat-bubble-received">
+          <p class="bubble-text">{{ previewText() }}</p>
+          <div class="bubble-meta">
+            <span class="bubble-time ltr-num font-mono">10:45 ص</span>
+            <span class="bubble-checks">✓✓</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="whatsapp-chat-footer">
+        <span class="mock-input">رسالة واتساب...</span>
+        <span class="mic-icon">🎙️</span>
+      </div>
+    </div>
+  </div>
+</div>

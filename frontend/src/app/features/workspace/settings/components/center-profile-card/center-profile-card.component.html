@@ -1,0 +1,111 @@
+<div class="settings-card">
+  <div class="card-header">
+    <div class="header-info">
+      <h3 class="card-title">🏢 الملف التعريفي للمركز (Center Profile)</h3>
+      <p class="card-subtitle">البيانات الأساسية لمركزك التعليمي التي تظهر على الإيصالات والتقارير الرسمية</p>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label" for="centerNameAr">اسم المركز (باللغة العربية) *</label>
+        <input
+          id="centerNameAr"
+          type="text"
+          class="form-input"
+          [ngModel]="centerNameAr()"
+          (ngModelChange)="centerNameAr.set($event)" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="centerNameEn">اسم المركز (باللغة الإنجليزية)</label>
+        <input
+          id="centerNameEn"
+          type="text"
+          class="form-input ltr-num"
+          [ngModel]="centerNameEn()"
+          (ngModelChange)="centerNameEn.set($event)" />
+      </div>
+    </div>
+
+    <div class="form-grid mt-3">
+      <div class="form-group">
+        <label class="form-label" for="centerPhone">رقم هاتف المركز الرئيسي *</label>
+        <input
+          id="centerPhone"
+          type="tel"
+          class="form-input ltr-num font-mono"
+          [ngModel]="centerPhone()"
+          (ngModelChange)="centerPhone.set($event)" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="gov">المحافظة *</label>
+        <select
+          id="gov"
+          class="form-select"
+          [ngModel]="governorate()"
+          (ngModelChange)="governorate.set($event)">
+          <option value="القاهرة">القاهرة</option>
+          <option value="الجيزة">الجيزة</option>
+          <option value="الإسكندرية">الإسكندرية</option>
+          <option value="الدقهلية">الدقهلية</option>
+          <option value="الشرقية">الشرقية</option>
+          <option value="الغربية">الغربية</option>
+          <option value="المنوفية">المنوفية</option>
+          <option value="القليوبية">القليوبية</option>
+          <option value="البحيرة">البحيرة</option>
+          <option value="كفر الشيخ">كفر الشيخ</option>
+          <option value="الفيوم">الفيوم</option>
+          <option value="بني سويف">بني سويف</option>
+          <option value="المنيا">المنيا</option>
+          <option value="أسيوط">أسيوط</option>
+          <option value="سوهاج">سوهاج</option>
+          <option value="قنا">قنا</option>
+          <option value="الأقصر">الأقصر</option>
+          <option value="أسوان">أسوان</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-grid mt-3">
+      <div class="form-group">
+        <label class="form-label" for="address">العنوان التفصيلي *</label>
+        <input
+          id="address"
+          type="text"
+          class="form-input"
+          [ngModel]="address()"
+          (ngModelChange)="address.set($event)" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="tax">الرقم الضريبي أو السجل التجاري (إن وجد)</label>
+        <input
+          id="tax"
+          type="text"
+          class="form-input ltr-num font-mono"
+          [ngModel]="taxId()"
+          (ngModelChange)="taxId.set($event)" />
+      </div>
+    </div>
+  </div>
+
+  <div class="card-footer">
+    @if (saveSuccess()) {
+      <span class="save-msg">✓ تم حفظ بيانات المركز بنجاح</span>
+    }
+    <button
+      type="button"
+      class="btn btn-primary"
+      [disabled]="store.isSaving()"
+      (click)="saveProfile()">
+      @if (store.isSaving()) {
+        <span class="spinner"></span> جاري الحفظ...
+      } @else {
+        💾 حفظ التعديلات
+      }
+    </button>
+  </div>
+</div>

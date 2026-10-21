@@ -1,0 +1,114 @@
+<div class="outbox-logs-container">
+  <!-- Filter Controls -->
+  <div class="logs-toolbar">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="بحث برقم الهاتف أو اسم الطالب..."
+        [ngModel]="store.searchPhone()"
+        (ngModelChange)="store.searchPhone.set($event)" />
+      @if (store.searchPhone()) {
+        <button type="button" class="btn-clear" (click)="store.searchPhone.set('')">✕</button>
+      }
+    </div>
+
+    <div class="filter-controls">
+      <select
+        class="form-select"
+        [ngModel]="store.filterStatus()"
+        (ngModelChange)="store.filterStatus.set($event)">
+        <option value="all">جميع الحالات</option>
+        <option value="Pending">قيد الانتظار (Buffer)</option>
+        <option value="Delivered">تم التسليم</option>
+        <option value="FailedTransient">فشل مؤقت (إعادة محاولة)</option>
+        <option value="FailedPermanent">فشل دائم</option>
+        <option value="Cancelled">ملغاة</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Outbox Table -->
+  <div class="table-card">
+    @if (store.filteredLogs().length === 0) {
+      <div class="empty-state">
+        <span class="empty-icon">📭</span>
+        <p>لا توجد رسائل مطابقة لخيارات التصفية.</p>
+      </div>
+    } @else {
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>تاريخ الإنشاء</th>
+            <th>نوع الرسالة</th>
+            <th>اسم الطالب</th>
+            <th>رقم ولي الأمر</th>
+            <th>محتوى الرسالة</th>
+            <th>الحالة / المهلة</th>
+            <th>الإجراءات</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (log of store.filteredLogs(); track log.id) {
+            <tr>
+              <td>
+                <span class="ltr-num font-mono">{{ (log.createdAt || log.dispatchedAtUtc) | date:'MM/dd hh:mm a' }}</span>
+              </td>
+              <td>
+                <span class="type-tag">{{ log.messageType }}</span>
+              </td>
+              <td class="font-bold">{{ log.studentName }}</td>
+              <td>
+                <span class="ltr-num font-mono">{{ log.guardianPhone }}</span>
+              </td>
+              <td class="message-preview-cell" [title]="log.renderedText || log.messageType">
+                {{ log.renderedText || log.messageType }}
+              </td>
+              <td>
+                @if (log.status === 'Pending') {
+                  <div class="buffer-badge">
+                    <span class="pulse-dot"></span>
+                    <span>إلغاء متاح:</span>
+                    <strong class="ltr-num font-mono">{{ log.bufferSecondsRemaining || 0 }} ثانية</strong>
+                  </div>
+                } @else {
+                  <span class="status-badge" [class]="'status-' + log.status.toLowerCase()">
+                    @switch (log.status) {
+                      @case ('Delivered') { تم التسليم ✓✓ }
+                      @case ('FailedTransient') { فشل مؤقت ⚠️ }
+                      @case ('FailedPermanent') { فشل نهائي ✕ }
+                      @case ('Cancelled') { تم الإلغاء }
+                      @default { {{ log.status }} }
+                    }
+                  </span>
+                }
+              </td>
+              <td class="actions-cell">
+                @if (log.status === 'Pending') {
+                  <button
+                    type="button"
+                    class="btn-cancel"
+                    (click)="cancelMessage(log.id)"
+                    title="إلغاء إرسال الرسالة فوراً قبل انتهاء مهلة الـ 30 ثانية">
+                    إلغاء ✕
+                  </button>
+                } @else if (log.status === 'FailedTransient' || log.status === 'FailedPermanent') {
+                  <button
+                    type="button"
+                    class="btn-retry"
+                    (click)="retryMessage(log.id)"
+                    title="إعادة إرسال الرسالة يدوياً">
+                    🔄 إعادة
+                  </button>
+                } @else {
+                  <span class="text-muted">-</span>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>

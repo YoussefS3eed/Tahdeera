@@ -1,0 +1,109 @@
+@if (isOpen) {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal-dialog" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2 class="modal-title">إنشاء اختبار جديد (SCR-14)</h2>
+        <button type="button" class="btn-close" (click)="closeModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        @if (errorMessage()) {
+          <div class="alert alert-danger">{{ errorMessage() }}</div>
+        }
+
+        <div class="form-group">
+          <label class="form-label" for="examTitle">عنوان الاختبار *</label>
+          <input
+            id="examTitle"
+            type="text"
+            class="form-input"
+            placeholder="مثال: اختبار شامل - النحو والبلاغة"
+            [ngModel]="title()"
+            (ngModelChange)="title.set($event)" />
+        </div>
+
+        <div class="form-grid mt-3">
+          <div class="form-group">
+            <label class="form-label" for="examSubject">المادة الدراسية *</label>
+            <select
+              id="examSubject"
+              class="form-select"
+              [ngModel]="subject()"
+              (ngModelChange)="subject.set($event)">
+              <option value="لغة عربية">لغة عربية</option>
+              <option value="رياضيات">رياضيات</option>
+              <option value="فيزياء">فيزياء</option>
+              <option value="كيمياء">كيمياء</option>
+              <option value="أحياء">أحياء</option>
+              <option value="لغة إنجليزية">لغة إنجليزية</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="duration">مدة الاختبار (بالدقائق) *</label>
+            <input
+              id="duration"
+              type="number"
+              min="5"
+              max="180"
+              class="form-input ltr-num font-mono"
+              [ngModel]="durationMinutes()"
+              (ngModelChange)="durationMinutes.set($event)" />
+          </div>
+        </div>
+
+        <div class="form-grid mt-3">
+          <div class="form-group">
+            <label class="form-label" for="points">إجمالي الدرجات *</label>
+            <input
+              id="points"
+              type="number"
+              min="1"
+              class="form-input ltr-num font-mono"
+              [ngModel]="totalPoints()"
+              (ngModelChange)="totalPoints.set($event)" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="attempts">أقصى عدد محاولات للطالب *</label>
+            <input
+              id="attempts"
+              type="number"
+              min="1"
+              max="3"
+              class="form-input ltr-num font-mono"
+              [ngModel]="maxAttempts()"
+              (ngModelChange)="maxAttempts.set($event)" />
+          </div>
+        </div>
+
+        <div class="checkbox-option mt-4">
+          <label class="checkbox-label">
+            <input
+              type="checkbox"
+              [checked]="autoSendWhatsapp()"
+              (change)="autoSendWhatsapp.set(!autoSendWhatsapp())" />
+            <span>إرسال نتائج الاختبار تلقائياً عبر الواتساب لولي الأمر بعد الانتهاء (Q3)</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()" [disabled]="isSubmitting()">
+          إلغاء
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="submit()"
+          [disabled]="isSubmitting() || !title().trim()">
+          @if (isSubmitting()) {
+            <span class="spinner"></span> جاري الإنشاء...
+          } @else {
+            حفظ وإنشاء الاختبار ✓
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

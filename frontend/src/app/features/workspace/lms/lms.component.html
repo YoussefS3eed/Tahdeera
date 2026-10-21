@@ -1,0 +1,69 @@
+<div class="lms-page">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-titles">
+      <h1 class="page-title">إدارة المحتوى الأكاديمي والاختبارات (SCR-14)</h1>
+      <p class="page-description">
+        بنك الأسئلة الذكي، إدارة الاختبارات الإلكترونية وبوابة الطلاب، ومتابعة الواجبات والمذكرات
+      </p>
+    </div>
+  </div>
+
+  <!-- Sub-Tabs Navigation -->
+  <div class="tabs-nav-bar">
+    <button
+      type="button"
+      class="tab-btn"
+      [class.active]="store.activeTab() === 'exams'"
+      (click)="setTab('exams')">
+      📝 الاختبارات الإلكترونية
+      <span class="tab-count font-mono">{{ store.exams().length }}</span>
+    </button>
+    <button
+      type="button"
+      class="tab-btn"
+      [class.active]="store.activeTab() === 'question_bank'"
+      (click)="setTab('question_bank')">
+      📚 بنك الأسئلة
+      @if (store.pendingAiDraftQuestions().length > 0) {
+        <span class="tab-alert-badge font-mono">{{ store.pendingAiDraftQuestions().length }} مسودة</span>
+      } @else {
+        <span class="tab-count font-mono">{{ store.questionBank().length }}</span>
+      }
+    </button>
+    <button
+      type="button"
+      class="tab-btn"
+      [class.active]="store.activeTab() === 'homework'"
+      (click)="setTab('homework')">
+      📋 الواجبات المنزلية
+      <span class="tab-count font-mono">{{ store.homeworkList().length }}</span>
+    </button>
+    <button
+      type="button"
+      class="tab-btn"
+      [class.active]="store.activeTab() === 'library'"
+      (click)="setTab('library')">
+      📁 المكتبة والمذكرات
+      <span class="tab-count font-mono">{{ store.libraryList().length }}</span>
+    </button>
+  </div>
+
+  <!-- Tab Content -->
+  <div class="tab-content">
+    @switch (store.activeTab()) {
+      @case ('exams') {
+        <app-exams-tab></app-exams-tab>
+      }
+      @case ('question_bank') {
+        <app-question-bank-tab></app-question-bank-tab>
+      }
+      @case ('homework') {
+        <app-homework-tab></app-homework-tab>
+      }
+      @case ('library') {
+        <app-library-tab></app-library-tab>
+      }
+    }
+  </div>
+</div>

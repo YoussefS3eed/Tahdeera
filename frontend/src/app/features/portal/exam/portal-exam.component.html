@@ -1,0 +1,151 @@
+<div class="portal-exam-page">
+  <!-- STAGE 1: AUTH GATE (DEC-02) -->
+  @if (stage() === 'auth') {
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="portal-badge">بوابة الاختبارات الإلكترونية</div>
+        <h2 class="exam-title">{{ exam()?.title }}</h2>
+        <p class="exam-sub">{{ exam()?.subject }} - مدة الاختبار: <span class="ltr-num font-mono font-bold">{{ exam()?.durationMinutes }} دقيقة</span></p>
+      </div>
+
+      <div class="auth-body">
+        @if (authError()) {
+          <div class="alert alert-danger">{{ authError() }}</div>
+        }
+
+        <div class="form-group">
+          <label class="form-label" for="stCode">كود الطالب الأكاديمي *</label>
+          <input
+            id="stCode"
+            type="text"
+            class="form-input ltr-num font-mono font-bold"
+            placeholder="مثال: ST-1001"
+            [ngModel]="studentCode()"
+            (ngModelChange)="studentCode.set($event)" />
+        </div>
+
+        <div class="form-group mt-3">
+          <label class="form-label" for="pin">رمز التحقق السري (4 أرقام) * (DEC-02)</label>
+          <input
+            id="pin"
+            type="password"
+            maxlength="4"
+            class="form-input ltr-num font-mono text-center pin-input"
+            placeholder="••••"
+            [ngModel]="verificationPin()"
+            (ngModelChange)="verificationPin.set($event)" />
+          <span class="hint-text">الرمز السري الممنوح للطالب من إدارة المركز</span>
+        </div>
+
+        <div class="auth-actions mt-4">
+          <button type="button" class="btn btn-primary btn-block" (click)="startExam()">
+            🚀 بدء الاختبار الآن
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- STAGE 2: EXAM IN PROGRESS -->
+  @if (stage() === 'taking') {
+    <div class="exam-taking-container">
+      <!-- Sticky Exam Header -->
+      <div class="exam-nav-header">
+        <div class="header-left">
+          <h3 class="exam-name">{{ exam()?.title }}</h3>
+          <span class="question-tracker">السؤال {{ currentQuestionIndex() + 1 }} من {{ questions().length }}</span>
+        </div>
+
+        <div class="timer-badge" [class.urgent]="secondsRemaining() < 120">
+          <span class="timer-icon">⏳</span>
+          <span class="time-left ltr-num font-mono font-bold">{{ timerDisplay() }}</span>
+        </div>
+      </div>
+
+      <!-- Question Card -->
+      @if (currentQuestion(); as q) {
+        <div class="question-taking-card">
+          <div class="question-title-row">
+            <span class="q-number">سؤال رقم {{ currentQuestionIndex() + 1 }}</span>
+            <span class="q-points ltr-num font-mono">{{ q.points }} درجات</span>
+          </div>
+
+          <p class="q-text">{{ q.textAr }}</p>
+
+          <div class="options-container">
+            @for (opt of q.options; track opt.id) {
+              <div
+                class="option-choice"
+                [class.selected]="answers()[q.id] === opt.id"
+                (click)="selectOption(q.id, opt.id)">
+                <span class="choice-radio">{{ answers()[q.id] === opt.id ? '◉' : '○' }}</span>
+                <span class="choice-label">{{ opt.textAr }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Bottom Pager -->
+      <div class="exam-pager-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          [disabled]="currentQuestionIndex() === 0"
+          (click)="prevQuestion()">
+          السابق
+        </button>
+
+        @if (currentQuestionIndex() < questions().length - 1) {
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="nextQuestion()">
+            التالي
+          </button>
+        } @else {
+          <button
+            type="button"
+            class="btn btn-success"
+            [disabled]="isSubmitting()"
+            (click)="submitExam()">
+            @if (isSubmitting()) {
+              <span class="spinner"></span> جاري إنهاء الاختبار...
+            } @else {
+              إنهاء وتسليم الاختبار ✓
+            }
+          </button>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- STAGE 3: RESULTS SUMMARY -->
+  @if (stage() === 'completed') {
+    <div class="results-card">
+      <div class="result-icon">🎉</div>
+      <h2 class="result-title">تم تسليم الاختبار بنجاح!</h2>
+      <p class="result-sub">عزيزي الطالب، تم تصحيح إجاباتك إلكترونياً واحتساب النتيجة.</p>
+
+      <div class="score-display-box">
+        <div class="score-number ltr-num font-mono font-bold">
+          {{ submissionResult()?.score }} / {{ submissionResult()?.maxScore }}
+        </div>
+        <div class="score-percentage ltr-num font-mono">
+          {{ submissionResult()?.percentage }}%
+        </div>
+      </div>
+
+      <div class="whatsapp-alert-box mt-3">
+        <span class="wa-icon">💬</span>
+        <span>تم إرسال نتيجتك وتفاصيل الإجابات تلقائياً إلى ولي الأمر عبر الواتساب (Q3).</span>
+      </div>
+
+      <div class="results-actions mt-4">
+        <button type="button" class="btn btn-primary" (click)="exitPortal()">
+          العودة للمنصة
+        </button>
+      </div>
+    </div>
+  }
+</div>

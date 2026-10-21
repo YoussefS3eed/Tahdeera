@@ -1,0 +1,76 @@
+.library-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  direction: rtl;
+}
+
+.toolbar-title {
+  h3 { font-size: 1.125rem; font-weight: 700; margin: 0; color: #0f172a; }
+  .subtitle { font-size: 0.8125rem; color: #64748b; margin: 0.25rem 0 0; }
+}
+
+.library-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.library-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+
+  .card-icon {
+    font-size: 2rem;
+  }
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    .item-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0;
+    }
+
+    .item-subject {
+      font-size: 0.8125rem;
+      color: #64748b;
+      margin: 0;
+    }
+
+    .item-meta {
+      display: flex;
+      gap: 0.75rem;
+      font-size: 0.75rem;
+      color: #94a3b8;
+      margin-top: 0.5rem;
+    }
+  }
+
+  .card-actions {
+    display: flex;
+    justify-content: flex-end;
+
+    .btn-download {
+      display: inline-block;
+      text-decoration: none;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 0.4rem 0.8rem;
+      border-radius: 0.375rem;
+      &:hover { background: #dbeafe; }
+    }
+  }
+}

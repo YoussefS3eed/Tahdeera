@@ -1,0 +1,53 @@
+<div class="whatsapp-page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-titles">
+      <h1 class="page-title">مركز رسائل الواتساب والتحكم بالصادر (SCR-13)</h1>
+      <p class="page-description">
+        إدارة قوالب الرسائل التلقائية، متابعة طابور الإرسال مع مهلة إلغاء 30 ثانية (ADR-011)، وإدارة موافقات أولياء الأمور
+      </p>
+    </div>
+  </div>
+
+  <!-- Sub Tabs Navigation -->
+  <div class="tabs-nav-bar">
+    <button
+      type="button"
+      class="tab-btn"
+      [class.active]="store.activeSubTab() === 'template'"
+      (click)="setTab('template')">
+      💬 قوالب الرسائل التلقائية
+    </button>
+    <button
+      type="button"
+      class="tab-btn"
+      [class.active]="store.activeSubTab() === 'logs'"
+      (click)="setTab('logs')">
+      📤 سجل الرسائل وصندوق الإرسال
+      <span class="tab-count font-mono">{{ store.outboxLogs().length }}</span>
+    </button>
+    <button
+      type="button"
+      class="tab-btn"
+      [class.active]="store.activeSubTab() === 'parents'"
+      (click)="setTab('parents')">
+      👥 موافقات أولياء الأمور (Opt-In)
+      <span class="tab-count font-mono">{{ store.consents().length }}</span>
+    </button>
+  </div>
+
+  <!-- Active Tab Body -->
+  <div class="tab-content">
+    @switch (store.activeSubTab()) {
+      @case ('template') {
+        <app-template-editor-tab></app-template-editor-tab>
+      }
+      @case ('logs') {
+        <app-outbox-logs-tab></app-outbox-logs-tab>
+      }
+      @case ('parents') {
+        <app-guardian-consent-tab></app-guardian-consent-tab>
+      }
+    }
+  </div>
+</div>

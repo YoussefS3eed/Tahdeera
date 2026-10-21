@@ -1,0 +1,73 @@
+<div class="filters-card">
+  <!-- Catalog Selector -->
+  <div class="catalog-section">
+    <label class="section-label" for="reportCatalogSelect">اختر التقرير القياسي المطلوب (SCR-16):</label>
+    <select
+      id="reportCatalogSelect"
+      class="form-select main-catalog-select"
+      [ngModel]="store.activeReportId()"
+      (ngModelChange)="onSelectReport($event)">
+      @for (item of store.catalog(); track item.id) {
+        <option [value]="item.id">
+          [{{ item.category }}] {{ item.titleAr || item.nameAr }}
+        </option>
+      }
+    </select>
+  </div>
+
+  @if (store.activeReportMeta(); as meta) {
+    <p class="report-description">{{ meta.descAr || meta.descriptionAr }}</p>
+  }
+
+  <!-- Filters Row -->
+  <div class="filter-controls-grid mt-3">
+    <div class="form-group">
+      <label class="form-label" for="fromDate">من تاريخ:</label>
+      <input
+        id="fromDate"
+        type="date"
+        class="form-input ltr-num font-mono"
+        [ngModel]="dateFrom()"
+        (ngModelChange)="dateFrom.set($event)" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="toDate">إلى تاريخ:</label>
+      <input
+        id="toDate"
+        type="date"
+        class="form-input ltr-num font-mono"
+        [ngModel]="dateTo()"
+        (ngModelChange)="dateTo.set($event)" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="gradeFilterSelect">المرحلة الدراسية:</label>
+      <select
+        id="gradeFilterSelect"
+        class="form-select"
+        [ngModel]="selectedGrade()"
+        (ngModelChange)="selectedGrade.set($event)">
+        <option value="all">جميع المراحل</option>
+        <option value="الصف الأول الثانوي">الصف الأول الثانوي</option>
+        <option value="الصف الثاني الثانوي">الصف الثاني الثانوي</option>
+        <option value="الصف الثالث الثانوي">الصف الثالث الثانوي</option>
+      </select>
+    </div>
+
+    <div class="form-group action-group">
+      <label class="form-label">&nbsp;</label>
+      <button
+        type="button"
+        class="btn btn-primary"
+        [disabled]="store.isLoading()"
+        (click)="applyFilters()">
+        @if (store.isLoading()) {
+          <span class="spinner"></span> جاري التشغيل...
+        } @else {
+          🔍 استخراج التقرير
+        }
+      </button>
+    </div>
+  </div>
+</div>

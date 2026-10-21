@@ -1,0 +1,28 @@
+.reports-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  max-width: 88rem;
+  margin-inline: auto;
+  direction: rtl;
+}
+
+.page-header {
+  .page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+  }
+  .page-description {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin: 0.25rem 0 0;
+  }
+}
+
+.results-section {
+  display: flex;
+  flex-direction: column;
+}

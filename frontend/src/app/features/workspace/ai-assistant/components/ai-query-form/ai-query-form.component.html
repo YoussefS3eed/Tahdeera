@@ -1,0 +1,70 @@
+<div class="ai-query-container">
+  <!-- Quota Meter Header -->
+  <div class="quota-bar">
+    <div class="quota-info">
+      <span class="quota-icon">⚡</span>
+      <span class="quota-text">
+        رصيد الاستفسارات الذكية اليومي:
+        <strong class="ltr-num font-mono">{{ store.dailyQuota().used }} / {{ store.dailyQuota().limit }}</strong>
+      </span>
+    </div>
+    <div class="quota-progress-track">
+      <div
+        class="quota-progress-fill"
+        [style.width.%]="(store.dailyQuota().used / store.dailyQuota().limit) * 100"></div>
+    </div>
+  </div>
+
+  <!-- Prompt Input Card -->
+  <div class="input-card">
+    <div class="input-wrapper">
+      <textarea
+        class="ai-input"
+        rows="3"
+        placeholder="اسأل المساعد الذكي عن إحصائيات الطلاب، نسب الغياب، المتأخرات المالية، أو توليد أسئلة..."
+        [ngModel]="questionText()"
+        (ngModelChange)="questionText.set($event)"
+        (keydown.enter)="$event.preventDefault(); submitQuery()"></textarea>
+
+      <div class="card-bottom">
+        <span class="scope-badge">🔒 استعلام آمن مخصص لسنتر الأوائل</span>
+
+        <button
+          type="button"
+          class="btn-send"
+          [disabled]="!questionText().trim() || store.isLoading()"
+          (click)="submitQuery()">
+          @if (store.isLoading()) {
+            <span class="spinner"></span>
+            جاري التحليل...
+          } @else {
+            إرسال الاستعلام 🚀
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Suggested Chips (Q4) -->
+  <div class="chips-section">
+    <span class="chips-title">💡 أسئلة مقترحة سريعة:</span>
+    <div class="chips-row">
+      @for (chip of store.promptChips(); track chip.id) {
+        <button
+          type="button"
+          class="chip-button"
+          (click)="useChip(chip)">
+          <span class="chip-cat-icon">
+            @switch (chip.category) {
+              @case ('Risk') { ⚠️ }
+              @case ('Finance') { 💰 }
+              @case ('Academics') { 📚 }
+              @default { 💡 }
+            }
+          </span>
+          <span>{{ chip.titleAr }}</span>
+        </button>
+      }
+    </div>
+  </div>
+</div>

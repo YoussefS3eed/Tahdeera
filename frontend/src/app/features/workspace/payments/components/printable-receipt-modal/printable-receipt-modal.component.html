@@ -1,0 +1,88 @@
+@if (isOpen && transaction) {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal-dialog" (click)="$event.stopPropagation()">
+      <div class="modal-header no-print">
+        <h2 class="modal-title">إيصال سداد مالي معتمد</h2>
+        <div class="header-actions">
+          <button type="button" class="btn btn-outline" (click)="printReceipt()">
+            🖨️ طباعة الإيصال
+          </button>
+          <button type="button" class="btn-close" (click)="closeModal()">✕</button>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <div class="receipt-paper" id="printable-receipt-area">
+          <div class="receipt-header">
+            <div class="center-brand">
+              <h3 class="center-name">سنتر الأوائل التعليمي</h3>
+              <p class="center-tagline">نظام إدارة المراكز التعليمية - تحضيرة</p>
+            </div>
+            <div class="receipt-meta">
+              <div class="receipt-no">
+                رقم الإيصال: <span class="ltr-num font-mono font-bold">{{ transaction.receiptNumber || 'REC-2026-0001' }}</span>
+              </div>
+              <div class="receipt-date">
+                التاريخ: <span class="ltr-num font-mono">{{ transaction.createdAt | date:'yyyy/MM/dd - hh:mm a' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="receipt-divider"></div>
+
+          <div class="receipt-grid">
+            <div class="receipt-row">
+              <span class="lbl">اسم الطالب:</span>
+              <span class="val font-bold">{{ transaction.studentName }}</span>
+            </div>
+            <div class="receipt-row">
+              <span class="lbl">كود الطالب:</span>
+              <span class="val ltr-num font-mono">{{ transaction.studentCode }}</span>
+            </div>
+            <div class="receipt-row">
+              <span class="lbl">طريقة السداد:</span>
+              <span class="val">{{ transaction.paymentMethod || 'نقداً' }}</span>
+            </div>
+            @if (transaction.referenceNumber) {
+              <div class="receipt-row">
+                <span class="lbl">الرقم المرجعي:</span>
+                <span class="val ltr-num font-mono">{{ transaction.referenceNumber }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="receipt-amount-box">
+            <span class="amount-label">المبلغ المسدد:</span>
+            <span class="amount-value ltr-num font-mono font-bold">
+              {{ transaction.amount | number:'1.2-2' }} ج.م
+            </span>
+          </div>
+
+          @if (transaction.notes) {
+            <div class="receipt-notes">
+              <strong>ملاحظات:</strong> {{ transaction.notes }}
+            </div>
+          }
+
+          <div class="receipt-footer">
+            <div class="signature-box">
+              <span>توقيع المستلم / الخزينة:</span>
+              <div class="signature-line">____________________</div>
+            </div>
+            <div class="system-stamp">
+              <span>إيصال إلكتروني معتمد رسمياً</span>
+              <span class="timestamp ltr-num font-mono">{{ transaction.id }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer no-print">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">إغلاق</button>
+        <button type="button" class="btn btn-primary" (click)="printReceipt()">
+          🖨️ طباعة الآن
+        </button>
+      </div>
+    </div>
+  </div>
+}

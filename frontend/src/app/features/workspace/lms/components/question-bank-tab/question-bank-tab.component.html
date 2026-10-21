@@ -1,0 +1,102 @@
+<div class="qbank-container">
+  <!-- AI Draft Questions Alert (Q3) -->
+  @if (store.pendingAiDraftQuestions().length > 0) {
+    <div class="ai-draft-alert">
+      <div class="alert-content">
+        <span class="ai-badge">🤖 مسودات ذكاء اصطناعي (AiGeneratedDraft)</span>
+        <p class="alert-desc">
+          يوجد <strong>{{ store.pendingAiDraftQuestions().length }}</strong> سؤال تم توليدها بالذكاء الاصطناعي بانتظار مراجعة واعتماد المعلم قبل إدراجها بالامتحانات.
+        </p>
+      </div>
+    </div>
+  }
+
+  <!-- Toolbar Filters -->
+  <div class="toolbar">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="بحث بنص السؤال..."
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event)" />
+      @if (searchQuery()) {
+        <button type="button" class="btn-clear" (click)="searchQuery.set('')">✕</button>
+      }
+    </div>
+
+    <div class="filters-group">
+      <select
+        class="form-select"
+        [ngModel]="filterType()"
+        (ngModelChange)="filterType.set($event)">
+        <option value="all">جميع أنواع الأسئلة</option>
+        <option value="MultipleChoice">اختيار من متعدد</option>
+        <option value="TrueFalse">صح أو خطأ</option>
+        <option value="OpenEnded">سؤال مقالي</option>
+      </select>
+
+      <select
+        class="form-select"
+        [ngModel]="filterDifficulty()"
+        (ngModelChange)="filterDifficulty.set($event)">
+        <option value="all">جميع مستويات الصعوبة</option>
+        <option value="Easy">سهل</option>
+        <option value="Medium">متوسط</option>
+        <option value="Hard">متقدم</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Questions List -->
+  <div class="questions-list">
+    @for (q of filteredQuestions(); track q.id) {
+      <div class="question-card" [class.is-draft]="!q.isApproved">
+        <div class="question-top-bar">
+          <div class="tags-row">
+            <span class="type-tag">{{ q.type }}</span>
+            <span class="difficulty-tag" [class]="'diff-' + q.difficulty.toLowerCase()">
+              {{ q.difficulty === 'Easy' ? 'سهل' : q.difficulty === 'Medium' ? 'متوسط' : 'صعب' }}
+            </span>
+            <span class="points-tag ltr-num font-mono">{{ q.points }} درجات</span>
+          </div>
+
+          <div class="approval-status">
+            @if (q.isApproved) {
+              <span class="badge-approved">معتمد ✓</span>
+            } @else {
+              <div class="pending-approval-box">
+                <span class="badge-draft">مسودة ذكاء اصطناعي ⏳</span>
+                <button
+                  type="button"
+                  class="btn-approve"
+                  (click)="approveDraft(q.id)">
+                  اعتماد السؤال الآن ✓
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="question-body">
+          <p class="question-text">{{ q.textAr }}</p>
+
+          @if (q.options && q.options.length > 0) {
+            <div class="options-grid">
+              @for (opt of q.options; track opt.id) {
+                <div class="option-item" [class.is-correct]="opt.isCorrect">
+                  <span class="opt-indicator">{{ opt.isCorrect ? '✓' : '○' }}</span>
+                  <span class="opt-text">{{ opt.textAr }}</span>
+                  @if (opt.isCorrect) {
+                    <span class="correct-tag">الإجابة الصحيحة</span>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>

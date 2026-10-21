@@ -1,0 +1,48 @@
+<div class="ai-assistant-page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-titles">
+      <h1 class="page-title">المساعد الذكي وتحليلات الأعمال (SCR-15)</h1>
+      <p class="page-description">
+        استعلام ذكي بلغة طبيعية مدعوم بنماذج الذكاء الاصطناعي مع نطاق أمان مخصص للمركز وسقوف استعلام يومية
+      </p>
+    </div>
+  </div>
+
+  <!-- Main Query Form -->
+  <app-ai-query-form
+    (querySubmitted)="onQuerySubmitted($event)">
+  </app-ai-query-form>
+
+  <!-- Active Response Card (if present) -->
+  @if (store.currentResponse()) {
+    <div class="current-response-area mt-4">
+      <app-ai-response-card
+        [response]="store.currentResponse()"
+        (chipClicked)="onChipSelected($event)"
+        (dismiss)="dismissCurrent()">
+      </app-ai-response-card>
+    </div>
+  }
+
+  <!-- Query History Section -->
+  @if (store.queryHistory().length > 0) {
+    <div class="history-section mt-5">
+      <h3 class="history-title">🕒 سجل استفسارات الجلسة:</h3>
+      <div class="history-list">
+        @for (item of store.queryHistory(); track item.id) {
+          @if (item.id !== store.currentResponse()?.id) {
+            <div class="history-card" (click)="store.currentResponse.set(item)">
+              <div class="history-card-header">
+                <span class="q-icon">💬</span>
+                <span class="q-text">{{ item.question }}</span>
+                <span class="q-time ltr-num font-mono">{{ item.createdAt | date:'hh:mm a' }}</span>
+              </div>
+              <p class="history-snippet">{{ item.answerAr }}</p>
+            </div>
+          }
+        }
+      </div>
+    </div>
+  }
+</div>

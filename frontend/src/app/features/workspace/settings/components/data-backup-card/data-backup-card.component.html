@@ -1,0 +1,39 @@
+<div class="settings-card">
+  <div class="card-header">
+    <div class="header-info">
+      <h3 class="card-title">💾 النسخ الاحتياطي وتصدير البيانات (Data Backup)</h3>
+      <p class="card-subtitle">تصدير نسخة كاملة مشفرة من بيانات المركز (الطلاب، الحضور، الدرجات، المعاملات المالية)</p>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div class="backup-info-banner">
+      <span class="banner-icon">🛡️</span>
+      <div class="banner-text">
+        <strong>سياسة أمان البيانات (Data Portability):</strong>
+        <p>يمكنك تحميل نسخة احتياطية كاملة بصيغة JSON متوافقة مع معايير الأمان وحفظ السجلات في أي وقت.</p>
+      </div>
+    </div>
+
+    @if (store.lastBackupTimestamp()) {
+      <div class="last-backup-stamp mt-3">
+        <span>آخر عملية تصدير تمت بنجاح:</span>
+        <strong class="ltr-num font-mono">{{ store.lastBackupTimestamp() | date:'yyyy/MM/dd hh:mm a' }}</strong>
+      </div>
+    }
+  </div>
+
+  <div class="card-footer">
+    <button
+      type="button"
+      class="btn btn-outline"
+      [disabled]="store.backupProgress()"
+      (click)="downloadBackup()">
+      @if (store.backupProgress()) {
+        <span class="spinner"></span> جاري تجهيز النسخة الاحتياطية...
+      } @else {
+        📥 تنزيل نسخة احتياطية شاملة (JSON)
+      }
+    </button>
+  </div>
+</div>

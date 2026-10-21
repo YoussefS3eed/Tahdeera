@@ -1,0 +1,52 @@
+<div class="report-table-container">
+  @if (result) {
+    <!-- Table Toolbar: Row Count & Export Actions -->
+    <div class="table-actions-header">
+      <div class="result-stats">
+        <span class="stats-label">إجمالي السجلات:</span>
+        <strong class="stats-count ltr-num font-mono">{{ result.totalRows }}</strong>
+        <span class="report-timestamp">تاريخ الاستخراج: <span class="ltr-num font-mono">{{ (result.generatedAt || result.generatedAtUtc) | date:'yyyy/MM/dd hh:mm a' }}</span></span>
+      </div>
+
+      <div class="export-buttons">
+        <button type="button" class="btn btn-outline" (click)="printReport()">
+          🖨️ طباعة التقرير
+        </button>
+        <button type="button" class="btn btn-success" (click)="exportCsv()">
+          📊 تصدير Excel (CSV)
+        </button>
+      </div>
+    </div>
+
+    <!-- Dynamic Data Table -->
+    <div class="table-wrapper">
+      @if (tableRows.length === 0) {
+        <div class="empty-state">
+          <span class="empty-icon">📊</span>
+          <p>لا توجد بيانات مطابقة لمعايير البحث المحددة.</p>
+        </div>
+      } @else {
+        <table class="data-table">
+          <thead>
+            <tr>
+              @for (h of tableHeaders; track $index) {
+                <th>{{ h }}</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of tableRows; track $index) {
+              <tr>
+                @for (cell of row; track $index) {
+                  <td>
+                    <span class="table-cell-val">{{ cell }}</span>
+                  </td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+  }
+</div>

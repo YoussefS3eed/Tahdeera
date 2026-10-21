@@ -1,0 +1,93 @@
+<div class="exams-tab-container">
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="بحث باسم الاختبار أو المادة..."
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event)" />
+      @if (searchQuery()) {
+        <button type="button" class="btn-clear" (click)="searchQuery.set('')">✕</button>
+      }
+    </div>
+
+    <div class="actions-group">
+      <select
+        class="form-select"
+        [ngModel]="filterStatus()"
+        (ngModelChange)="filterStatus.set($event)">
+        <option value="all">جميع الحالات</option>
+        <option value="Published">منشور ومتاح للطلاب</option>
+        <option value="Draft">مسودة (غير منشور)</option>
+        <option value="Closed">مغلق / منتهي</option>
+      </select>
+
+      <button type="button" class="btn btn-primary" (click)="showCreateModal.set(true)">
+        ➕ إنشاء اختبار جديد
+      </button>
+    </div>
+  </div>
+
+  <!-- Exams Grid -->
+  @if (filteredExams().length === 0) {
+    <div class="empty-state">
+      <span class="empty-icon">📝</span>
+      <p>لا توجد اختبارات مسجلة مطابقة للبحث.</p>
+    </div>
+  } @else {
+    <div class="exams-grid">
+      @for (exam of filteredExams(); track exam.id) {
+        <div class="exam-card">
+          <div class="card-header">
+            <span class="subject-tag">{{ exam.subject }}</span>
+            <span class="status-badge" [class]="'status-' + exam.status.toLowerCase()">
+              @switch (exam.status) {
+                @case ('Published') { منشور للطلاب ✓ }
+                @case ('Draft') { مسودة ✏️ }
+                @case ('Closed') { مغلق 🔒 }
+              }
+            </span>
+          </div>
+
+          <h3 class="exam-title">{{ exam.title }}</h3>
+
+          <div class="exam-meta">
+            <div class="meta-item">
+              <span class="meta-label">المدة:</span>
+              <span class="meta-val ltr-num font-mono">{{ exam.durationMinutes }} دقيقة</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">الدرجات:</span>
+              <span class="meta-val ltr-num font-mono">{{ exam.totalPoints }} درجة</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">الأسئلة:</span>
+              <span class="meta-val ltr-num font-mono">{{ exam.questionsCount }} سؤال</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">الإجابات:</span>
+              <span class="meta-val ltr-num font-mono">{{ exam.submissionCount }} طالب</span>
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <button
+              type="button"
+              class="btn-portal"
+              (click)="openStudentPortal(exam.id)">
+              🚀 فتح بوابة الطالب (DEC-02)
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <app-create-exam-modal
+    [isOpen]="showCreateModal()"
+    (close)="showCreateModal.set(false)">
+  </app-create-exam-modal>
+</div>

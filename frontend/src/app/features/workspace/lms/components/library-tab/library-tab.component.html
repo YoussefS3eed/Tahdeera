@@ -1,0 +1,35 @@
+<div class="library-container">
+  <div class="toolbar">
+    <div class="toolbar-title">
+      <h3>المكتبة الرقمية والمذكرات</h3>
+      <p class="subtitle">مذكرات الشرح والملخصات وفيديوهات المراجعة المسجلة</p>
+    </div>
+  </div>
+
+  <div class="library-grid">
+    @for (item of store.libraryList(); track item.id) {
+      <div class="library-card">
+        <div class="card-icon">
+          @if (item.type === 'Pdf') { 📄 } @else if (item.type === 'Video') { 🎬 } @else { 📁 }
+        </div>
+        <div class="card-body">
+          <h4 class="item-title">{{ item.title }}</h4>
+          <p class="item-subject">{{ item.subject }} - {{ item.gradeName }}</p>
+          <div class="item-meta">
+            @if (item.fileSizeBytes) {
+              <span class="file-size ltr-num font-mono">
+                {{ (item.fileSizeBytes / (1024 * 1024)) | number:'1.1-1' }} MB
+              </span>
+            }
+            <span class="downloads-count ltr-num font-mono">{{ item.downloadCount }} تحميل</span>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a [href]="item.fileUrl" target="_blank" class="btn-download">
+            تحميل الملف ⬇️
+          </a>
+        </div>
+      </div>
+    }
+  </div>
+</div>

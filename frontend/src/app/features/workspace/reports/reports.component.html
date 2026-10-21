@@ -1,0 +1,22 @@
+<div class="reports-page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-titles">
+      <h1 class="page-title">التقارير وسجل التحليلات المعتمدة (SCR-16)</h1>
+      <p class="page-description">
+        دليل التقارير الإحصائية والمالية الشاملة للمركز مع تصدير مباشر بتنسيق Excel يدعم اللغة العربية (UTF-8 BOM)
+      </p>
+    </div>
+  </div>
+
+  <!-- Filter & Catalog Selection Card -->
+  <app-report-filters></app-report-filters>
+
+  <!-- Report Data Results Table -->
+  <div class="results-section mt-4">
+    <app-report-table
+      [result]="store.reportResult()"
+      [reportMeta]="store.activeReportMeta()">
+    </app-report-table>
+  </div>
+</div>

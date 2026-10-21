@@ -1,0 +1,36 @@
+<div class="homework-container">
+  <div class="toolbar">
+    <div class="toolbar-title">
+      <h3>الواجبات المنزلية والمهام الأسبوعية</h3>
+      <p class="subtitle">متابعة تسليمات الواجبات والتصحيح التلقائي للطلاب</p>
+    </div>
+  </div>
+
+  <div class="homework-grid">
+    @for (hw of store.homeworkList(); track hw.id) {
+      <div class="hw-card">
+        <div class="hw-header">
+          <span class="subject-tag">{{ hw.subject }}</span>
+          <span class="grade-tag">{{ hw.gradeName }}</span>
+        </div>
+
+        <h4 class="hw-title">{{ hw.title }}</h4>
+
+        <div class="hw-meta">
+          <div class="meta-row">
+            <span>تاريخ التسليم:</span>
+            <span class="val ltr-num font-mono">{{ hw.dueDate | date:'yyyy/MM/dd' }}</span>
+          </div>
+          <div class="meta-row">
+            <span>الدرجة الكلية:</span>
+            <span class="val ltr-num font-mono">{{ hw.totalPoints }} درجة</span>
+          </div>
+          <div class="meta-row">
+            <span>التسليمات:</span>
+            <span class="val ltr-num font-mono">{{ hw.submissionCount }} طالب</span>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

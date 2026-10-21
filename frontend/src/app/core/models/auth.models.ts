@@ -1,4 +1,4 @@
-export type WorkspaceRole = 'Owner' | 'Admin' | 'Teacher' | 'Assistant' | 'Receptionist';
+export type WorkspaceRole = 'Owner' | 'Admin' | 'Teacher' | 'Assistant' | 'Receptionist' | 'Reception' | 'Accountant';
 export type WorkspaceStatus = 'Active' | 'Expired' | 'Suspended';
 export type LockoutReason = 'SubscriptionExpired' | 'AdminSuspended';
 

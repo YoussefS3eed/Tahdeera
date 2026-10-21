@@ -1,0 +1,77 @@
+<div class="guardian-consent-container">
+  <div class="consent-toolbar">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="بحث باسم الطالب، ولي الأمر، أو رقم الهاتف..."
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event)" />
+      @if (searchQuery()) {
+        <button type="button" class="btn-clear" (click)="searchQuery.set('')">✕</button>
+      }
+    </div>
+
+    <div class="consent-info-banner">
+      <span class="info-icon">ℹ️</span>
+      <span>يتم إرسال إشعارات الحضور والنتائج فقط لأولياء الأمور المفعلين للموافقة (WhatsApp Opt-In) التزاماً بسياسات المراسلة.</span>
+    </div>
+  </div>
+
+  <div class="table-card">
+    @if (filteredConsents().length === 0) {
+      <div class="empty-state">
+        <span class="empty-icon">👥</span>
+        <p>لا توجد بيانات موافقة مطابقة.</p>
+      </div>
+    } @else {
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>كود الطالب</th>
+            <th>اسم الطالب</th>
+            <th>اسم ولي الأمر</th>
+            <th>رقم الواتساب</th>
+            <th>تاريخ تسجيل الموافقة</th>
+            <th>حالة التفعيل</th>
+            <th>التبديل</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (c of filteredConsents(); track c.studentId) {
+            <tr>
+              <td>
+                <span class="student-code ltr-num font-mono">{{ c.studentCode }}</span>
+              </td>
+              <td class="font-bold">{{ c.studentName }}</td>
+              <td>{{ c.guardianName }}</td>
+              <td>
+                <span class="ltr-num font-mono">{{ c.guardianPhone }}</span>
+              </td>
+              <td>
+                <span class="ltr-num font-mono">{{ c.consentDate | date:'yyyy/MM/dd' }}</span>
+              </td>
+              <td>
+                @if (c.whatsappOptIn) {
+                  <span class="badge badge-active">مفعل (Opted-In) ✓</span>
+                } @else {
+                  <span class="badge badge-inactive">معطل (Opted-Out) ✕</span>
+                }
+              </td>
+              <td>
+                <label class="toggle-switch">
+                  <input
+                    type="checkbox"
+                    [checked]="c.whatsappOptIn"
+                    (change)="toggle(c.studentId, c.whatsappOptIn)" />
+                  <span class="slider"></span>
+                </label>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>

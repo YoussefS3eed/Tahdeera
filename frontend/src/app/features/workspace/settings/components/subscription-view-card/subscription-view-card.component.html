@@ -1,0 +1,57 @@
+<div class="settings-card">
+  <div class="card-header">
+    <div class="header-info">
+      <h3 class="card-title">💎 تفاصيل باقة الاشتراك والسعة (Subscription & Quotas)</h3>
+      <p class="card-subtitle">عرض تفاصيل باقة تحضيرة الحالية، السعة الاستيعابية، وتاريخ التجديد</p>
+    </div>
+  </div>
+
+  @if (store.subscription(); as sub) {
+    <div class="card-body">
+      <div class="package-banner">
+        <div class="pkg-info">
+          <span class="pkg-label">الباقة الحالية:</span>
+          <h4 class="pkg-name">{{ sub.packageNameAr }} ({{ sub.packagePlan }})</h4>
+        </div>
+        <div class="pkg-status">
+          <span class="status-badge" [class]="'status-' + sub.status.toLowerCase()">
+            {{ sub.status === 'Active' ? 'سارية المفعول ✓' : sub.status }}
+          </span>
+          <span class="expires-date">تاريخ الانتهاء: <strong class="ltr-num font-mono">{{ sub.expiresAt | date:'yyyy/MM/dd' }}</strong></span>
+        </div>
+      </div>
+
+      <div class="quotas-grid mt-4">
+        <!-- Students Quota Meter -->
+        <div class="quota-meter-card">
+          <div class="meter-head">
+            <span class="meter-title">سعة الطلاب المقيدين:</span>
+            <span class="meter-numbers ltr-num font-mono font-bold">
+              {{ sub.activeStudentsCount || 0 }} / {{ sub.maxStudentsLimit || 0 }} طالب
+            </span>
+          </div>
+          <div class="meter-track">
+            <div
+              class="meter-fill"
+              [style.width.%]="((sub.activeStudentsCount || 0) / (sub.maxStudentsLimit || 1)) * 100"></div>
+          </div>
+        </div>
+
+        <!-- Staff Quota Meter -->
+        <div class="quota-meter-card">
+          <div class="meter-head">
+            <span class="meter-title">سعة فريق العمل (Staff):</span>
+            <span class="meter-numbers ltr-num font-mono font-bold">
+              {{ sub.currentStaffCount || 0 }} / {{ sub.maxStaffLimit || 0 }} موظف
+            </span>
+          </div>
+          <div class="meter-track">
+            <div
+              class="meter-fill fill-purple"
+              [style.width.%]="((sub.currentStaffCount || 0) / (sub.maxStaffLimit || 1)) * 100"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

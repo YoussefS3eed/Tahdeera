@@ -1,0 +1,46 @@
+@if (isOpen && member) {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal-dialog" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2 class="modal-title text-danger">تعطيل حساب الموظف</h2>
+        <button type="button" class="btn-close" (click)="closeModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        @if (errorMessage()) {
+          <div class="alert alert-danger">{{ errorMessage() }}</div>
+        }
+
+        <p class="confirm-text">
+          هل أنت متأكد من رغبتك في تعطيل حساب الموظف: <strong>{{ member.displayName }}</strong>؟
+        </p>
+
+        <div class="member-info-box">
+          <div>الدور الوظيفي: <strong>{{ member.role }}</strong></div>
+          <div>اسم المستخدم: <span class="ltr-num font-mono">{{ member.username }}</span></div>
+        </div>
+
+        <p class="notice-text">
+          سيؤدي هذا الإجراء إلى منع الموظف من تسجيل الدخول إلى النظام فوراً، مع الاحتفاظ بجميع عملياته وسجلاته التاريخية.
+        </p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()" [disabled]="isSubmitting()">
+          إلغاء
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          (click)="confirmDeactivation()"
+          [disabled]="isSubmitting()">
+          @if (isSubmitting()) {
+            <span class="spinner"></span> جاري التعطيل...
+          } @else {
+            تأكيد تعطيل الحساب ✕
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

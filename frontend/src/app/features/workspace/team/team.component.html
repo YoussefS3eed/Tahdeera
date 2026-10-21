@@ -1,0 +1,162 @@
+<div class="team-page">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-titles">
+      <h1 class="page-title">إدارة فريق العمل والصلاحيات (SCR-17)</h1>
+      <p class="page-description">
+        إدارة حسابات المعلمين والمساعدين وموظفي الاستقبال، وتوليد بطاقات الدخول الجاهزة للواتساب
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <!-- Quota Meter Badge -->
+      <div class="quota-badge" [class.quota-full]="teamStore.isQuotaReached()">
+        <span class="quota-icon">👥</span>
+        <span>سعة الفريق:</span>
+        <strong class="ltr-num font-mono">{{ teamStore.currentMemberCount() }} / {{ teamStore.maxStaffQuota() }} موظف</strong>
+      </div>
+
+      <button
+        type="button"
+        class="btn btn-primary"
+        [disabled]="teamStore.isQuotaReached()"
+        (click)="showAddModal.set(true)">
+        ➕ إضافة موظف جديد
+      </button>
+    </div>
+  </div>
+
+  <!-- Role Filter Bar -->
+  <div class="filter-bar">
+    <div class="role-pills">
+      <button
+        type="button"
+        class="pill-btn"
+        [class.active]="teamStore.roleFilter() === 'all'"
+        (click)="teamStore.roleFilter.set('all')">
+        الكل ({{ teamStore.members().length }})
+      </button>
+      <button
+        type="button"
+        class="pill-btn"
+        [class.active]="teamStore.roleFilter() === 'Teacher'"
+        (click)="teamStore.roleFilter.set('Teacher')">
+        المعلمون (Teachers)
+      </button>
+      <button
+        type="button"
+        class="pill-btn"
+        [class.active]="teamStore.roleFilter() === 'Assistant'"
+        (click)="teamStore.roleFilter.set('Assistant')">
+        المساعدون (Assistants)
+      </button>
+      <button
+        type="button"
+        class="pill-btn"
+        [class.active]="teamStore.roleFilter() === 'Reception'"
+        (click)="teamStore.roleFilter.set('Reception')">
+        الاستقبال (Reception)
+      </button>
+      <button
+        type="button"
+        class="pill-btn"
+        [class.active]="teamStore.roleFilter() === 'Accountant'"
+        (click)="teamStore.roleFilter.set('Accountant')">
+        المحاسبون (Accountants)
+      </button>
+    </div>
+  </div>
+
+  <!-- Members Table -->
+  <div class="table-card">
+    @if (teamStore.filteredMembers().length === 0) {
+      <div class="empty-state">
+        <span class="empty-icon">👥</span>
+        <p>لا يوجد أعضاء في هذا الدور الوظيفي حالياً.</p>
+      </div>
+    } @else {
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>اسم الموظف</th>
+            <th>اسم المستخدم للدخول</th>
+            <th>الدور والصلاحية (Role)</th>
+            <th>رقم الهاتف</th>
+            <th>الحالة</th>
+            <th>تاريخ الإضافة</th>
+            <th>الإجراءات</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (m of teamStore.filteredMembers(); track m.id) {
+            <tr [class.row-deactivated]="m.status === 'Deactivated' || m.isActive === false">
+              <td class="font-bold">{{ m.displayName || m.name }}</td>
+              <td>
+                <span class="ltr-num font-mono">{{ m.username }}</span>
+              </td>
+              <td>
+                <span class="role-tag" [class]="'role-' + m.role.toLowerCase()">
+                  @switch (m.role) {
+                    @case ('Owner') { مالك المركز (Owner) 👑 }
+                    @case ('Teacher') { معلم (Teacher) 👨‍🏫 }
+                    @case ('Assistant') { مساعد تعليمي (Assistant) 🤝 }
+                    @case ('Reception') { موظف استقبال (Reception) 🏢 }
+                    @case ('Accountant') { محاسب مالي (Accountant) 💼 }
+                  }
+                </span>
+              </td>
+              <td>
+                <span class="ltr-num font-mono">{{ m.phone }}</span>
+              </td>
+              <td>
+                <span class="badge" [class]="(m.status === 'Active' || m.isActive !== false) ? 'badge-active' : 'badge-inactive'">
+                  {{ (m.status === 'Active' || m.isActive !== false) ? 'نشط ✓' : 'معطل ✕' }}
+                </span>
+              </td>
+              <td>
+                <span class="ltr-num font-mono">{{ (m.createdAt || m.createdAtUtc) | date:'yyyy/MM/dd' }}</span>
+              </td>
+              <td class="actions-cell">
+                <button
+                  type="button"
+                  class="btn-icon"
+                  title="عرض ونسخ بطاقة الواتساب (Q5)"
+                  (click)="openCredentialCard(m)">
+                  💬
+                </button>
+                @if (m.role !== 'Owner' && m.status === 'Active') {
+                  <button
+                    type="button"
+                    class="btn-icon btn-danger"
+                    title="تعطيل حساب الموظف"
+                    (click)="openDeactivateModal(m)">
+                    ⛔
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+
+  <!-- Modals -->
+  <app-add-staff-modal
+    [isOpen]="showAddModal()"
+    (close)="showAddModal.set(false)"
+    (staffCreated)="onStaffCreated($event)">
+  </app-add-staff-modal>
+
+  <app-staff-credential-card
+    [isOpen]="showCredentialCard()"
+    [member]="selectedMemberForCard()"
+    (close)="showCredentialCard.set(false)">
+  </app-staff-credential-card>
+
+  <app-deactivate-staff-modal
+    [isOpen]="showDeactivateModal()"
+    [member]="selectedMemberForDeactivation()"
+    (close)="showDeactivateModal.set(false)">
+  </app-deactivate-staff-modal>
+</div>

@@ -1,0 +1,74 @@
+.homework-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  direction: rtl;
+}
+
+.toolbar-title {
+  h3 { font-size: 1.125rem; font-weight: 700; margin: 0; color: #0f172a; }
+  .subtitle { font-size: 0.8125rem; color: #64748b; margin: 0.25rem 0 0; }
+}
+
+.homework-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.hw-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+
+  .hw-header {
+    display: flex;
+    justify-content: space-between;
+
+    .subject-tag {
+      background: #eff6ff;
+      color: #1d4ed8;
+      padding: 0.2rem 0.5rem;
+      border-radius: 0.25rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .grade-tag {
+      background: #f1f5f9;
+      color: #475569;
+      padding: 0.2rem 0.5rem;
+      border-radius: 0.25rem;
+      font-size: 0.75rem;
+    }
+  }
+
+  .hw-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+  }
+
+  .hw-meta {
+    background: #f8fafc;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    font-size: 0.8125rem;
+
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      color: #64748b;
+      .val { color: #0f172a; font-weight: 600; }
+    }
+  }
+}
