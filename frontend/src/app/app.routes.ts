@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
 import { lockoutGuard } from './core/guards/lockout.guard';
+import { superAdminGuard } from './core/guards/super-admin.guard';
 import { WorkspaceRole } from './core/models/auth.models';
 import { FoundationHarnessComponent } from './features/harness/foundation-harness.component';
 import { ForbiddenStubComponent } from './features/stubs/forbidden-stub.component';
@@ -259,6 +260,98 @@ export const routes: Routes = [
         path: 'subscribed-only',
         canActivate: [lockoutGuard],
         component: FoundationHarnessComponent
+      }
+    ]
+  },
+
+
+  // Top-level Forbidden Route (Clarification A5)
+  {
+    path: 'forbidden',
+    loadComponent: () =>
+      import('./features/forbidden/forbidden-stub.component').then(
+        (m) => m.ForbiddenStubComponent
+      ),
+    title: '403 — غير مصرح بالوصول'
+  },
+
+  // Super Admin Platform Management (SCR-19 through SCR-26)
+  {
+    path: 'admin',
+    loadComponent: () =>
+      import('./core/layout/admin-layout/admin-layout.component').then(
+        (m) => m.AdminLayoutComponent
+      ),
+    canActivate: [superAdminGuard],
+    children: [
+      {
+        path: '',
+        redirectTo: 'overview',
+        pathMatch: 'full'
+      },
+      {
+        path: 'overview',
+        loadComponent: () =>
+          import('./features/admin/overview/overview.component').then(
+            (m) => m.AdminOverviewComponent
+          ),
+        title: 'نظرة عامة — إدارة المنصة'
+      },
+      {
+        path: 'accounts',
+        loadComponent: () =>
+          import('./features/admin/accounts/accounts.component').then(
+            (m) => m.AccountsComponent
+          ),
+        title: 'السناتر والمدرسين — إدارة المنصة'
+      },
+      {
+        path: 'subscriptions',
+        loadComponent: () =>
+          import('./features/admin/subscriptions/subscriptions.component').then(
+            (m) => m.SubscriptionsComponent
+          ),
+        title: 'الاشتراكات والتجديدات — إدارة المنصة'
+      },
+      {
+        path: 'packages',
+        loadComponent: () =>
+          import('./features/admin/packages/packages.component').then(
+            (m) => m.PackagesComponent
+          ),
+        title: 'الباقات والميزات — إدارة المنصة'
+      },
+      {
+        path: 'revenue',
+        loadComponent: () =>
+          import('./features/admin/revenue/revenue.component').then(
+            (m) => m.RevenueComponent
+          ),
+        title: 'الإيرادات والتحصيل — إدارة المنصة'
+      },
+      {
+        path: 'whatsapp',
+        loadComponent: () =>
+          import('./features/admin/whatsapp/whatsapp-admin.component').then(
+            (m) => m.WhatsAppAdminComponent
+          ),
+        title: 'بوابة الواتساب — إدارة المنصة'
+      },
+      {
+        path: 'settings',
+        loadComponent: () =>
+          import('./features/admin/settings/admin-settings.component').then(
+            (m) => m.AdminSettingsComponent
+          ),
+        title: 'إعدادات المنصة — إدارة المنصة'
+      },
+      {
+        path: 'audit-logs',
+        loadComponent: () =>
+          import('./features/admin/audit-logs/audit-logs.component').then(
+            (m) => m.AuditLogComponent
+          ),
+        title: 'سجل العمليات — إدارة المنصة'
       }
     ]
   },

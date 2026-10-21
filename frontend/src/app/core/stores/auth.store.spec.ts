@@ -135,11 +135,29 @@ describe('AuthStore', () => {
     expect(store.accessToken()).toBe('token_teacher_123');
     expect(store.activeWorkspaceId()).toBe('ws_01');
     expect(store.currentUserRole()).toBe('Teacher');
-    expect(store.canViewFinancials()).toBeTrue();
+    expect(store.canViewFinancials()).toBeFalse(); // Teacher is restricted from financials (Principle 9)
     expect(store.isLockedOut()).toBeFalse();
 
     expect(localStorage.getItem('tahdeera_auth_token')).toBe('token_teacher_123');
     expect(localStorage.getItem('tahdeera_refresh_token')).toBe('refresh_teacher_123');
+  });
+
+  it('should return true for canViewFinancials when role is Accountant or Owner (Principle 9)', () => {
+    const mockAccountantLogin: LoginResponse = {
+      ...mockTeacherLoginResponse,
+      workspaces: [{ ...mockTeacherLoginResponse.workspaces[0], role: 'Accountant' }]
+    };
+    store.login(mockAccountantLogin);
+    expect(store.currentUserRole()).toBe('Accountant');
+    expect(store.canViewFinancials()).toBeTrue();
+
+    const mockOwnerLogin: LoginResponse = {
+      ...mockTeacherLoginResponse,
+      workspaces: [{ ...mockTeacherLoginResponse.workspaces[0], role: 'Owner' }]
+    };
+    store.login(mockOwnerLogin);
+    expect(store.currentUserRole()).toBe('Owner');
+    expect(store.canViewFinancials()).toBeTrue();
   });
 
   it('should strictly return false for canViewFinancials when role is Assistant (CONF-09)', () => {

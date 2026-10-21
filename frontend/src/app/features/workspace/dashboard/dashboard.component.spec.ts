@@ -119,14 +119,14 @@ describe('DashboardComponent', () => {
     expect(component.isLoading()).toBeTrue();
   });
 
-  it('should render 4 KPI cards including Unpaid Tuition for Teacher role', () => {
+  it('should render 4 KPI cards including Unpaid Tuition for Owner role', () => {
     authStore.workspaces.set([
       {
         id: 'ws_01',
         name: 'سنتر الأوائل',
         code: 'AWAEL',
         status: 'Active',
-        role: 'Teacher',
+        role: 'Owner',
         studentCount: 248,
         activeGroupCount: 12,
         subscriptionDaysRemaining: 5,
@@ -147,6 +147,34 @@ describe('DashboardComponent', () => {
     const tuitionCard = fixture.debugElement.query(By.css('.tuition-card'));
     expect(tuitionCard).toBeTruthy();
     expect(tuitionCard.nativeElement.textContent).toContain('12450');
+  });
+
+  it('should STRICTLY EXCLUDE Unpaid Tuition card from DOM for Teacher role (Principle 9)', () => {
+    authStore.workspaces.set([
+      {
+        id: 'ws_01',
+        name: 'سنتر الأوائل',
+        code: 'AWAEL',
+        status: 'Active',
+        role: 'Teacher',
+        studentCount: 248,
+        activeGroupCount: 12,
+        subscriptionDaysRemaining: 45,
+        subscriptionExpiresAt: '2026-12-05T00:00:00Z'
+      }
+    ]);
+    authStore.activeWorkspaceId.set('ws_01');
+
+    dashboardServiceSpy.getOverview.and.returnValue(of(mockOverviewWithoutTuition));
+
+    fixture = TestBed.createComponent(DashboardComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    expect(component.canViewFinancials()).toBeFalse();
+
+    const tuitionCard = fixture.debugElement.query(By.css('.tuition-card'));
+    expect(tuitionCard).toBeNull();
   });
 
   it('should STRICTLY EXCLUDE Unpaid Tuition card from DOM for Assistant role (CONF-09)', () => {

@@ -9,6 +9,7 @@ import { RouterModule, RouterOutlet } from '@angular/router';
 import { HeaderComponent } from '../../../shared/components/header/header.component';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
 import { MobileNavComponent } from '../../../shared/components/mobile-nav/mobile-nav.component';
+import { ImpersonationBannerComponent } from './components/impersonation-banner/impersonation-banner.component';
 
 @Component({
   selector: 'app-workspace-layout',
@@ -20,7 +21,8 @@ import { MobileNavComponent } from '../../../shared/components/mobile-nav/mobile
     HeaderComponent,
     SidebarComponent,
     MobileNavComponent,
-    ReauthModalComponent
+    ReauthModalComponent,
+    ImpersonationBannerComponent
   ],
   template: `
     <div class="workspace-shell">
@@ -31,6 +33,7 @@ import { MobileNavComponent } from '../../../shared/components/mobile-nav/mobile
 
       <!-- Main Column -->
       <div class="main-column">
+        <app-impersonation-banner></app-impersonation-banner>
         <!-- Universal Header -->
         <app-header
           [workspaceName]="authStore.activeWorkspace()?.name || '???? ???????'"

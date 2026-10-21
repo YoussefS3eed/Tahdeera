@@ -52,7 +52,11 @@ export class AuthStore {
   readonly canViewFinancials = computed<boolean>(() => {
     const role = this.currentUserRole();
     if (!role) return false;
-    return role === 'Owner' || role === 'Admin' || role === 'Teacher';
+    return role === 'Owner' || role === 'Admin' || role === 'Accountant';
+  });
+
+  readonly isPlatformAdmin = computed<boolean>(() => {
+    return !!this.user()?.isPlatformAdmin;
   });
 
   constructor() {
@@ -123,6 +127,46 @@ export class AuthStore {
     }
   }
 
+  setSession(session: {
+    accessToken: string;
+    refreshToken?: string;
+    user: UserProfile;
+    activeWorkspace?: any;
+    workspaces?: any[];
+  }): void {
+    this.accessToken.set(session.accessToken);
+    if (session.refreshToken) {
+      this.refreshToken.set(session.refreshToken);
+    }
+    this.user.set(session.user);
+
+    if (session.workspaces && session.workspaces.length > 0) {
+      this.workspaces.set(session.workspaces);
+    } else if (session.activeWorkspace) {
+      this.workspaces.set([session.activeWorkspace]);
+    }
+
+    if (session.activeWorkspace) {
+      this.activeWorkspaceId.set(session.activeWorkspace.id);
+    }
+
+    try {
+      localStorage.setItem(STORAGE_KEY_AUTH_TOKEN, session.accessToken);
+      if (session.refreshToken) {
+        localStorage.setItem(STORAGE_KEY_REFRESH_TOKEN, session.refreshToken);
+      }
+      localStorage.setItem(STORAGE_KEY_USER_PROFILE, JSON.stringify(session.user));
+      localStorage.setItem(STORAGE_KEY_WORKSPACES, JSON.stringify(this.workspaces()));
+      const activeId = this.activeWorkspaceId();
+      if (activeId) {
+        localStorage.setItem(STORAGE_KEY_ACTIVE_WORKSPACE, activeId);
+      }
+    } catch {
+      // Storage quota or restriction fallback
+    }
+  }
+
+
   logout(): void {
     this.user.set(null);
     this.accessToken.set(null);
@@ -135,11 +179,26 @@ export class AuthStore {
       localStorage.removeItem(STORAGE_KEY_REFRESH_TOKEN);
       localStorage.removeItem(STORAGE_KEY_USER_PROFILE);
       localStorage.removeItem(STORAGE_KEY_WORKSPACES);
-      // Retain or clear active workspace
       localStorage.removeItem(STORAGE_KEY_ACTIVE_WORKSPACE);
     } catch {
       // Ignored
     }
+  }
+
+  getSessionSnapshot(): {
+    accessToken: string | null;
+    refreshToken: string | null;
+    user: UserProfile | null;
+    workspaces: WorkspaceSummary[];
+    activeWorkspaceId: string | null;
+  } {
+    return {
+      accessToken: this.accessToken(),
+      refreshToken: this.refreshToken(),
+      user: this.user(),
+      workspaces: this.workspaces(),
+      activeWorkspaceId: this.activeWorkspaceId()
+    };
   }
 
   /**

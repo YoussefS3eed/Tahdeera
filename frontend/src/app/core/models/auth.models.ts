@@ -9,6 +9,7 @@ export interface UserProfile {
   phone: string;
   avatarUrl?: string | null;
   initials: string;
+  isPlatformAdmin?: boolean;
 }
 
 export interface WorkspaceSummary {
