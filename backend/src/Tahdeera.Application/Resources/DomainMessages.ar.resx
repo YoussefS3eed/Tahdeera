@@ -845,4 +845,65 @@
   <data name="GROUP_NOT_FOUND_IN_WORKSPACE_Detail" xml:space="preserve">
     <value>المجموعة الدراسية المحددة غير موجودة في مساحة العمل.</value>
   </data>
+
+  <data name="NO_ACTIVE_STUDENTS_IN_GROUP" xml:space="preserve">
+    <value>لا يوجد طلاب نشطون مسجلون في هذه المجموعة لإنشاء المطالبات.</value>
+  </data>
+  <data name="NO_ACTIVE_STUDENTS_IN_GROUP_Title" xml:space="preserve">
+    <value>لا يوجد طلاب نشطون</value>
+  </data>
+  <data name="NO_ACTIVE_STUDENTS_IN_GROUP_Detail" xml:space="preserve">
+    <value>لا يوجد طلاب نشطون مسجلون في هذه المجموعة لإنشاء المطالبات.</value>
+  </data>
+
+  <data name="BILLING_PERIOD_REQUIRED" xml:space="preserve">
+    <value>يرجى تحديد فترة الفوترة المطلوبة (مثل: 2026-10).</value>
+  </data>
+  <data name="BILLING_PERIOD_REQUIRED_Title" xml:space="preserve">
+    <value>فترة الفوترة مطلوبة</value>
+  </data>
+  <data name="BILLING_PERIOD_REQUIRED_Detail" xml:space="preserve">
+    <value>يرجى تحديد فترة الفوترة المطلوبة (مثل: 2026-10).</value>
+  </data>
+
+  <data name="CANNOT_PRINT_REVERSED_PAYMENT" xml:space="preserve">
+    <value>لا يمكن طباعة إيصال لعملية دفع تم إلغاؤها سابقاً.</value>
+  </data>
+  <data name="CANNOT_PRINT_REVERSED_PAYMENT_Title" xml:space="preserve">
+    <value>لا يمكن طباعة إيصال ملغى</value>
+  </data>
+  <data name="CANNOT_PRINT_REVERSED_PAYMENT_Detail" xml:space="preserve">
+    <value>لا يمكن طباعة إيصال لعملية دفع تم إلغاؤها سابقاً.</value>
+  </data>
+
+
+  <data name="INVALID_DATE_RANGE" xml:space="preserve">
+    <value>تاريخ البداية يجب أن يكون سابقاً لتاريخ النهاية.</value>
+  </data>
+  <data name="INVALID_DATE_RANGE_Title" xml:space="preserve">
+    <value>نطاق التاريخ غير صالح</value>
+  </data>
+  <data name="INVALID_DATE_RANGE_Detail" xml:space="preserve">
+    <value>تاريخ البداية يجب أن يكون سابقاً لتاريخ النهاية.</value>
+  </data>
+
+  <data name="EXPORT_DATE_SPAN_EXCEEDED" xml:space="preserve">
+    <value>نطاق تصدير البيانات لا يمكن أن يتجاوز 90 يوماً.</value>
+  </data>
+  <data name="EXPORT_DATE_SPAN_EXCEEDED_Title" xml:space="preserve">
+    <value>تجاوز الحد الأقصى لنطاق التصدير</value>
+  </data>
+  <data name="EXPORT_DATE_SPAN_EXCEEDED_Detail" xml:space="preserve">
+    <value>نطاق تصدير البيانات لا يمكن أن يتجاوز 90 يوماً.</value>
+  </data>
+
+  <data name="FEATURE_FLAG_DISABLED" xml:space="preserve">
+    <value>هذه الميزة غير مفعلة في باقة الاشتراك الحالية لمركزك.</value>
+  </data>
+  <data name="FEATURE_FLAG_DISABLED_Title" xml:space="preserve">
+    <value>الميزة غير مفعلة</value>
+  </data>
+  <data name="FEATURE_FLAG_DISABLED_Detail" xml:space="preserve">
+    <value>هذه الميزة غير مفعلة في باقة الاشتراك الحالية لمركزك.</value>
+  </data>
 </root>

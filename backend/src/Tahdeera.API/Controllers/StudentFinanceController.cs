@@ -14,6 +14,7 @@ using Tahdeera.Application.Features.Finances.DTOs;
 using Tahdeera.Application.Features.Finances.Queries.GetStudentAccountStatement;
 using Tahdeera.Application.Features.Finances.Queries.GetStudentCharges;
 using Tahdeera.Application.Features.Finances.Queries.GetStudentPayments;
+using Tahdeera.Application.Features.Finances.Queries.GetPrintableReceipt;
 using Tahdeera.Domain.Enums;
 
 namespace Tahdeera.API.Controllers;
@@ -193,6 +194,24 @@ public class StudentFinanceController : ApiControllerBase
     {
         var command = new ReverseStudentPaymentCommand(workspaceId, studentId, paymentId, request.Reason);
         var result = await _sender.Send(command, cancellationToken);
+        return Ok(result);
+    }
+
+    [HttpGet("payments/{paymentId:guid}/receipt-print")]
+    [HasPermission(Permissions.FinancesView)]
+    [ProducesResponseType(typeof(PrintableReceiptDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetPrintableReceipt(
+        [FromRoute] Guid workspaceId,
+        [FromRoute] Guid studentId,
+        [FromRoute] Guid paymentId,
+        CancellationToken cancellationToken)
+    {
+        var query = new GetPrintableReceiptQuery(workspaceId, studentId, paymentId);
+        var result = await _sender.Send(query, cancellationToken);
         return Ok(result);
     }
 }

@@ -49,6 +49,22 @@ public class GetStudentPaymentsHandler : IRequestHandler<GetStudentPaymentsQuery
             .OrderByDescending(p => p.PaidAt)
             .ToListAsync(cancellationToken);
 
+        if (payments.Count == 0)
+        {
+            return new List<StudentPaymentDto>();
+        }
+
+        // ADR-010 Tier 3: Direct Read-Only Projection from message_outbox using idempotency keys
+        var paymentKeys = payments.Select(p => "pay_" + p.Id).ToList();
+        var outboxList = await _context.MessageOutboxes
+            .AsNoTracking()
+            .Where(m => paymentKeys.Contains(m.IdempotencyKey))
+            .ToListAsync(cancellationToken);
+
+        var outboxMap = outboxList
+            .GroupBy(m => m.IdempotencyKey)
+            .ToDictionary(g => g.Key, g => g.First());
+
         return payments.Select(p =>
         {
             var activeAllocations = p.Allocations.Where(a => !a.IsReversed).ToList();
@@ -61,6 +77,17 @@ public class GetStudentPaymentsHandler : IRequestHandler<GetStudentPaymentsQuery
                 Amount: a.Amount,
                 IsReversed: a.IsReversed
             )).ToList();
+
+            string deliveryStatus = "None";
+            DateTimeOffset? deliveredAt = null;
+            string? errorMessage = null;
+
+            if (outboxMap.TryGetValue("pay_" + p.Id, out var outbox))
+            {
+                deliveryStatus = outbox.Status.ToString();
+                deliveredAt = outbox.DeliveredAt;
+                errorMessage = outbox.ErrorMessage ?? outbox.ErrorCode;
+            }
 
             return new StudentPaymentDto(
                 Id: p.Id,
@@ -76,7 +103,12 @@ public class GetStudentPaymentsHandler : IRequestHandler<GetStudentPaymentsQuery
                 ReversalReason: p.ReversalReason,
                 AllocatedAmount: allocatedAmount,
                 UnallocatedAmount: unallocatedAmount,
-                Allocations: allocationDtos);
+                Allocations: allocationDtos)
+            {
+                WhatsAppDeliveryStatus = deliveryStatus,
+                WhatsAppDeliveredAt = deliveredAt,
+                WhatsAppErrorMessage = errorMessage
+            };
         }).ToList();
     }
 }

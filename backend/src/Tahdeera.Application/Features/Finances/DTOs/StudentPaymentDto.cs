@@ -14,4 +14,9 @@ public record StudentPaymentDto(
     string? ReversalReason,
     decimal AllocatedAmount,
     decimal UnallocatedAmount,
-    IReadOnlyList<PaymentAllocationDetailDto> Allocations);
+    IReadOnlyList<PaymentAllocationDetailDto> Allocations)
+{
+    public string WhatsAppDeliveryStatus { get; init; } = "None";
+    public DateTimeOffset? WhatsAppDeliveredAt { get; init; }
+    public string? WhatsAppErrorMessage { get; init; }
+}

@@ -27,3 +27,14 @@ public record RecordStudentPaymentRequest(
 
 public record ReverseStudentPaymentRequest(
     string Reason);
+
+public record BatchCreateGroupChargesRequest(
+    string BillingPeriodLabel,
+    string Description,
+    decimal Amount,
+    DateTimeOffset? DueAt = null,
+    string? Notes = null);
+
+public record StageTuitionRemindersRequest(
+    Guid? GroupId = null,
+    decimal MinimumBalanceThreshold = 50.00m);
