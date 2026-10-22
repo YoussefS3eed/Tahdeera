@@ -38,6 +38,13 @@ public interface ITahdeeraDbContext
     DbSet<WhatsAppSenderConnection> WhatsAppSenderConnections { get; }
     DbSet<WorkspaceWhatsAppUsageLedger> WorkspaceWhatsAppUsageLedgers { get; }
 
+    // Student Tuition Finance DbSets
+    DbSet<StudentAccount> StudentAccounts { get; }
+    DbSet<StudentCharge> StudentCharges { get; }
+    DbSet<StudentPayment> StudentPayments { get; }
+    DbSet<PaymentAllocation> PaymentAllocations { get; }
+    DbSet<WorkspaceReceiptSequence> WorkspaceReceiptSequences { get; }
+
     DatabaseFacade Database { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);

@@ -23,6 +23,7 @@ public class WorkspaceStudent
     public Workspace Workspace { get; set; } = null!;
     public Student Student { get; set; } = null!;
     public AppUser? CreatedByUser { get; set; }
+    public virtual StudentAccount? StudentAccount { get; set; }
 
     public void SetStatus(WorkspaceStudentStatus newStatus)
     {

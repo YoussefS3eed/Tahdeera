@@ -41,6 +41,13 @@ public class UnitOfWork : IUnitOfWork
     private IWhatsAppSenderConnectionRepository? _whatsAppSenderConnections;
     private IWorkspaceWhatsAppUsageLedgerRepository? _workspaceWhatsAppUsageLedgers;
 
+    // Milestone B5 Student Tuition Finance Repositories
+    private IStudentAccountRepository? _studentAccounts;
+    private IStudentChargeRepository? _studentCharges;
+    private IStudentPaymentRepository? _studentPayments;
+    private IPaymentAllocationRepository? _paymentAllocations;
+    private IWorkspaceReceiptSequenceRepository? _workspaceReceiptSequences;
+
     public UnitOfWork(TahdeeraDbContext context)
     {
         _context = context;
@@ -129,6 +136,22 @@ public class UnitOfWork : IUnitOfWork
 
     public IWorkspaceWhatsAppUsageLedgerRepository WorkspaceWhatsAppUsageLedgers =>
         _workspaceWhatsAppUsageLedgers ??= new WorkspaceWhatsAppUsageLedgerRepository(_context);
+
+    // Milestone B5 Student Tuition Finance Repositories
+    public IStudentAccountRepository StudentAccounts =>
+        _studentAccounts ??= new StudentAccountRepository(_context);
+
+    public IStudentChargeRepository StudentCharges =>
+        _studentCharges ??= new StudentChargeRepository(_context);
+
+    public IStudentPaymentRepository StudentPayments =>
+        _studentPayments ??= new StudentPaymentRepository(_context);
+
+    public IPaymentAllocationRepository PaymentAllocations =>
+        _paymentAllocations ??= new PaymentAllocationRepository(_context);
+
+    public IWorkspaceReceiptSequenceRepository WorkspaceReceiptSequences =>
+        _workspaceReceiptSequences ??= new WorkspaceReceiptSequenceRepository(_context);
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

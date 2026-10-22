@@ -674,4 +674,175 @@
   <data name="WABA_CONNECTION_NOT_FOUND_Detail" xml:space="preserve">
     <value>لا يوجد اتصال نشط لحساب واتساب للأعمال في هذا السنتر.</value>
   </data>
+
+  <!-- Milestone B5 Financial Ledger Error Codes -->
+  <data name="FINANCES_UNAUTHORIZED_ROLE" xml:space="preserve">
+    <value>ليس لديك صلاحية للوصول إلى الحسابات المالية أو إدارتها.</value>
+  </data>
+  <data name="FINANCES_UNAUTHORIZED_ROLE_Title" xml:space="preserve">
+    <value>غير مصرح بالوصول إلى المالية</value>
+  </data>
+  <data name="FINANCES_UNAUTHORIZED_ROLE_Detail" xml:space="preserve">
+    <value>ليس لديك صلاحية للوصول إلى الحسابات المالية أو إدارتها.</value>
+  </data>
+
+  <data name="STUDENT_NOT_IN_WORKSPACE" xml:space="preserve">
+    <value>الطالب غير مسجل في مساحة العمل هذه.</value>
+  </data>
+  <data name="STUDENT_NOT_IN_WORKSPACE_Title" xml:space="preserve">
+    <value>الطالب غير موجود</value>
+  </data>
+  <data name="STUDENT_NOT_IN_WORKSPACE_Detail" xml:space="preserve">
+    <value>الطالب غير مسجل في مساحة العمل هذه.</value>
+  </data>
+
+  <data name="STUDENT_ACCOUNT_NOT_FOUND" xml:space="preserve">
+    <value>الحساب المالي للطالب غير موجود.</value>
+  </data>
+  <data name="STUDENT_ACCOUNT_NOT_FOUND_Title" xml:space="preserve">
+    <value>الحساب المالي غير موجود</value>
+  </data>
+  <data name="STUDENT_ACCOUNT_NOT_FOUND_Detail" xml:space="preserve">
+    <value>الحساب المالي للطالب غير موجود.</value>
+  </data>
+
+  <data name="CHARGE_NOT_FOUND" xml:space="preserve">
+    <value>بند الرسوم المطلوب غير موجود.</value>
+  </data>
+  <data name="CHARGE_NOT_FOUND_Title" xml:space="preserve">
+    <value>بند الرسوم غير موجود</value>
+  </data>
+  <data name="CHARGE_NOT_FOUND_Detail" xml:space="preserve">
+    <value>بند الرسوم المطلوب غير موجود.</value>
+  </data>
+
+  <data name="PAYMENT_NOT_FOUND" xml:space="preserve">
+    <value>سند الدفع المطلوب غير موجود.</value>
+  </data>
+  <data name="PAYMENT_NOT_FOUND_Title" xml:space="preserve">
+    <value>سند الدفع غير موجود</value>
+  </data>
+  <data name="PAYMENT_NOT_FOUND_Detail" xml:space="preserve">
+    <value>سند الدفع المطلوب غير موجود.</value>
+  </data>
+
+  <data name="AMOUNT_MUST_BE_POSITIVE" xml:space="preserve">
+    <value>يجب أن يكون المبلغ أكبر من الصفر.</value>
+  </data>
+  <data name="AMOUNT_MUST_BE_POSITIVE_Title" xml:space="preserve">
+    <value>المبلغ غير صالح</value>
+  </data>
+  <data name="AMOUNT_MUST_BE_POSITIVE_Detail" xml:space="preserve">
+    <value>يجب أن يكون المبلغ أكبر من الصفر.</value>
+  </data>
+
+  <data name="CHARGE_DESCRIPTION_REQUIRED" xml:space="preserve">
+    <value>وصف الرسوم مطلوب ويجب أن يتكون من 3 أحرف على الأقل.</value>
+  </data>
+  <data name="CHARGE_DESCRIPTION_REQUIRED_Title" xml:space="preserve">
+    <value>وصف الرسوم مطلوب</value>
+  </data>
+  <data name="CHARGE_DESCRIPTION_REQUIRED_Detail" xml:space="preserve">
+    <value>وصف الرسوم مطلوب ويجب أن يتكون من 3 أحرف على الأقل.</value>
+  </data>
+
+  <data name="CANCELLATION_REASON_TOO_SHORT" xml:space="preserve">
+    <value>سبب الإلغاء أو الإعفاء مطلوب ويجب أن يكون 5 أحرف على الأقل.</value>
+  </data>
+  <data name="CANCELLATION_REASON_TOO_SHORT_Title" xml:space="preserve">
+    <value>سبب الإلغاء غير كافٍ</value>
+  </data>
+  <data name="CANCELLATION_REASON_TOO_SHORT_Detail" xml:space="preserve">
+    <value>سبب الإلغاء أو الإعفاء مطلوب ويجب أن يكون 5 أحرف على الأقل.</value>
+  </data>
+
+  <data name="REVERSAL_REASON_TOO_SHORT" xml:space="preserve">
+    <value>سبب إلغاء السند مطلوب ويجب أن يكون 5 أحرف على الأقل.</value>
+  </data>
+  <data name="REVERSAL_REASON_TOO_SHORT_Title" xml:space="preserve">
+    <value>سبب إلغاء السند غير كافٍ</value>
+  </data>
+  <data name="REVERSAL_REASON_TOO_SHORT_Detail" xml:space="preserve">
+    <value>سبب إلغاء السند مطلوب ويجب أن يكون 5 أحرف على الأقل.</value>
+  </data>
+
+  <data name="CANNOT_CANCEL_NON_OPEN_CHARGE" xml:space="preserve">
+    <value>لا يمكن إلغاء رسوم تم إلغاؤها أو إعفاؤها مسبقاً.</value>
+  </data>
+  <data name="CANNOT_CANCEL_NON_OPEN_CHARGE_Title" xml:space="preserve">
+    <value>حالة الرسوم غير قابلة للإلغاء</value>
+  </data>
+  <data name="CANNOT_CANCEL_NON_OPEN_CHARGE_Detail" xml:space="preserve">
+    <value>لا يمكن إلغاء رسوم تم إلغاؤها أو إعفاؤها مسبقاً.</value>
+  </data>
+
+  <data name="CANNOT_WRITEOFF_NON_OPEN_CHARGE" xml:space="preserve">
+    <value>لا يمكن إعفاء رسوم تم إلغاؤها أو إعفاؤها مسبقاً.</value>
+  </data>
+  <data name="CANNOT_WRITEOFF_NON_OPEN_CHARGE_Title" xml:space="preserve">
+    <value>حالة الرسوم غير قابلة للإعفاء</value>
+  </data>
+  <data name="CANNOT_WRITEOFF_NON_OPEN_CHARGE_Detail" xml:space="preserve">
+    <value>لا يمكن إعفاء رسوم تم إلغاؤها أو إعفاؤها مسبقاً.</value>
+  </data>
+
+  <data name="PAYMENT_ALREADY_REVERSED" xml:space="preserve">
+    <value>تم إلغاء سند الدفع هذا مسبقاً ولا يمكن إلغاؤه مرة أخرى.</value>
+  </data>
+  <data name="PAYMENT_ALREADY_REVERSED_Title" xml:space="preserve">
+    <value>السند ملغى بالفعل</value>
+  </data>
+  <data name="PAYMENT_ALREADY_REVERSED_Detail" xml:space="preserve">
+    <value>تم إلغاء سند الدفع هذا مسبقاً ولا يمكن إلغاؤه مرة أخرى.</value>
+  </data>
+
+  <data name="INVALID_PAYMENT_METHOD" xml:space="preserve">
+    <value>طريقة الدفع المحددة غير صالحة.</value>
+  </data>
+  <data name="INVALID_PAYMENT_METHOD_Title" xml:space="preserve">
+    <value>طريقة دفع غير صالحة</value>
+  </data>
+  <data name="INVALID_PAYMENT_METHOD_Detail" xml:space="preserve">
+    <value>طريقة الدفع المحددة غير صالحة.</value>
+  </data>
+
+  <data name="PAYMENT_DATE_CANNOT_BE_FUTURE" xml:space="preserve">
+    <value>تاريخ وساعة الدفع لا يمكن أن تكون في المستقبل.</value>
+  </data>
+  <data name="PAYMENT_DATE_CANNOT_BE_FUTURE_Title" xml:space="preserve">
+    <value>تاريخ الدفع غير صالح</value>
+  </data>
+  <data name="PAYMENT_DATE_CANNOT_BE_FUTURE_Detail" xml:space="preserve">
+    <value>تاريخ وساعة الدفع لا يمكن أن تكون في المستقبل.</value>
+  </data>
+
+  <data name="ALLOCATION_EXCEEDS_PAYMENT" xml:space="preserve">
+    <value>إجمالي المبالغ الموزعة يتجاوز إجمالي مبلغ السند.</value>
+  </data>
+  <data name="ALLOCATION_EXCEEDS_PAYMENT_Title" xml:space="preserve">
+    <value>تجاوز مبلغ السند</value>
+  </data>
+  <data name="ALLOCATION_EXCEEDS_PAYMENT_Detail" xml:space="preserve">
+    <value>إجمالي المبالغ الموزعة يتجاوز إجمالي مبلغ السند.</value>
+  </data>
+
+  <data name="ALLOCATION_EXCEEDS_CHARGE_BALANCE" xml:space="preserve">
+    <value>المبلغ الموزع يتجاوز الرصيد المتبقي للبند المستحق.</value>
+  </data>
+  <data name="ALLOCATION_EXCEEDS_CHARGE_BALANCE_Title" xml:space="preserve">
+    <value>تجاوز رصيد الرسوم</value>
+  </data>
+  <data name="ALLOCATION_EXCEEDS_CHARGE_BALANCE_Detail" xml:space="preserve">
+    <value>المبلغ الموزع يتجاوز الرصيد المتبقي للبند المستحق.</value>
+  </data>
+
+  <data name="GROUP_NOT_FOUND_IN_WORKSPACE" xml:space="preserve">
+    <value>المجموعة الدراسية المحددة غير موجودة في مساحة العمل.</value>
+  </data>
+  <data name="GROUP_NOT_FOUND_IN_WORKSPACE_Title" xml:space="preserve">
+    <value>المجموعة غير موجودة</value>
+  </data>
+  <data name="GROUP_NOT_FOUND_IN_WORKSPACE_Detail" xml:space="preserve">
+    <value>المجموعة الدراسية المحددة غير موجودة في مساحة العمل.</value>
+  </data>
 </root>

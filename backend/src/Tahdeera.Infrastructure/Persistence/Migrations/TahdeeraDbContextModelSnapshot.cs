@@ -1355,6 +1355,60 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Tahdeera.Domain.Entities.PaymentAllocation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)")
+                        .HasColumnName("amount");
+
+                    b.Property<Guid>("ChargeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("charge_id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<bool>("IsReversed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_reversed");
+
+                    b.Property<Guid>("PaymentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("payment_id");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.HasKey("Id")
+                        .HasName("pk_payment_allocations");
+
+                    b.HasIndex("ChargeId")
+                        .HasDatabaseName("ix_payment_allocations_charge")
+                        .HasFilter("is_reversed = false");
+
+                    b.HasIndex("PaymentId", "ChargeId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_payment_allocations_payment_id_charge_id");
+
+                    b.ToTable("payment_allocations", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_payment_allocations_amount_positive", "amount > 0");
+                        });
+                });
+
             modelBuilder.Entity("Tahdeera.Domain.Entities.RefreshToken", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1607,6 +1661,152 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                     b.ToTable("student_academic_history", (string)null);
                 });
 
+            modelBuilder.Entity("Tahdeera.Domain.Entities.StudentAccount", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<Guid?>("CreatedByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_user_id");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)")
+                        .HasDefaultValue("EGP")
+                        .HasColumnName("currency");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<Guid>("WorkspaceStudentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("workspace_student_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_student_accounts");
+
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_student_accounts_created_by_user_id");
+
+                    b.HasIndex("WorkspaceStudentId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_student_accounts_workspace_student_id");
+
+                    b.ToTable("student_accounts", (string)null);
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.StudentCharge", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)")
+                        .HasColumnName("amount");
+
+                    b.Property<string>("BillingPeriodLabel")
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)")
+                        .HasColumnName("billing_period_label");
+
+                    b.Property<string>("CancellationReason")
+                        .HasColumnType("text")
+                        .HasColumnName("cancellation_reason");
+
+                    b.Property<DateTimeOffset?>("CancelledAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("cancelled_at");
+
+                    b.Property<Guid?>("CancelledByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("cancelled_by_user_id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<Guid?>("CreatedByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_user_id");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(240)
+                        .HasColumnType("character varying(240)")
+                        .HasColumnName("description");
+
+                    b.Property<DateTimeOffset?>("DueAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("due_at");
+
+                    b.Property<Guid?>("GroupId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("group_id");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text")
+                        .HasColumnName("notes");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("Open")
+                        .HasColumnName("status");
+
+                    b.Property<Guid>("StudentAccountId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("student_account_id");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.HasKey("Id")
+                        .HasName("pk_student_charges");
+
+                    b.HasIndex("CancelledByUserId")
+                        .HasDatabaseName("ix_student_charges_cancelled_by_user_id");
+
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_student_charges_created_by_user_id");
+
+                    b.HasIndex("GroupId")
+                        .HasDatabaseName("ix_student_charges_group_id");
+
+                    b.HasIndex("StudentAccountId", "Status")
+                        .HasDatabaseName("ix_student_charges_account_status");
+
+                    b.ToTable("student_charges", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_student_charges_amount_positive", "amount > 0");
+
+                            t.HasCheckConstraint("CK_student_charges_cancellation_reason", "status = 'Open' OR cancellation_reason IS NOT NULL");
+
+                            t.HasCheckConstraint("CK_student_charges_status", "status IN ('Open', 'Cancelled', 'WrittenOff')");
+                        });
+                });
+
             modelBuilder.Entity("Tahdeera.Domain.Entities.StudentCredential", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1699,6 +1899,119 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                             t.HasCheckConstraint("ck_student_credentials_revoked_at", "revoked_at IS NULL OR revoked_at >= issued_at");
 
                             t.HasCheckConstraint("ck_student_credentials_type", "credential_type IN ('QR', 'NFC', 'FallbackCode')");
+                        });
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.StudentPayment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)")
+                        .HasColumnName("amount");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<string>("Method")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("method");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text")
+                        .HasColumnName("notes");
+
+                    b.Property<DateTimeOffset>("PaidAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("paid_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<string>("ReceiptNumber")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)")
+                        .HasColumnName("receipt_number");
+
+                    b.Property<Guid>("RecordedByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("recorded_by_user_id");
+
+                    b.Property<string>("Reference")
+                        .HasMaxLength(160)
+                        .HasColumnType("character varying(160)")
+                        .HasColumnName("reference");
+
+                    b.Property<string>("ReversalReason")
+                        .HasColumnType("text")
+                        .HasColumnName("reversal_reason");
+
+                    b.Property<DateTimeOffset?>("ReversedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("reversed_at");
+
+                    b.Property<Guid?>("ReversedByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("reversed_by_user_id");
+
+                    b.Property<Guid?>("ReversesPaymentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("reverses_payment_id");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("Received")
+                        .HasColumnName("status");
+
+                    b.Property<Guid>("StudentAccountId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("student_account_id");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.HasKey("Id")
+                        .HasName("pk_student_payments");
+
+                    b.HasIndex("ReceiptNumber")
+                        .IsUnique()
+                        .HasDatabaseName("ux_student_payments_receipt_number");
+
+                    b.HasIndex("RecordedByUserId")
+                        .HasDatabaseName("ix_student_payments_recorded_by_user_id");
+
+                    b.HasIndex("ReversedByUserId")
+                        .HasDatabaseName("ix_student_payments_reversed_by_user_id");
+
+                    b.HasIndex("ReversesPaymentId")
+                        .HasDatabaseName("ix_student_payments_reverses_payment_id");
+
+                    b.HasIndex("StudentAccountId", "PaidAt")
+                        .HasDatabaseName("ix_student_payments_account_date");
+
+                    b.ToTable("student_payments", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_student_payments_amount_positive", "amount > 0");
+
+                            t.HasCheckConstraint("CK_student_payments_method", "method IN ('Cash', 'BankTransfer', 'Wallet', 'Card', 'Other')");
+
+                            t.HasCheckConstraint("CK_student_payments_reversal_validity", "(status = 'Received' AND reversed_at IS NULL) OR (status = 'Reversed' AND reversed_at IS NOT NULL AND reversal_reason IS NOT NULL)");
+
+                            t.HasCheckConstraint("CK_student_payments_status", "status IN ('Received', 'Reversed')");
                         });
                 });
 
@@ -2209,6 +2522,34 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
 
                             t.HasCheckConstraint("ck_workspace_members_role", "role IN ('Owner', 'Teacher', 'Assistant', 'Reception', 'Accountant', 'Member')");
                         });
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.WorkspaceReceiptSequence", b =>
+                {
+                    b.Property<Guid>("WorkspaceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("workspace_id");
+
+                    b.Property<int>("YearMonth")
+                        .HasColumnType("integer")
+                        .HasColumnName("year_month");
+
+                    b.Property<int>("NextSequence")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1)
+                        .HasColumnName("next_sequence");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.HasKey("WorkspaceId", "YearMonth")
+                        .HasName("pk_workspace_receipt_sequences");
+
+                    b.ToTable("workspace_receipt_sequences", (string)null);
                 });
 
             modelBuilder.Entity("Tahdeera.Domain.Entities.WorkspaceStudent", b =>
@@ -2933,6 +3274,27 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                     b.Navigation("Workspace");
                 });
 
+            modelBuilder.Entity("Tahdeera.Domain.Entities.PaymentAllocation", b =>
+                {
+                    b.HasOne("Tahdeera.Domain.Entities.StudentCharge", "Charge")
+                        .WithMany("Allocations")
+                        .HasForeignKey("ChargeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_payment_allocations_student_charges_charge_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.StudentPayment", "Payment")
+                        .WithMany("Allocations")
+                        .HasForeignKey("PaymentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_payment_allocations_student_payments_payment_id");
+
+                    b.Navigation("Charge");
+
+                    b.Navigation("Payment");
+                });
+
             modelBuilder.Entity("Tahdeera.Domain.Entities.RefreshToken", b =>
                 {
                     b.HasOne("Tahdeera.Domain.Entities.AppUser", "User")
@@ -3011,6 +3373,62 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                     b.Navigation("Student");
                 });
 
+            modelBuilder.Entity("Tahdeera.Domain.Entities.StudentAccount", b =>
+                {
+                    b.HasOne("Tahdeera.Domain.Entities.AppUser", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_student_accounts_app_users_created_by_user_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.WorkspaceStudent", "WorkspaceStudent")
+                        .WithOne("StudentAccount")
+                        .HasForeignKey("Tahdeera.Domain.Entities.StudentAccount", "WorkspaceStudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_student_accounts_workspace_students_workspace_student_id");
+
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("WorkspaceStudent");
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.StudentCharge", b =>
+                {
+                    b.HasOne("Tahdeera.Domain.Entities.AppUser", "CancelledByUser")
+                        .WithMany()
+                        .HasForeignKey("CancelledByUserId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_student_charges_app_users_cancelled_by_user_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.AppUser", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_student_charges_app_users_created_by_user_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.Group", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_student_charges_groups_group_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.StudentAccount", "StudentAccount")
+                        .WithMany("Charges")
+                        .HasForeignKey("StudentAccountId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_student_charges_student_accounts_student_account_id");
+
+                    b.Navigation("CancelledByUser");
+
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("Group");
+
+                    b.Navigation("StudentAccount");
+                });
+
             modelBuilder.Entity("Tahdeera.Domain.Entities.StudentCredential", b =>
                 {
                     b.HasOne("Tahdeera.Domain.Entities.AppUser", "IssuedByUser")
@@ -3047,6 +3465,43 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                     b.Navigation("Student");
 
                     b.Navigation("Workspace");
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.StudentPayment", b =>
+                {
+                    b.HasOne("Tahdeera.Domain.Entities.AppUser", "RecordedByUser")
+                        .WithMany()
+                        .HasForeignKey("RecordedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_student_payments_app_users_recorded_by_user_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.AppUser", "ReversedByUser")
+                        .WithMany()
+                        .HasForeignKey("ReversedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_student_payments_app_users_reversed_by_user_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.StudentPayment", "ReversesPayment")
+                        .WithMany()
+                        .HasForeignKey("ReversesPaymentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_student_payments_student_payments_reverses_payment_id");
+
+                    b.HasOne("Tahdeera.Domain.Entities.StudentAccount", "StudentAccount")
+                        .WithMany("Payments")
+                        .HasForeignKey("StudentAccountId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_student_payments_student_accounts_student_account_id");
+
+                    b.Navigation("RecordedByUser");
+
+                    b.Navigation("ReversedByUser");
+
+                    b.Navigation("ReversesPayment");
+
+                    b.Navigation("StudentAccount");
                 });
 
             modelBuilder.Entity("Tahdeera.Domain.Entities.SubscriptionPayment", b =>
@@ -3118,6 +3573,18 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                     b.Navigation("CreatedByUser");
 
                     b.Navigation("User");
+
+                    b.Navigation("Workspace");
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.WorkspaceReceiptSequence", b =>
+                {
+                    b.HasOne("Tahdeera.Domain.Entities.Workspace", "Workspace")
+                        .WithMany()
+                        .HasForeignKey("WorkspaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_workspace_receipt_sequences_workspaces_workspace_id");
 
                     b.Navigation("Workspace");
                 });
@@ -3279,6 +3746,23 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                     b.Navigation("WorkspaceEnrollments");
                 });
 
+            modelBuilder.Entity("Tahdeera.Domain.Entities.StudentAccount", b =>
+                {
+                    b.Navigation("Charges");
+
+                    b.Navigation("Payments");
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.StudentCharge", b =>
+                {
+                    b.Navigation("Allocations");
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.StudentPayment", b =>
+                {
+                    b.Navigation("Allocations");
+                });
+
             modelBuilder.Entity("Tahdeera.Domain.Entities.SubscriptionPlan", b =>
                 {
                     b.Navigation("Subscriptions");
@@ -3297,6 +3781,11 @@ namespace Tahdeera.Infrastructure.Persistence.Migrations
                     b.Navigation("Subscriptions");
 
                     b.Navigation("WorkspaceAccesses");
+                });
+
+            modelBuilder.Entity("Tahdeera.Domain.Entities.WorkspaceStudent", b =>
+                {
+                    b.Navigation("StudentAccount");
                 });
 
             modelBuilder.Entity("Tahdeera.Domain.Entities.WorkspaceSubscription", b =>

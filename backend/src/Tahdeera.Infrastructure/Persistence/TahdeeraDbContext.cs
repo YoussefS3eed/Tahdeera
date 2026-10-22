@@ -45,6 +45,13 @@ public class TahdeeraDbContext : IdentityDbContext<IdentityUser<Guid>, IdentityR
     public DbSet<WhatsAppSenderConnection> WhatsAppSenderConnections => Set<WhatsAppSenderConnection>();
     public DbSet<WorkspaceWhatsAppUsageLedger> WorkspaceWhatsAppUsageLedgers => Set<WorkspaceWhatsAppUsageLedger>();
 
+    // Milestone B5 Student Tuition Finance DbSets
+    public DbSet<StudentAccount> StudentAccounts => Set<StudentAccount>();
+    public DbSet<StudentCharge> StudentCharges => Set<StudentCharge>();
+    public DbSet<StudentPayment> StudentPayments => Set<StudentPayment>();
+    public DbSet<PaymentAllocation> PaymentAllocations => Set<PaymentAllocation>();
+    public DbSet<WorkspaceReceiptSequence> WorkspaceReceiptSequences => Set<WorkspaceReceiptSequence>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

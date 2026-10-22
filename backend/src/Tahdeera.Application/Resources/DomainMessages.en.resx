@@ -674,4 +674,175 @@
   <data name="WABA_CONNECTION_NOT_FOUND_Detail" xml:space="preserve">
     <value>No active WhatsApp sender connection found for this workspace.</value>
   </data>
+
+  <!-- Milestone B5 Financial Ledger Error Codes -->
+  <data name="FINANCES_UNAUTHORIZED_ROLE" xml:space="preserve">
+    <value>You do not have permission to access or manage financial accounts.</value>
+  </data>
+  <data name="FINANCES_UNAUTHORIZED_ROLE_Title" xml:space="preserve">
+    <value>Financial Access Unauthorized</value>
+  </data>
+  <data name="FINANCES_UNAUTHORIZED_ROLE_Detail" xml:space="preserve">
+    <value>You do not have permission to access or manage financial accounts.</value>
+  </data>
+
+  <data name="STUDENT_NOT_IN_WORKSPACE" xml:space="preserve">
+    <value>The student is not enrolled in this workspace.</value>
+  </data>
+  <data name="STUDENT_NOT_IN_WORKSPACE_Title" xml:space="preserve">
+    <value>Student Not Found</value>
+  </data>
+  <data name="STUDENT_NOT_IN_WORKSPACE_Detail" xml:space="preserve">
+    <value>The student is not enrolled in this workspace.</value>
+  </data>
+
+  <data name="STUDENT_ACCOUNT_NOT_FOUND" xml:space="preserve">
+    <value>The student's financial account was not found.</value>
+  </data>
+  <data name="STUDENT_ACCOUNT_NOT_FOUND_Title" xml:space="preserve">
+    <value>Student Account Not Found</value>
+  </data>
+  <data name="STUDENT_ACCOUNT_NOT_FOUND_Detail" xml:space="preserve">
+    <value>The student's financial account was not found.</value>
+  </data>
+
+  <data name="CHARGE_NOT_FOUND" xml:space="preserve">
+    <value>The requested charge was not found.</value>
+  </data>
+  <data name="CHARGE_NOT_FOUND_Title" xml:space="preserve">
+    <value>Charge Not Found</value>
+  </data>
+  <data name="CHARGE_NOT_FOUND_Detail" xml:space="preserve">
+    <value>The requested charge was not found.</value>
+  </data>
+
+  <data name="PAYMENT_NOT_FOUND" xml:space="preserve">
+    <value>The requested payment was not found.</value>
+  </data>
+  <data name="PAYMENT_NOT_FOUND_Title" xml:space="preserve">
+    <value>Payment Not Found</value>
+  </data>
+  <data name="PAYMENT_NOT_FOUND_Detail" xml:space="preserve">
+    <value>The requested payment was not found.</value>
+  </data>
+
+  <data name="AMOUNT_MUST_BE_POSITIVE" xml:space="preserve">
+    <value>Amount must be strictly greater than zero.</value>
+  </data>
+  <data name="AMOUNT_MUST_BE_POSITIVE_Title" xml:space="preserve">
+    <value>Invalid Amount</value>
+  </data>
+  <data name="AMOUNT_MUST_BE_POSITIVE_Detail" xml:space="preserve">
+    <value>Amount must be strictly greater than zero.</value>
+  </data>
+
+  <data name="CHARGE_DESCRIPTION_REQUIRED" xml:space="preserve">
+    <value>Charge description is required and must be at least 3 characters.</value>
+  </data>
+  <data name="CHARGE_DESCRIPTION_REQUIRED_Title" xml:space="preserve">
+    <value>Description Required</value>
+  </data>
+  <data name="CHARGE_DESCRIPTION_REQUIRED_Detail" xml:space="preserve">
+    <value>Charge description is required and must be at least 3 characters.</value>
+  </data>
+
+  <data name="CANCELLATION_REASON_TOO_SHORT" xml:space="preserve">
+    <value>Cancellation or write-off reason is required and must be at least 5 characters.</value>
+  </data>
+  <data name="CANCELLATION_REASON_TOO_SHORT_Title" xml:space="preserve">
+    <value>Cancellation Reason Too Short</value>
+  </data>
+  <data name="CANCELLATION_REASON_TOO_SHORT_Detail" xml:space="preserve">
+    <value>Cancellation or write-off reason is required and must be at least 5 characters.</value>
+  </data>
+
+  <data name="REVERSAL_REASON_TOO_SHORT" xml:space="preserve">
+    <value>Payment reversal reason is required and must be at least 5 characters.</value>
+  </data>
+  <data name="REVERSAL_REASON_TOO_SHORT_Title" xml:space="preserve">
+    <value>Reversal Reason Too Short</value>
+  </data>
+  <data name="REVERSAL_REASON_TOO_SHORT_Detail" xml:space="preserve">
+    <value>Payment reversal reason is required and must be at least 5 characters.</value>
+  </data>
+
+  <data name="CANNOT_CANCEL_NON_OPEN_CHARGE" xml:space="preserve">
+    <value>Cannot cancel a charge that is not in Open status.</value>
+  </data>
+  <data name="CANNOT_CANCEL_NON_OPEN_CHARGE_Title" xml:space="preserve">
+    <value>Charge Not Open</value>
+  </data>
+  <data name="CANNOT_CANCEL_NON_OPEN_CHARGE_Detail" xml:space="preserve">
+    <value>Cannot cancel a charge that is not in Open status.</value>
+  </data>
+
+  <data name="CANNOT_WRITEOFF_NON_OPEN_CHARGE" xml:space="preserve">
+    <value>Cannot write off a charge that is not in Open status.</value>
+  </data>
+  <data name="CANNOT_WRITEOFF_NON_OPEN_CHARGE_Title" xml:space="preserve">
+    <value>Charge Not Open</value>
+  </data>
+  <data name="CANNOT_WRITEOFF_NON_OPEN_CHARGE_Detail" xml:space="preserve">
+    <value>Cannot write off a charge that is not in Open status.</value>
+  </data>
+
+  <data name="PAYMENT_ALREADY_REVERSED" xml:space="preserve">
+    <value>This payment has already been reversed.</value>
+  </data>
+  <data name="PAYMENT_ALREADY_REVERSED_Title" xml:space="preserve">
+    <value>Payment Already Reversed</value>
+  </data>
+  <data name="PAYMENT_ALREADY_REVERSED_Detail" xml:space="preserve">
+    <value>This payment has already been reversed.</value>
+  </data>
+
+  <data name="INVALID_PAYMENT_METHOD" xml:space="preserve">
+    <value>The specified payment method is invalid.</value>
+  </data>
+  <data name="INVALID_PAYMENT_METHOD_Title" xml:space="preserve">
+    <value>Invalid Payment Method</value>
+  </data>
+  <data name="INVALID_PAYMENT_METHOD_Detail" xml:space="preserve">
+    <value>The specified payment method is invalid.</value>
+  </data>
+
+  <data name="PAYMENT_DATE_CANNOT_BE_FUTURE" xml:space="preserve">
+    <value>Payment date cannot be in the future.</value>
+  </data>
+  <data name="PAYMENT_DATE_CANNOT_BE_FUTURE_Title" xml:space="preserve">
+    <value>Invalid Payment Date</value>
+  </data>
+  <data name="PAYMENT_DATE_CANNOT_BE_FUTURE_Detail" xml:space="preserve">
+    <value>Payment date cannot be in the future.</value>
+  </data>
+
+  <data name="ALLOCATION_EXCEEDS_PAYMENT" xml:space="preserve">
+    <value>Total allocated amounts exceed the payment amount.</value>
+  </data>
+  <data name="ALLOCATION_EXCEEDS_PAYMENT_Title" xml:space="preserve">
+    <value>Allocation Exceeds Payment</value>
+  </data>
+  <data name="ALLOCATION_EXCEEDS_PAYMENT_Detail" xml:space="preserve">
+    <value>Total allocated amounts exceed the payment amount.</value>
+  </data>
+
+  <data name="ALLOCATION_EXCEEDS_CHARGE_BALANCE" xml:space="preserve">
+    <value>Allocated amount exceeds the charge's remaining unpaid balance.</value>
+  </data>
+  <data name="ALLOCATION_EXCEEDS_CHARGE_BALANCE_Title" xml:space="preserve">
+    <value>Allocation Exceeds Charge Balance</value>
+  </data>
+  <data name="ALLOCATION_EXCEEDS_CHARGE_BALANCE_Detail" xml:space="preserve">
+    <value>Allocated amount exceeds the charge's remaining unpaid balance.</value>
+  </data>
+
+  <data name="GROUP_NOT_FOUND_IN_WORKSPACE" xml:space="preserve">
+    <value>The specified group was not found in this workspace.</value>
+  </data>
+  <data name="GROUP_NOT_FOUND_IN_WORKSPACE_Title" xml:space="preserve">
+    <value>Group Not Found</value>
+  </data>
+  <data name="GROUP_NOT_FOUND_IN_WORKSPACE_Detail" xml:space="preserve">
+    <value>The specified group was not found in this workspace.</value>
+  </data>
 </root>

@@ -38,5 +38,12 @@ public interface IUnitOfWork : IDisposable
     IWhatsAppSenderConnectionRepository WhatsAppSenderConnections { get; }
     IWorkspaceWhatsAppUsageLedgerRepository WorkspaceWhatsAppUsageLedgers { get; }
 
+    // Milestone B5 Student Tuition Finance Repositories
+    IStudentAccountRepository StudentAccounts { get; }
+    IStudentChargeRepository StudentCharges { get; }
+    IStudentPaymentRepository StudentPayments { get; }
+    IPaymentAllocationRepository PaymentAllocations { get; }
+    IWorkspaceReceiptSequenceRepository WorkspaceReceiptSequences { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

@@ -14,4 +14,6 @@ public static class Permissions
     public const string AttendanceOwnerOverride = "Attendance.OwnerOverride";
     public const string WhatsAppManage = "WhatsApp.Manage";
     public const string WhatsAppView = "WhatsApp.View";
+    public const string FinancesManage = "Finances.Manage";
+    public const string FinancesView = "Finances.View";
 }
