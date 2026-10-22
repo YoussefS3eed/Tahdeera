@@ -18,6 +18,15 @@ public class StudentAccountRepository : GenericRepository<StudentAccount>, IStud
             .FirstOrDefaultAsync(a => a.WorkspaceStudentId == workspaceStudentId, ct);
     }
 
+    public async Task<StudentAccount?> GetByWorkspaceStudentIdForUpdateAsync(Guid workspaceStudentId, CancellationToken ct = default)
+    {
+        return await _dbSet
+            .FromSqlRaw("SELECT * FROM student_accounts WHERE workspace_student_id = {0} FOR UPDATE", workspaceStudentId)
+            .Include(a => a.Charges)
+            .Include(a => a.Payments)
+            .FirstOrDefaultAsync(ct);
+    }
+
     public async Task<StudentAccount?> GetByIdAsync(Guid id, CancellationToken ct = default)
     {
         return await _dbSet

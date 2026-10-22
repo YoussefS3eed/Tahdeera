@@ -121,6 +121,8 @@ public class WorkspacePermissionAuthorizationHandler : AuthorizationHandler<Work
             Permissions.AttendanceOwnerOverride => member.Role is "Owner",
             Permissions.WhatsAppManage => member.Role is "Owner",
             Permissions.WhatsAppView => member.Role is "Owner" or "Teacher",
+            Permissions.FinancesManage => member.Role is "Owner" or "Accountant",
+            Permissions.FinancesView => member.Role is "Owner" or "Accountant",
             _ => false
         };
 

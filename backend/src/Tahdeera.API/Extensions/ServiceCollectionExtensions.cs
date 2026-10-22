@@ -104,6 +104,12 @@ public static class ServiceCollectionExtensions
             options.AddPolicy(Tahdeera.Application.Common.Security.Permissions.WhatsAppManage, policy =>
                 policy.Requirements.Add(new WorkspacePermissionRequirement(Tahdeera.Application.Common.Security.Permissions.WhatsAppManage)));
 
+            options.AddPolicy(Tahdeera.Application.Common.Security.Permissions.FinancesManage, policy =>
+                policy.Requirements.Add(new WorkspacePermissionRequirement(Tahdeera.Application.Common.Security.Permissions.FinancesManage)));
+
+            options.AddPolicy(Tahdeera.Application.Common.Security.Permissions.FinancesView, policy =>
+                policy.Requirements.Add(new WorkspacePermissionRequirement(Tahdeera.Application.Common.Security.Permissions.FinancesView)));
+
             options.AddPolicy(Tahdeera.Application.Common.Security.Permissions.WhatsAppView, policy =>
                 policy.Requirements.Add(new WorkspacePermissionRequirement(Tahdeera.Application.Common.Security.Permissions.WhatsAppView)));
         });

@@ -32,6 +32,9 @@ public static class DependencyInjection
             cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
         });
 
+        // 4. Financial Services
+        services.AddScoped<Tahdeera.Application.Features.Finances.Services.IPaymentAllocationEngine, Tahdeera.Application.Features.Finances.Services.PaymentAllocationEngine>();
+
         return services;
     }
 
