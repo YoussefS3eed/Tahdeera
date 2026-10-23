@@ -906,4 +906,45 @@
   <data name="FEATURE_FLAG_DISABLED_Detail" xml:space="preserve">
     <value>هذه الميزة غير مفعلة في باقة الاشتراك الحالية لمركزك.</value>
   </data>
+
+  <!-- Milestone B5 Wave 4 Canonical Error Codes -->
+  <data name="INVALID_RECEIPT_VERIFICATION_TOKEN" xml:space="preserve">
+    <value>رمز التحقق من الإيصال غير صالح أو المعاملة غير موجودة.</value>
+  </data>
+  <data name="INVALID_RECEIPT_VERIFICATION_TOKEN_Title" xml:space="preserve">
+    <value>رمز التحقق غير صالح</value>
+  </data>
+  <data name="INVALID_RECEIPT_VERIFICATION_TOKEN_Detail" xml:space="preserve">
+    <value>رمز التحقق من الإيصال غير صالح أو المعاملة غير موجودة.</value>
+  </data>
+
+  <data name="PAGE_SIZE_EXCEEDED" xml:space="preserve">
+    <value>حجم الصفحة المطلوب لا يمكن أن يتجاوز 100 عنصر.</value>
+  </data>
+  <data name="PAGE_SIZE_EXCEEDED_Title" xml:space="preserve">
+    <value>تجاوز حجم الصفحة الأقصى</value>
+  </data>
+  <data name="PAGE_SIZE_EXCEEDED_Detail" xml:space="preserve">
+    <value>حجم الصفحة المطلوب لا يمكن أن يتجاوز 100 عنصر.</value>
+  </data>
+
+  <data name="INVALID_FINANCE_STATUS_FILTER" xml:space="preserve">
+    <value>حالة الدفع المحددة غير صالحة (القيم المدعومة: Paid, Partial, Unpaid, Settled).</value>
+  </data>
+  <data name="INVALID_FINANCE_STATUS_FILTER_Title" xml:space="preserve">
+    <value>فلتر حالة الدفع غير صالح</value>
+  </data>
+  <data name="INVALID_FINANCE_STATUS_FILTER_Detail" xml:space="preserve">
+    <value>حالة الدفع المحددة غير صالحة (القيم المدعومة: Paid, Partial, Unpaid, Settled).</value>
+  </data>
+
+  <data name="FINANCE_ACCESS_DENIED" xml:space="preserve">
+    <value>ليس لديك صلاحية للوصول إلى السجلات المالية لهذا المركز.</value>
+  </data>
+  <data name="FINANCE_ACCESS_DENIED_Title" xml:space="preserve">
+    <value>تم رفض الوصول المالي</value>
+  </data>
+  <data name="FINANCE_ACCESS_DENIED_Detail" xml:space="preserve">
+    <value>ليس لديك صلاحية للوصول إلى السجلات المالية لهذا المركز.</value>
+  </data>
 </root>

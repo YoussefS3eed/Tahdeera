@@ -1,5 +1,3 @@
-using System.Security.Cryptography;
-using System.Text;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,9 +8,10 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NSubstitute;
+using System.Security.Cryptography;
+using System.Text;
 using Tahdeera.API.Security;
 using Tahdeera.Infrastructure.Configuration;
-using Xunit;
 
 namespace Tahdeera.Application.UnitTests.WhatsApp;
 

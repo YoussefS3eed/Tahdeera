@@ -22,15 +22,15 @@ public sealed record WhatsAppSenderDescriptor
         string accessToken,
         string displayPhone,
         string? businessName) => new()
-    {
-        WorkspaceId = workspaceId,
-        SenderMode = WhatsAppSenderMode.PlatformManaged,
-        PhoneNumberId = phoneNumberId,
-        AccessToken = accessToken,
-        DisplayPhoneNumber = displayPhone,
-        VerifiedBusinessName = businessName,
-        IsActive = true
-    };
+        {
+            WorkspaceId = workspaceId,
+            SenderMode = WhatsAppSenderMode.PlatformManaged,
+            PhoneNumberId = phoneNumberId,
+            AccessToken = accessToken,
+            DisplayPhoneNumber = displayPhone,
+            VerifiedBusinessName = businessName,
+            IsActive = true
+        };
 
     public static WhatsAppSenderDescriptor Workspace(
         Guid workspaceId,
@@ -38,15 +38,15 @@ public sealed record WhatsAppSenderDescriptor
         string decryptedAccessToken,
         string displayPhone,
         string? businessName) => new()
-    {
-        WorkspaceId = workspaceId,
-        SenderMode = WhatsAppSenderMode.WorkspaceOwned,
-        PhoneNumberId = phoneNumberId,
-        AccessToken = decryptedAccessToken,
-        DisplayPhoneNumber = displayPhone,
-        VerifiedBusinessName = businessName,
-        IsActive = true
-    };
+        {
+            WorkspaceId = workspaceId,
+            SenderMode = WhatsAppSenderMode.WorkspaceOwned,
+            PhoneNumberId = phoneNumberId,
+            AccessToken = decryptedAccessToken,
+            DisplayPhoneNumber = displayPhone,
+            VerifiedBusinessName = businessName,
+            IsActive = true
+        };
 
     public static WhatsAppSenderDescriptor Disabled(Guid workspaceId) => new()
     {
@@ -63,15 +63,15 @@ public sealed record WhatsAppSenderDescriptor
         Guid workspaceId,
         WhatsAppSenderMode mode,
         string reason) => new()
-    {
-        WorkspaceId = workspaceId,
-        SenderMode = mode,
-        PhoneNumberId = string.Empty,
-        AccessToken = string.Empty,
-        DisplayPhoneNumber = string.Empty,
-        IsActive = false,
-        InactiveReason = reason
-    };
+        {
+            WorkspaceId = workspaceId,
+            SenderMode = mode,
+            PhoneNumberId = string.Empty,
+            AccessToken = string.Empty,
+            DisplayPhoneNumber = string.Empty,
+            IsActive = false,
+            InactiveReason = reason
+        };
 
     public override string ToString() =>
         $"WhatsAppSenderDescriptor [WorkspaceId={WorkspaceId}, Mode={SenderMode}, PhoneId={PhoneNumberId}, IsActive={IsActive}]";

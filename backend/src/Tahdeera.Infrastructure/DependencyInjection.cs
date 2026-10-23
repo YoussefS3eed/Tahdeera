@@ -1,14 +1,16 @@
-using Tahdeera.Infrastructure.Messaging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Quartz;
 using System.Text;
 using Tahdeera.Application.Common.Interfaces;
 using Tahdeera.Domain.Repositories;
 using Tahdeera.Infrastructure.BackgroundJobs;
+using Tahdeera.Infrastructure.Jobs.Finances;
+using Tahdeera.Infrastructure.Messaging;
 using Tahdeera.Infrastructure.Persistence;
 using Tahdeera.Infrastructure.Persistence.Repositories;
 using Tahdeera.Infrastructure.Services;
@@ -111,6 +113,20 @@ public static class DependencyInjection
         services.Configure<OutboxWorkerOptions>(configuration.GetSection(OutboxWorkerOptions.SectionName));
         services.AddHostedService<SessionCompletionWorker>();
         services.AddHostedService<MessageOutboxRelayWorker>();
+
+        // Quartz Scheduler & Background Jobs
+        services.AddQuartz(q =>
+        {
+            var jobKey = new JobKey("TuitionReminderJob", "Finances");
+            q.AddJob<TuitionReminderJob>(opts => opts.WithIdentity(jobKey));
+
+            q.AddTrigger(opts => opts
+                .ForJob(jobKey)
+                .WithIdentity("TuitionReminderJob-Trigger", "Finances")
+                .WithCronSchedule("0 0 10 ? * MON"));
+        });
+
+        services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
         // Repositories & Unit of Work
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));

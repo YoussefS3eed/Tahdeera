@@ -61,7 +61,7 @@ public class MakeupAttendanceIntegrationTests : IAsyncLifetime
             Id = Guid.NewGuid(),
             WorkspaceId = workspace.Id,
             StudentId = student.Id,
-            
+
             Status = WorkspaceStudentStatus.Active
         };
         await db.WorkspaceStudents.AddAsync(wsStudent);

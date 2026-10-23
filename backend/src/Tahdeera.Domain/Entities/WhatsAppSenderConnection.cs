@@ -1,6 +1,5 @@
 using Tahdeera.Domain.Common;
 using Tahdeera.Domain.Enums;
-using Tahdeera.Domain.Exceptions;
 
 namespace Tahdeera.Domain.Entities;
 

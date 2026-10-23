@@ -1,7 +1,6 @@
 using FluentAssertions;
 using Tahdeera.Application.Common.Models.WhatsApp;
 using Tahdeera.Application.Features.WhatsApp.Queries.GetWhatsAppTemplates;
-using Xunit;
 
 namespace Tahdeera.Application.UnitTests.WhatsApp;
 

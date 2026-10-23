@@ -2,9 +2,7 @@ using FluentAssertions;
 using NSubstitute;
 using Tahdeera.Application.Features.WhatsApp.Commands.RetryWhatsAppMessage;
 using Tahdeera.Domain.Entities;
-using Tahdeera.Domain.Enums;
 using Tahdeera.Domain.Repositories;
-using Xunit;
 
 namespace Tahdeera.Application.UnitTests.WhatsApp;
 

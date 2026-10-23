@@ -4,8 +4,6 @@ using Tahdeera.Application.Common.Interfaces;
 using Tahdeera.Application.Features.WhatsApp.Queries.GetWorkspaceWhatsAppMessages;
 using Tahdeera.Application.UnitTests.Helpers;
 using Tahdeera.Domain.Entities;
-using Tahdeera.Domain.Enums;
-using Xunit;
 
 namespace Tahdeera.Application.UnitTests.WhatsApp;
 

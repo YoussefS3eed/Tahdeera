@@ -1,8 +1,8 @@
 namespace Tahdeera.Infrastructure.Services;
 
-using System.Net.Http.Json;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Net.Http.Json;
 using Tahdeera.Application.Common.Interfaces.Services;
 using Tahdeera.Application.Common.Models.WhatsApp;
 using Tahdeera.Infrastructure.Configuration;

@@ -3,12 +3,10 @@ using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Tahdeera.Application.Common.Interfaces;
 using Tahdeera.Application.Features.Finances.Commands.RecordStudentPayment;
-using Tahdeera.Application.Features.Finances.DTOs;
 using Tahdeera.Application.Features.Finances.Services;
 using Tahdeera.Domain.Entities;
 using Tahdeera.Domain.Enums;
 using Tahdeera.Domain.Repositories;
-using Xunit;
 
 namespace Tahdeera.Application.UnitTests.Finances;
 

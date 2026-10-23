@@ -6,7 +6,6 @@ using Tahdeera.Domain.Entities;
 using Tahdeera.Domain.Enums;
 using Tahdeera.Domain.Exceptions;
 using Tahdeera.Domain.Repositories;
-using Xunit;
 
 namespace Tahdeera.Application.UnitTests.Finances;
 

@@ -6,7 +6,6 @@ using Tahdeera.Application.Features.WhatsApp.Commands.ProcessWhatsAppWebhook;
 using Tahdeera.Domain.Entities;
 using Tahdeera.Domain.Enums;
 using Tahdeera.Domain.Repositories;
-using Xunit;
 
 namespace Tahdeera.Application.UnitTests.WhatsApp;
 

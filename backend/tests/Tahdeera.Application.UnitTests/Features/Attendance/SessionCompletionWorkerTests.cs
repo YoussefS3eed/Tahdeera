@@ -9,7 +9,6 @@ using Tahdeera.Application.UnitTests.Common;
 using Tahdeera.Domain.Entities;
 using Tahdeera.Domain.Enums;
 using Tahdeera.Infrastructure.BackgroundJobs;
-using Tahdeera.Infrastructure.Persistence;
 
 namespace Tahdeera.Application.UnitTests.Features.Attendance;
 

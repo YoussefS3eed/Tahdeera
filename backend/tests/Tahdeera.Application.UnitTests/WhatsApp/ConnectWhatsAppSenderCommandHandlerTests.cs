@@ -5,9 +5,7 @@ using Tahdeera.Application.Common.Interfaces.Services;
 using Tahdeera.Application.Common.Models.WhatsApp;
 using Tahdeera.Application.Features.WhatsApp.Commands.ConnectWhatsAppSender;
 using Tahdeera.Domain.Entities;
-using Tahdeera.Domain.Enums;
 using Tahdeera.Domain.Repositories;
-using Xunit;
 
 namespace Tahdeera.Application.UnitTests.WhatsApp;
 

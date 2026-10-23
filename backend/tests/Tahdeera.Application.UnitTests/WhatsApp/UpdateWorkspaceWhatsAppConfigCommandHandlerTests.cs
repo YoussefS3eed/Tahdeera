@@ -3,9 +3,7 @@ using NSubstitute;
 using Tahdeera.Application.Common.Interfaces.Services;
 using Tahdeera.Application.Features.WhatsApp.Commands.UpdateWorkspaceWhatsAppConfig;
 using Tahdeera.Domain.Entities;
-using Tahdeera.Domain.Enums;
 using Tahdeera.Domain.Repositories;
-using Xunit;
 
 namespace Tahdeera.Application.UnitTests.WhatsApp;
 

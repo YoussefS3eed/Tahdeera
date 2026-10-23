@@ -1,9 +1,8 @@
-using System.Net;
-using System.Net.Http.Json;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Tahdeera.API.Contracts.Requests;
+using System.Net;
+using System.Net.Http.Json;
 using Tahdeera.Application.Features.Workspaces.Commands.CreateWorkspace;
 using Tahdeera.Application.Features.Workspaces.DTOs;
 using Tahdeera.Domain.Entities;
@@ -12,7 +11,6 @@ using Tahdeera.Domain.ValueObjects;
 using Tahdeera.Infrastructure.Persistence;
 using Tahdeera.IntegrationTests.Fixtures;
 using Tahdeera.IntegrationTests.Helpers;
-using Xunit;
 
 namespace Tahdeera.IntegrationTests.Finances;
 

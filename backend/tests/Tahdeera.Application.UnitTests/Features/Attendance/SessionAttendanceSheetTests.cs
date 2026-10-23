@@ -5,7 +5,6 @@ using Tahdeera.Application.Features.Attendance.Queries.GetSessionAttendanceSheet
 using Tahdeera.Application.Features.Attendance.Queries.GetStudentAttendanceHistory;
 using Tahdeera.Application.UnitTests.Common;
 using Tahdeera.Domain.Entities;
-using Tahdeera.Domain.Enums;
 using Tahdeera.Infrastructure.Persistence.Repositories;
 
 namespace Tahdeera.Application.UnitTests.Features.Attendance;

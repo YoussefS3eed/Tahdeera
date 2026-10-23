@@ -1,8 +1,8 @@
+using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using System.Net;
 using System.Text.Json;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Tahdeera.Application.Common.Interfaces;
 using Tahdeera.Domain.Enums;
 using Tahdeera.Domain.Exceptions;

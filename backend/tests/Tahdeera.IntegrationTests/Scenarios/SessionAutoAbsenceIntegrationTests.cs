@@ -59,7 +59,7 @@ public class SessionAutoAbsenceIntegrationTests : IAsyncLifetime
             Id = Guid.NewGuid(),
             WorkspaceId = workspace.Id,
             StudentId = student1.Id,
-            
+
             Status = WorkspaceStudentStatus.Active
         };
         await db.WorkspaceStudents.AddAsync(wsStudent1);
@@ -74,7 +74,7 @@ public class SessionAutoAbsenceIntegrationTests : IAsyncLifetime
             Id = Guid.NewGuid(),
             WorkspaceId = workspace.Id,
             StudentId = student2.Id,
-            
+
             Status = WorkspaceStudentStatus.Active
         };
         await db.WorkspaceStudents.AddAsync(wsStudent2);

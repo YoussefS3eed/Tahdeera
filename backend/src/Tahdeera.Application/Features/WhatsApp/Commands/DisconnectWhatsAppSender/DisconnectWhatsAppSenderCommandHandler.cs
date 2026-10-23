@@ -3,7 +3,6 @@ namespace Tahdeera.Application.Features.WhatsApp.Commands.DisconnectWhatsAppSend
 using MediatR;
 using Tahdeera.Application.Common.Interfaces.Services;
 using Tahdeera.Domain.Common;
-using Tahdeera.Domain.Enums;
 using Tahdeera.Domain.Repositories;
 
 public sealed class DisconnectWhatsAppSenderCommandHandler

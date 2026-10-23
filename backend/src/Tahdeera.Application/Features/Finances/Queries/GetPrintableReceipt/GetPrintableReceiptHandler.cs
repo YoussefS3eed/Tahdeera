@@ -1,8 +1,8 @@
+using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Tahdeera.Application.Common.Interfaces;
 using Tahdeera.Application.Common.Utilities;
 using Tahdeera.Application.Features.Finances.DTOs;
@@ -127,7 +127,7 @@ public class GetPrintableReceiptHandler : IRequestHandler<GetPrintableReceiptQue
 
         string amountInWordsArabic = Tafqeet.Convert(payment.Amount, "EGP");
 
-        var payloadToSign = $"{payment.ReceiptNumber}:{payment.Amount:F2}:{payment.PaidAt:O}:{request.WorkspaceId}:{payment.RecordedByUserId}";
+        var payloadToSign = FormattableString.Invariant($"{payment.ReceiptNumber}:{payment.Amount:F2}:{payment.PaidAt:O}:{request.WorkspaceId}:{payment.RecordedByUserId}");
         var keyBytes = Encoding.UTF8.GetBytes(request.WorkspaceId.ToString());
         var hashBytes = HMACSHA256.HashData(keyBytes, Encoding.UTF8.GetBytes(payloadToSign));
         var verificationHash = Convert.ToHexString(hashBytes).ToLowerInvariant();

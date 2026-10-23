@@ -1,9 +1,9 @@
+using Microsoft.Extensions.Logging;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Microsoft.Extensions.Logging;
 using Tahdeera.Application.Common.Interfaces.Services;
 using Tahdeera.Application.Common.Models;
 

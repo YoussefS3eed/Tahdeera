@@ -6,7 +6,6 @@ using Microsoft.Extensions.Options;
 using Tahdeera.Application.Common.Interfaces;
 using Tahdeera.Domain.Entities;
 using Tahdeera.Domain.Enums;
-using Tahdeera.Domain.Repositories;
 using Tahdeera.Infrastructure.Persistence;
 
 namespace Tahdeera.Infrastructure.BackgroundJobs;

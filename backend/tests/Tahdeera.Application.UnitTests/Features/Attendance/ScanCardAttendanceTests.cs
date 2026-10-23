@@ -1,8 +1,8 @@
-using System.Security.Cryptography;
-using System.Text;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
+using System.Security.Cryptography;
+using System.Text;
 using Tahdeera.Application.Common.Interfaces;
 using Tahdeera.Application.Features.Attendance.Commands.ScanCardAttendance;
 using Tahdeera.Application.UnitTests.Common;

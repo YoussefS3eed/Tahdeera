@@ -2,7 +2,6 @@ using FluentAssertions;
 using Microsoft.Extensions.Options;
 using Tahdeera.Infrastructure.Configuration;
 using Tahdeera.Infrastructure.Services;
-using Xunit;
 
 namespace Tahdeera.Application.UnitTests.WhatsApp;
 

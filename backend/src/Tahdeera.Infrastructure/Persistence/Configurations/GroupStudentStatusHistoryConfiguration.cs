@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Tahdeera.Domain.Entities;
-using Tahdeera.Domain.Enums;
 
 namespace Tahdeera.Infrastructure.Persistence.Configurations;
 

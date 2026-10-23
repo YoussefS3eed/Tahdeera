@@ -1,5 +1,3 @@
-using System.Net;
-using System.Text.Json;
 using FluentAssertions;
 using MassTransit;
 using Microsoft.AspNetCore.DataProtection;
@@ -7,6 +5,8 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NSubstitute;
+using System.Net;
+using System.Text.Json;
 using Tahdeera.Application.Common.Interfaces.Messaging;
 using Tahdeera.Application.Common.Interfaces.Services;
 using Tahdeera.Application.Common.Models;
@@ -16,7 +16,6 @@ using Tahdeera.Domain.Repositories;
 using Tahdeera.Infrastructure.Configuration;
 using Tahdeera.Infrastructure.Messaging.Consumers;
 using Tahdeera.Infrastructure.Services;
-using Xunit;
 
 namespace Tahdeera.Application.UnitTests.Messaging;
 

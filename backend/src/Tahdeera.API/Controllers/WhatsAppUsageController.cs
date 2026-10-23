@@ -1,7 +1,6 @@
 using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Tahdeera.Application.Features.WhatsApp.DTOs;
 using Tahdeera.Application.Features.WhatsApp.Queries.GetWorkspaceWhatsAppUsage;

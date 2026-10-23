@@ -1,6 +1,6 @@
+using FluentAssertions;
 using System.Globalization;
 using System.Resources;
-using FluentAssertions;
 using Tahdeera.Application.Resources;
 
 namespace Tahdeera.Application.UnitTests.Localization;

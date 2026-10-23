@@ -1,8 +1,8 @@
-using System.Net;
 using FluentAssertions;
 using FluentValidation.TestHelper;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
+using System.Net;
 using Tahdeera.Application.Common.Interfaces;
 using Tahdeera.Application.Features.Finances.Commands.RecordStudentPayment;
 using Tahdeera.Application.Features.Finances.DTOs;
@@ -11,7 +11,6 @@ using Tahdeera.Domain.Entities;
 using Tahdeera.Domain.Enums;
 using Tahdeera.Domain.Exceptions;
 using Tahdeera.Domain.Repositories;
-using Xunit;
 
 namespace Tahdeera.Application.UnitTests.Finances;
 

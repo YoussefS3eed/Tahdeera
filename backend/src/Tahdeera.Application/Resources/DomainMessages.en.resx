@@ -906,4 +906,45 @@
   <data name="FEATURE_FLAG_DISABLED_Detail" xml:space="preserve">
     <value>This feature is disabled in your workspace's current subscription plan.</value>
   </data>
+
+  <!-- Milestone B5 Wave 4 Canonical Error Codes -->
+  <data name="INVALID_RECEIPT_VERIFICATION_TOKEN" xml:space="preserve">
+    <value>The receipt verification token is invalid or the transaction does not exist.</value>
+  </data>
+  <data name="INVALID_RECEIPT_VERIFICATION_TOKEN_Title" xml:space="preserve">
+    <value>Invalid Verification Token</value>
+  </data>
+  <data name="INVALID_RECEIPT_VERIFICATION_TOKEN_Detail" xml:space="preserve">
+    <value>The receipt verification token is invalid or the transaction does not exist.</value>
+  </data>
+
+  <data name="PAGE_SIZE_EXCEEDED" xml:space="preserve">
+    <value>Requested page size cannot exceed 100 items.</value>
+  </data>
+  <data name="PAGE_SIZE_EXCEEDED_Title" xml:space="preserve">
+    <value>Page Size Exceeded</value>
+  </data>
+  <data name="PAGE_SIZE_EXCEEDED_Detail" xml:space="preserve">
+    <value>Requested page size cannot exceed 100 items.</value>
+  </data>
+
+  <data name="INVALID_FINANCE_STATUS_FILTER" xml:space="preserve">
+    <value>Specified payment status is invalid (allowed: Paid, Partial, Unpaid, Settled).</value>
+  </data>
+  <data name="INVALID_FINANCE_STATUS_FILTER_Title" xml:space="preserve">
+    <value>Invalid Status Filter</value>
+  </data>
+  <data name="INVALID_FINANCE_STATUS_FILTER_Detail" xml:space="preserve">
+    <value>Specified payment status is invalid (allowed: Paid, Partial, Unpaid, Settled).</value>
+  </data>
+
+  <data name="FINANCE_ACCESS_DENIED" xml:space="preserve">
+    <value>You do not have permission to access financial records for this workspace.</value>
+  </data>
+  <data name="FINANCE_ACCESS_DENIED_Title" xml:space="preserve">
+    <value>Finance Access Denied</value>
+  </data>
+  <data name="FINANCE_ACCESS_DENIED_Detail" xml:space="preserve">
+    <value>You do not have permission to access financial records for this workspace.</value>
+  </data>
 </root>

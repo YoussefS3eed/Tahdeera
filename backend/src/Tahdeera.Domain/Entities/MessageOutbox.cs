@@ -373,7 +373,7 @@ public class MessageOutbox : BaseEntity
         UpdatedAt = DateTimeOffset.UtcNow;
     }
 
-    
+
     public void RecordAttempt(WhatsAppSenderMode mode, string? phoneNumberId)
     {
         SenderMode = mode.ToString();

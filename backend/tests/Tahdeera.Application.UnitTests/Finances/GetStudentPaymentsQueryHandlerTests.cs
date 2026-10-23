@@ -5,7 +5,6 @@ using Tahdeera.Application.Features.Finances.Queries.GetStudentPayments;
 using Tahdeera.Application.UnitTests.Helpers;
 using Tahdeera.Domain.Entities;
 using Tahdeera.Domain.Enums;
-using Xunit;
 
 namespace Tahdeera.Application.UnitTests.Finances;
 

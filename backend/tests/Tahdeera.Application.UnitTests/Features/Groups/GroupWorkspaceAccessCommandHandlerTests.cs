@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Tahdeera.Application.Features.Groups.Commands.GroupWorkspaceAccess;
 using Tahdeera.Application.UnitTests.Common;
 using Tahdeera.Domain.Entities;
-using Tahdeera.Domain.Enums;
 
 namespace Tahdeera.Application.UnitTests.Features.Groups;
 

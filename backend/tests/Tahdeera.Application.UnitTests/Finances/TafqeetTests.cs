@@ -1,6 +1,5 @@
 using FluentAssertions;
 using Tahdeera.Application.Common.Utilities;
-using Xunit;
 
 namespace Tahdeera.Application.UnitTests.Finances;
 

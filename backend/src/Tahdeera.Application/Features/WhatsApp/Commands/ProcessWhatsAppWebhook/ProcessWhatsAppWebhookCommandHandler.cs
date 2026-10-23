@@ -56,60 +56,60 @@ public sealed class ProcessWhatsAppWebhookCommandHandler : IRequestHandler<Proce
                     switch (statusType)
                     {
                         case "delivered":
-                        {
-                            var transitioned = outbox.TransitionToDelivered(eventTime);
-                            if (transitioned)
                             {
-                                var yearMonth = eventTime.UtcDateTime.ToString("yyyy-MM");
-                                var ledger = await _unitOfWork.WorkspaceWhatsAppUsageLedgers.GetOrCreateCurrentMonthAsync(outbox.WorkspaceId, yearMonth, ct);
-                                ledger?.RecordDelivered();
-                                hasChanges = true;
-                                _logger.LogInformation("Outbox message {OutboxId} (wamid: {Wamid}) marked Delivered.", outbox.Id, wamid);
+                                var transitioned = outbox.TransitionToDelivered(eventTime);
+                                if (transitioned)
+                                {
+                                    var yearMonth = eventTime.UtcDateTime.ToString("yyyy-MM");
+                                    var ledger = await _unitOfWork.WorkspaceWhatsAppUsageLedgers.GetOrCreateCurrentMonthAsync(outbox.WorkspaceId, yearMonth, ct);
+                                    ledger?.RecordDelivered();
+                                    hasChanges = true;
+                                    _logger.LogInformation("Outbox message {OutboxId} (wamid: {Wamid}) marked Delivered.", outbox.Id, wamid);
+                                }
+                                else
+                                {
+                                    _logger.LogInformation("Outbox message {OutboxId} (wamid: {Wamid}) was already Delivered. Idempotent no-op.", outbox.Id, wamid);
+                                }
+                                break;
                             }
-                            else
-                            {
-                                _logger.LogInformation("Outbox message {OutboxId} (wamid: {Wamid}) was already Delivered. Idempotent no-op.", outbox.Id, wamid);
-                            }
-                            break;
-                        }
 
                         case "read":
-                        {
-                            outbox.RecordReadReceipt(eventTime);
-                            hasChanges = true;
-                            _logger.LogInformation("Outbox message {OutboxId} (wamid: {Wamid}) marked Read in metadata.", outbox.Id, wamid);
-                            break;
-                        }
+                            {
+                                outbox.RecordReadReceipt(eventTime);
+                                hasChanges = true;
+                                _logger.LogInformation("Outbox message {OutboxId} (wamid: {Wamid}) marked Read in metadata.", outbox.Id, wamid);
+                                break;
+                            }
 
                         case "failed":
-                        {
-                            if (outbox.Status != OutboxMessageStatus.Delivered)
                             {
-                                var err = statusItem.Errors?.FirstOrDefault();
-                                var errCode = err != null ? $"ERR_META_{err.Code}" : "ERR_META_DELIVERY_FAILED";
-                                var errDetails = err?.Title ?? err?.Message ?? err?.ErrorData?.Details ?? "Delivery failed reported by Meta";
+                                if (outbox.Status != OutboxMessageStatus.Delivered)
+                                {
+                                    var err = statusItem.Errors?.FirstOrDefault();
+                                    var errCode = err != null ? $"ERR_META_{err.Code}" : "ERR_META_DELIVERY_FAILED";
+                                    var errDetails = err?.Title ?? err?.Message ?? err?.ErrorData?.Details ?? "Delivery failed reported by Meta";
 
-                                outbox.TransitionToFailedPermanent(errCode, errDetails);
+                                    outbox.TransitionToFailedPermanent(errCode, errDetails);
 
-                                var yearMonth = eventTime.UtcDateTime.ToString("yyyy-MM");
-                                var ledger = await _unitOfWork.WorkspaceWhatsAppUsageLedgers.GetOrCreateCurrentMonthAsync(outbox.WorkspaceId, yearMonth, ct);
-                                ledger?.RecordFailed();
-                                hasChanges = true;
+                                    var yearMonth = eventTime.UtcDateTime.ToString("yyyy-MM");
+                                    var ledger = await _unitOfWork.WorkspaceWhatsAppUsageLedgers.GetOrCreateCurrentMonthAsync(outbox.WorkspaceId, yearMonth, ct);
+                                    ledger?.RecordFailed();
+                                    hasChanges = true;
 
-                                _logger.LogWarning("Outbox message {OutboxId} (wamid: {Wamid}) delivery failed: {Code} - {Details}", outbox.Id, wamid, errCode, errDetails);
+                                    _logger.LogWarning("Outbox message {OutboxId} (wamid: {Wamid}) delivery failed: {Code} - {Details}", outbox.Id, wamid, errCode, errDetails);
+                                }
+                                break;
                             }
-                            break;
-                        }
 
                         case "sent":
-                        {
-                            if (outbox.Status != OutboxMessageStatus.Sent && outbox.Status != OutboxMessageStatus.Delivered)
                             {
-                                outbox.TransitionToSent(wamid, outbox.CostEgp ?? 0m);
-                                hasChanges = true;
+                                if (outbox.Status != OutboxMessageStatus.Sent && outbox.Status != OutboxMessageStatus.Delivered)
+                                {
+                                    outbox.TransitionToSent(wamid, outbox.CostEgp ?? 0m);
+                                    hasChanges = true;
+                                }
+                                break;
                             }
-                            break;
-                        }
 
                         default:
                             _logger.LogDebug("Received unhandled WhatsApp webhook status '{Status}' for wamid {Wamid}", statusItem.Status, wamid);

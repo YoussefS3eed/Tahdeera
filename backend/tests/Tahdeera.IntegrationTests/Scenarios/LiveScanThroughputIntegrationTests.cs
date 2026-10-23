@@ -1,15 +1,15 @@
+using FluentAssertions;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
-using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Tahdeera.Application.Features.Attendance.Commands.ScanCardAttendance;
 using Tahdeera.Domain.Entities;
 using Tahdeera.Domain.Enums;
 using Tahdeera.Infrastructure.Persistence;
 using Tahdeera.IntegrationTests.Fixtures;
-using MediatR;
 
 namespace Tahdeera.IntegrationTests.Scenarios;
 
@@ -82,7 +82,7 @@ public class LiveScanThroughputIntegrationTests : IAsyncLifetime
                 Id = Guid.NewGuid(),
                 WorkspaceId = workspace.Id,
                 StudentId = student.Id,
-                
+
                 Status = WorkspaceStudentStatus.Active,
                 WhatsappOptIn = true,
                 GuardianPhone = $"+20101111{i:D4}"

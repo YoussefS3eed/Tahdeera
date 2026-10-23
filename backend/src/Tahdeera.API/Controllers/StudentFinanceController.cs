@@ -11,10 +11,10 @@ using Tahdeera.Application.Features.Finances.Commands.RecordStudentPayment;
 using Tahdeera.Application.Features.Finances.Commands.ReverseStudentPayment;
 using Tahdeera.Application.Features.Finances.Commands.WriteOffStudentCharge;
 using Tahdeera.Application.Features.Finances.DTOs;
+using Tahdeera.Application.Features.Finances.Queries.GetPrintableReceipt;
 using Tahdeera.Application.Features.Finances.Queries.GetStudentAccountStatement;
 using Tahdeera.Application.Features.Finances.Queries.GetStudentCharges;
 using Tahdeera.Application.Features.Finances.Queries.GetStudentPayments;
-using Tahdeera.Application.Features.Finances.Queries.GetPrintableReceipt;
 using Tahdeera.Domain.Enums;
 
 namespace Tahdeera.API.Controllers;
