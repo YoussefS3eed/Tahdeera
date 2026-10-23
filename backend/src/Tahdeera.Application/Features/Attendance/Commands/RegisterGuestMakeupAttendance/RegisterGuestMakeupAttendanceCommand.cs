@@ -10,5 +10,6 @@ public sealed record RegisterGuestMakeupAttendanceCommand(
     Guid StudentId,
     Guid HomeGroupId,
     Guid? HomeSessionId = null,
-    string? Reason = null
+    string? Reason = null,
+    Guid WorkspaceId = default
 ) : IRequest<Result<GuestMakeupResultDto>>, ITransactionalRequest;

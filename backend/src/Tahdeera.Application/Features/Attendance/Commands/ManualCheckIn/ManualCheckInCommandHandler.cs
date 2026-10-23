@@ -48,6 +48,11 @@ public sealed class ManualCheckInCommandHandler : IRequestHandler<ManualCheckInC
 
         // 2. Verify workspace isolation
         var workspaceId = session.Group.OwnerWorkspaceId;
+        if (request.WorkspaceId != Guid.Empty && workspaceId != request.WorkspaceId)
+        {
+            return DomainErrors.Sessions.UnauthorizedWorkspaceAccess;
+        }
+
         if (_currentUserService.ActiveWorkspaceId.HasValue &&
             _currentUserService.ActiveWorkspaceId.Value != workspaceId)
         {

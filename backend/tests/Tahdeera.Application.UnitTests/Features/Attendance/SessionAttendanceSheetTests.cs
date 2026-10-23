@@ -5,6 +5,7 @@ using Tahdeera.Application.Features.Attendance.Queries.GetSessionAttendanceSheet
 using Tahdeera.Application.Features.Attendance.Queries.GetStudentAttendanceHistory;
 using Tahdeera.Application.UnitTests.Common;
 using Tahdeera.Domain.Entities;
+using Tahdeera.Domain.Enums;
 using Tahdeera.Infrastructure.Persistence.Repositories;
 
 namespace Tahdeera.Application.UnitTests.Features.Attendance;
@@ -46,7 +47,7 @@ public class SessionAttendanceSheetTests
         currentUserService.ActiveWorkspaceId.Returns(_workspaceId);
 
         var handler = new GetSessionAttendanceSheetQueryHandler(unitOfWork, currentUserService);
-        var query = new GetSessionAttendanceSheetQuery(session.Id);
+        var query = new GetSessionAttendanceSheetQuery(_workspaceId, session.Id);
 
         // Act
         var result = await handler.Handle(query, CancellationToken.None);
@@ -75,6 +76,7 @@ public class SessionAttendanceSheetTests
 
         var student = new Student { Id = Guid.NewGuid(), StudentCode = "STU_HIST_1", FullName = "Samy" };
         var groupStudent = GroupStudent.Create(group.Id, student.Id, baseTime.AddDays(-15));
+        var wsStudent = new WorkspaceStudent { Id = Guid.NewGuid(), WorkspaceId = _workspaceId, StudentId = student.Id, Status = WorkspaceStudentStatus.Active, EnrolledAt = baseTime.AddDays(-15) };
 
         // Session 1: Present, Session 2: Absent
         var record1 = AttendanceRecord.CreateCheckIn(session1, student.Id, _workspaceId, session1.StartsAt.AddMinutes(5), _actorUserId);
@@ -82,6 +84,7 @@ public class SessionAttendanceSheetTests
 
         context.Students.Add(student);
         context.GroupStudents.Add(groupStudent);
+        context.WorkspaceStudents.Add(wsStudent);
         context.AttendanceRecords.AddRange(record1, record2);
         await context.SaveChangesAsync();
 
@@ -90,7 +93,7 @@ public class SessionAttendanceSheetTests
         currentUserService.ActiveWorkspaceId.Returns(_workspaceId);
 
         var handler = new GetStudentAttendanceHistoryQueryHandler(unitOfWork, currentUserService);
-        var query = new GetStudentAttendanceHistoryQuery(student.Id);
+        var query = new GetStudentAttendanceHistoryQuery(_workspaceId, student.Id);
 
         // Act
         var result = await handler.Handle(query, CancellationToken.None);

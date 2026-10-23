@@ -5,6 +5,9 @@ namespace Tahdeera.Infrastructure.Services;
 
 public class IdentityService : IIdentityService
 {
+    private static readonly IdentityUser<Guid> DummyUser = new();
+    private static readonly string DummyHash = new PasswordHasher<IdentityUser<Guid>>().HashPassword(DummyUser, "DummyPassword123!");
+
     private readonly UserManager<IdentityUser<Guid>> _userManager;
 
     public IdentityService(UserManager<IdentityUser<Guid>> userManager)
@@ -51,6 +54,8 @@ public class IdentityService : IIdentityService
 
         if (user == null)
         {
+            // Execute dummy verification to preserve constant timing against account enumeration
+            _userManager.PasswordHasher.VerifyHashedPassword(DummyUser, DummyHash, password);
             return (false, Guid.Empty);
         }
 

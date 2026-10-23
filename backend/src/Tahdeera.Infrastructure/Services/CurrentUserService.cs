@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using System.Security.Claims;
 using Tahdeera.Application.Common.Interfaces;
 
@@ -52,14 +53,33 @@ public class CurrentUserService : ICurrentUserService
             var context = _httpContextAccessor.HttpContext;
             if (context == null) return null;
 
-            // 1. Check custom header X-Workspace-Id
+            // 1. Check RouteValues ("workspaceId" or "workspace_id")
+            if (context.Request.RouteValues.TryGetValue("workspaceId", out var routeVal) &&
+                Guid.TryParse(routeVal?.ToString(), out var routeGuid))
+            {
+                return routeGuid;
+            }
+
+            if (context.Request.RouteValues.TryGetValue("workspace_id", out var routeSnakeVal) &&
+                Guid.TryParse(routeSnakeVal?.ToString(), out var routeSnakeGuid))
+            {
+                return routeSnakeGuid;
+            }
+
+            if (context.GetRouteData()?.Values.TryGetValue("workspaceId", out var routeDataVal) == true &&
+                Guid.TryParse(routeDataVal?.ToString(), out var routeDataGuid))
+            {
+                return routeDataGuid;
+            }
+
+            // 2. Check custom header X-Workspace-Id
             if (context.Request.Headers.TryGetValue("X-Workspace-Id", out var headerValue)
                 && Guid.TryParse(headerValue, out var headerGuid))
             {
                 return headerGuid;
             }
 
-            // 2. Check JWT token claim workspace_id
+            // 3. Check JWT token claim workspace_id
             var claimValue = context.User?.FindFirstValue("workspace_id");
             if (Guid.TryParse(claimValue, out var claimGuid))
             {

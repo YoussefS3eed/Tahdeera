@@ -92,26 +92,18 @@ public static class ServiceCollectionExtensions
                     context.User.IsInRole("SuperAdmin") ||
                     context.User.HasClaim(c => c.Type == "is_platform_admin" && c.Value.Equals("true", StringComparison.OrdinalIgnoreCase))));
 
-            options.AddPolicy(Tahdeera.Application.Common.Security.Permissions.StudentsManage, policy =>
-                policy.Requirements.Add(new WorkspacePermissionRequirement(Tahdeera.Application.Common.Security.Permissions.StudentsManage)));
+            // Automatically register all domain permission policies
+            var permissionConstants = typeof(Tahdeera.Application.Common.Security.Permissions)
+                .GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.FlattenHierarchy)
+                .Where(f => f.IsLiteral && !f.IsInitOnly && f.FieldType == typeof(string));
 
-            options.AddPolicy(Tahdeera.Application.Common.Security.Permissions.StudentsView, policy =>
-                policy.Requirements.Add(new WorkspacePermissionRequirement(Tahdeera.Application.Common.Security.Permissions.StudentsView)));
+            foreach (var field in permissionConstants)
+            {
+                var permission = (string)field.GetValue(null)!;
+                options.AddPolicy(permission, p =>
+                    p.Requirements.Add(new WorkspacePermissionRequirement(permission)));
+            }
 
-            options.AddPolicy(Tahdeera.Application.Common.Security.Permissions.CredentialsManage, policy =>
-                policy.Requirements.Add(new WorkspacePermissionRequirement(Tahdeera.Application.Common.Security.Permissions.CredentialsManage)));
-
-            options.AddPolicy(Tahdeera.Application.Common.Security.Permissions.WhatsAppManage, policy =>
-                policy.Requirements.Add(new WorkspacePermissionRequirement(Tahdeera.Application.Common.Security.Permissions.WhatsAppManage)));
-
-            options.AddPolicy(Tahdeera.Application.Common.Security.Permissions.FinancesManage, policy =>
-                policy.Requirements.Add(new WorkspacePermissionRequirement(Tahdeera.Application.Common.Security.Permissions.FinancesManage)));
-
-            options.AddPolicy(Tahdeera.Application.Common.Security.Permissions.FinancesView, policy =>
-                policy.Requirements.Add(new WorkspacePermissionRequirement(Tahdeera.Application.Common.Security.Permissions.FinancesView)));
-
-            options.AddPolicy(Tahdeera.Application.Common.Security.Permissions.WhatsAppView, policy =>
-                policy.Requirements.Add(new WorkspacePermissionRequirement(Tahdeera.Application.Common.Security.Permissions.WhatsAppView)));
         });
 
         // 7. Application + Infrastructure layers

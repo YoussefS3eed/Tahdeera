@@ -33,6 +33,11 @@ public sealed class GetSessionAttendanceSheetQueryHandler : IRequestHandler<GetS
         }
 
         var workspaceId = session.Group.OwnerWorkspaceId;
+        if (request.WorkspaceId != Guid.Empty && workspaceId != request.WorkspaceId)
+        {
+            return DomainErrors.Sessions.UnauthorizedWorkspaceAccess;
+        }
+
         if (_currentUserService.ActiveWorkspaceId.HasValue &&
             _currentUserService.ActiveWorkspaceId.Value != workspaceId)
         {

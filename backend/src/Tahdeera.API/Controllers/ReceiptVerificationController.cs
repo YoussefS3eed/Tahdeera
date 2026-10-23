@@ -2,6 +2,8 @@ using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
+using Tahdeera.API.Extensions;
 using Tahdeera.Application.Features.Finances.DTOs;
 using Tahdeera.Application.Features.Finances.Queries.VerifyPrintableReceipt;
 
@@ -21,6 +23,7 @@ public class ReceiptVerificationController : ApiControllerBase
 
     [HttpGet("verify-receipt/{receiptNumber}/{hash}")]
     [AllowAnonymous]
+    [EnableRateLimiting(RateLimitingExtensions.PublicReceiptVerificationPolicy)]
     [ProducesResponseType(typeof(VerifiedReceiptDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]

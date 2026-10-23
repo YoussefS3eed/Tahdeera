@@ -52,7 +52,8 @@ public class AttendanceController : ApiControllerBase
     {
         var command = new ScanCardAttendanceCommand(
             SessionId: sessionId,
-            RawToken: request.RawToken
+            RawToken: request.RawToken,
+            WorkspaceId: workspaceId
         );
 
         var result = await _sender.Send(command, cancellationToken);
@@ -75,7 +76,8 @@ public class AttendanceController : ApiControllerBase
         var command = new ManualCheckInCommand(
             SessionId: sessionId,
             StudentId: request.StudentId,
-            RetroactiveReason: request.RetroactiveReason
+            RetroactiveReason: request.RetroactiveReason,
+            WorkspaceId: workspaceId
         );
 
         var result = await _sender.Send(command, cancellationToken);
@@ -101,7 +103,8 @@ public class AttendanceController : ApiControllerBase
             StudentId: request.StudentId,
             HomeGroupId: request.HomeGroupId,
             HomeSessionId: request.HomeSessionId,
-            Reason: request.Reason
+            Reason: request.Reason,
+            WorkspaceId: workspaceId
         );
 
         var result = await _sender.Send(command, cancellationToken);
@@ -122,7 +125,19 @@ public class AttendanceController : ApiControllerBase
         [FromBody] CorrectAttendanceRecordRequest request,
         CancellationToken cancellationToken)
     {
-        // 1. Resolve attendance record by (sessionId, studentId) or by attendanceRecordId
+        // 1. Verify session belongs to workspace
+        var session = await _unitOfWork.Sessions.GetByIdWithDetailsAsync(sessionId, cancellationToken);
+        if (session is null)
+        {
+            return HandleFailure(Result.Failure(DomainErrors.Sessions.NotFound));
+        }
+
+        if (session.Group.OwnerWorkspaceId != workspaceId)
+        {
+            return HandleFailure(Result.Failure(DomainErrors.Sessions.UnauthorizedWorkspaceAccess));
+        }
+
+        // 2. Resolve attendance record by (sessionId, studentId) or by attendanceRecordId
         var record = await _unitOfWork.AttendanceRecords.FirstOrDefaultAsync(
             r => r.SessionId == sessionId && r.StudentId == studentId && r.VoidedAt == null, cancellationToken);
 
@@ -137,7 +152,7 @@ public class AttendanceController : ApiControllerBase
             return HandleFailure(Result.Failure(DomainErrors.Attendance.NotFound));
         }
 
-        // 2. Check if actor is Workspace Owner
+        // 3. Check if actor is Workspace Owner for the session's workspace
         bool isOwner = User.IsInRole("PlatformAdmin") || User.IsInRole("SuperAdmin");
         if (!isOwner && _currentUserService.UserId.HasValue)
         {
@@ -150,7 +165,8 @@ public class AttendanceController : ApiControllerBase
             AttendanceRecordId: record.Id,
             NewStatus: request.NewStatus,
             Reason: request.Reason,
-            IsOwner: isOwner
+            IsOwner: isOwner,
+            WorkspaceId: workspaceId
         );
 
         var result = await _sender.Send(command, cancellationToken);
@@ -168,7 +184,7 @@ public class AttendanceController : ApiControllerBase
         [FromRoute] Guid sessionId,
         CancellationToken cancellationToken)
     {
-        var query = new GetSessionAttendanceSheetQuery(sessionId);
+        var query = new GetSessionAttendanceSheetQuery(workspaceId, sessionId);
         var result = await _sender.Send(query, cancellationToken);
         return result.IsSuccess ? Ok(result.Value) : HandleFailure(result);
     }
@@ -185,7 +201,7 @@ public class AttendanceController : ApiControllerBase
         [FromQuery] Guid? groupId = null,
         CancellationToken cancellationToken = default)
     {
-        var query = new GetStudentAttendanceHistoryQuery(studentId, groupId);
+        var query = new GetStudentAttendanceHistoryQuery(workspaceId, studentId, groupId);
         var result = await _sender.Send(query, cancellationToken);
         return result.IsSuccess ? Ok(result.Value) : HandleFailure(result);
     }

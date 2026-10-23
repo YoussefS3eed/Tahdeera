@@ -8,5 +8,6 @@ namespace Tahdeera.Application.Features.Attendance.Commands.ManualCheckIn;
 public sealed record ManualCheckInCommand(
     Guid SessionId,
     Guid StudentId,
-    string? RetroactiveReason = null
+    string? RetroactiveReason = null,
+    Guid WorkspaceId = default
 ) : IRequest<Result<AttendanceScanResultDto>>, ITransactionalRequest;

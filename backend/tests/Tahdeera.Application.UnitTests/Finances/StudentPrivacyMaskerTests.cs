@@ -30,6 +30,8 @@ public class StudentPrivacyMaskerTests
     [InlineData("أحمد محمد علي", "أحمد م***")]
     [InlineData("محمود عبد الرحمن السيد", "محمود ع***")]
     [InlineData("سارة حسام حسن", "سارة ح***")]
+    [InlineData("عبد الرحمن محمد علي", "عبد الرحمن م***")]
+    [InlineData("سيف الدين خالد مصطفى", "سيف الدين خ***")]
     public void MaskEgyptianName_MultiWordEgyptianName_PreservesFirstNameAndMasksSecondInitial(string input, string expected)
     {
         var result = StudentPrivacyMasker.MaskEgyptianName(input);

@@ -297,4 +297,69 @@ public class MessageOutboxTests
         var exception = act.Should().Throw<DomainValidationException>().Which;
         exception.ErrorCode.Should().Be("MESSAGE_ALREADY_SENT");
     }
+
+    [Fact]
+    public void RecoverLease_CyclesUntilThresholdThenPermanentlyFails()
+    {
+        var outbox = MessageOutbox.Create(
+            _workspaceId, "+201019482687", "Type", "template", "ar", "{}", "idem_rec");
+        outbox.TransitionToProcessing(TimeSpan.FromMinutes(2));
+
+        // Cycle 1: resets to Pending
+        outbox.RecoverLease();
+        outbox.Status.Should().Be(OutboxMessageStatus.Pending);
+        outbox.LeaseRecoveryAttempts.Should().Be(1);
+
+        // Cycle 2: resets to Pending
+        outbox.RecoverLease();
+        outbox.Status.Should().Be(OutboxMessageStatus.Pending);
+        outbox.LeaseRecoveryAttempts.Should().Be(2);
+
+        // Cycle 3: exceeds limit -> FailedPermanent
+        outbox.RecoverLease();
+        outbox.Status.Should().Be(OutboxMessageStatus.FailedPermanent);
+        outbox.ErrorCode.Should().Be("STALE_LEASE_EXCEEDED");
+    }
+
+    [Fact]
+    public void RecordReadReceipt_AppendsMetaReadAtFieldToPayload()
+    {
+        var outbox = MessageOutbox.Create(
+            _workspaceId, "+201019482687", "Type", "template", "ar", "{\"studentId\":\"123\"}", "idem_read");
+        var readTime = DateTimeOffset.UtcNow;
+
+        outbox.RecordReadReceipt(readTime);
+
+        outbox.Payload.Should().Contain("meta_read_at");
+        System.Text.Json.Nodes.JsonNode.Parse(outbox.Payload)!["meta_read_at"]?.GetValue<string>().Should().Be(readTime.ToString("O"));
+    }
+
+    [Fact]
+    public void TransitionToFailedTransient_SetsStatusAndNextAttempt()
+    {
+        var outbox = MessageOutbox.Create(
+            _workspaceId, "+201019482687", "Type", "template", "ar", "{}", "idem_trans");
+        var delay = TimeSpan.FromSeconds(30);
+
+        outbox.TransitionToFailedTransient("HTTP_503", "Meta API throttling", delay);
+
+        outbox.Status.Should().Be(OutboxMessageStatus.FailedTransient);
+        outbox.FailureCategory.Should().Be("Transient");
+        outbox.ErrorCode.Should().Be("HTTP_503");
+        outbox.ErrorDetails.Should().Be("Meta API throttling");
+        outbox.NextAttemptAt.Should().BeCloseTo(DateTimeOffset.UtcNow.Add(delay), TimeSpan.FromSeconds(5));
+    }
+
+    [Fact]
+    public void MarkPublishedToBroker_SetsStatusAndBrokerMessageId()
+    {
+        var outbox = MessageOutbox.Create(
+            _workspaceId, "+201019482687", "Type", "template", "ar", "{}", "idem_pub");
+        var pubTime = DateTimeOffset.UtcNow;
+
+        outbox.MarkPublishedToBroker("broker_msg_999", pubTime);
+
+        outbox.Status.Should().Be(OutboxMessageStatus.PublishedToBroker);
+        outbox.BrokerMessageId.Should().Be("broker_msg_999");
+    }
 }

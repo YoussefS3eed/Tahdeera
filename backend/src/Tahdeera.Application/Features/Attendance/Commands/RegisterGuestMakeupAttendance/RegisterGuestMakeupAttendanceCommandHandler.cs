@@ -49,6 +49,11 @@ public sealed class RegisterGuestMakeupAttendanceCommandHandler : IRequestHandle
 
         // 2. Verify workspace isolation
         var workspaceId = session.Group.OwnerWorkspaceId;
+        if (request.WorkspaceId != Guid.Empty && workspaceId != request.WorkspaceId)
+        {
+            return DomainErrors.Sessions.UnauthorizedWorkspaceAccess;
+        }
+
         if (_currentUserService.ActiveWorkspaceId.HasValue &&
             _currentUserService.ActiveWorkspaceId.Value != workspaceId)
         {
@@ -60,6 +65,11 @@ public sealed class RegisterGuestMakeupAttendanceCommandHandler : IRequestHandle
         if (homeGroup is null)
         {
             return DomainErrors.Groups.NotFound;
+        }
+
+        if (homeGroup.OwnerWorkspaceId != workspaceId)
+        {
+            return DomainErrors.Sessions.UnauthorizedWorkspaceAccess;
         }
 
         var homeGroupStudent = await _unitOfWork.GroupStudents

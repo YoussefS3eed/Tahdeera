@@ -129,6 +129,7 @@ public class PublicReceiptVerificationIntegrationTests : IAsyncLifetime
         // Arrange
         var (workspaceId, receiptNumber, validHash) = await SetupPaymentForVerificationAsync();
         var anonClient = _factory.CreateClient();
+        anonClient.DefaultRequestHeaders.Add("X-Forwarded-For", "198.51.100.10");
 
         // Act 1: Call public verification endpoint with valid hash
         var response = await anonClient.GetAsync($"/api/finance/verify-receipt/{receiptNumber}/{validHash}");
@@ -148,5 +149,31 @@ public class PublicReceiptVerificationIntegrationTests : IAsyncLifetime
         var fakeHash = new string('f', 64);
         var badResponse = await anonClient.GetAsync($"/api/finance/verify-receipt/{receiptNumber}/{fakeHash}");
         badResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task VerifyReceipt_WhenRequestCountExceedsRateLimit_Returns429TooManyRequests()
+    {
+        // Arrange
+        var (workspaceId, receiptNumber, validHash) = await SetupPaymentForVerificationAsync();
+        var anonClient = _factory.CreateClient();
+        anonClient.DefaultRequestHeaders.Add("X-Forwarded-For", "198.51.100.20");
+
+        // Act & Assert: Permit limit is 30 per minute
+        HttpResponseMessage lastResponse = null!;
+        var rateLimitHit = false;
+
+        for (var i = 0; i < 35; i++)
+        {
+            lastResponse = await anonClient.GetAsync($"/api/finance/verify-receipt/{receiptNumber}/{validHash}");
+            if (lastResponse.StatusCode == HttpStatusCode.TooManyRequests)
+            {
+                rateLimitHit = true;
+                break;
+            }
+        }
+
+        rateLimitHit.Should().BeTrue("Public receipt verification should be rate limited after 30 requests per minute");
+        lastResponse.StatusCode.Should().Be(HttpStatusCode.TooManyRequests);
     }
 }

@@ -51,8 +51,16 @@ public static class DependencyInjection
         .AddDefaultTokenProviders();
 
         // JWT Authentication
-        var signingKey = configuration["Jwt:SigningKey"]
-            ?? "SuperSecretJwtSigningKeyWith256BitsMinimumLengthForDevelopmentOnly!";
+        var env = configuration["ASPNETCORE_ENVIRONMENT"] ?? Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+        var isProduction = string.Equals(env, "Production", StringComparison.OrdinalIgnoreCase);
+        var signingKey = configuration["Jwt:SigningKey"];
+
+        if (isProduction && (string.IsNullOrWhiteSpace(signingKey) || signingKey == "SuperSecretJwtSigningKeyWith256BitsMinimumLengthForDevelopmentOnly!"))
+        {
+            throw new InvalidOperationException("A secure, non-default Jwt:SigningKey must be explicitly configured in Production.");
+        }
+
+        signingKey ??= "SuperSecretJwtSigningKeyWith256BitsMinimumLengthForDevelopmentOnly!";
         var issuer = configuration["Jwt:Issuer"] ?? "https://api.tahdeera.app";
         var audience = configuration["Jwt:Audience"] ?? "https://tahdeera.app";
 

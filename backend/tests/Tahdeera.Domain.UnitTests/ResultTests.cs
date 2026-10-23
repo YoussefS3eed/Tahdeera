@@ -5,6 +5,13 @@ namespace Tahdeera.Domain.UnitTests;
 
 public class ResultTests
 {
+    private class TestSubResult : Result
+    {
+        public TestSubResult(bool isSuccess, Error error) : base(isSuccess, error)
+        {
+        }
+    }
+
     [Fact]
     public void Success_ShouldCreateSuccessfulResult()
     {
@@ -75,5 +82,31 @@ public class ResultTests
 
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Be(error);
+    }
+
+    [Fact]
+    public void ImplicitOperator_NonGenericFromError_ShouldReturnFailureResult()
+    {
+        var error = Error.Forbidden("FORBIDDEN", "Access denied");
+        Result result = error;
+
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(error);
+    }
+
+    [Fact]
+    public void Constructor_WhenSuccessWithNonNoneError_ThrowsInvalidOperationException()
+    {
+        var act = () => new TestSubResult(true, Error.Validation("V1", "Invalid"));
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("Success result cannot carry an error.");
+    }
+
+    [Fact]
+    public void Constructor_WhenFailureWithNoneError_ThrowsInvalidOperationException()
+    {
+        var act = () => new TestSubResult(false, Error.None);
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("Failure result must have an error.");
     }
 }

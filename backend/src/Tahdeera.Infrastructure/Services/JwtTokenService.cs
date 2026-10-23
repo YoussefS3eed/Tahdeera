@@ -22,8 +22,16 @@ public class JwtTokenService : IJwtTokenService
 
     public (string AccessToken, DateTimeOffset ExpiresAt) GenerateAccessToken(AppUser user, IEnumerable<string>? roles = null, Guid? workspaceId = null)
     {
-        var signingKey = _configuration["Jwt:SigningKey"]
-            ?? "SuperSecretJwtSigningKeyWith256BitsMinimumLengthForDevelopmentOnly!";
+        var env = _configuration["ASPNETCORE_ENVIRONMENT"] ?? Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+        var isProduction = string.Equals(env, "Production", StringComparison.OrdinalIgnoreCase);
+        var signingKey = _configuration["Jwt:SigningKey"];
+
+        if (isProduction && (string.IsNullOrWhiteSpace(signingKey) || signingKey == "SuperSecretJwtSigningKeyWith256BitsMinimumLengthForDevelopmentOnly!"))
+        {
+            throw new InvalidOperationException("A secure, non-default Jwt:SigningKey must be explicitly configured in Production.");
+        }
+
+        signingKey ??= "SuperSecretJwtSigningKeyWith256BitsMinimumLengthForDevelopmentOnly!";
         var issuer = _configuration["Jwt:Issuer"] ?? "https://api.tahdeera.app";
         var audience = _configuration["Jwt:Audience"] ?? "https://tahdeera.app";
 

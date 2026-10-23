@@ -7,5 +7,6 @@ namespace Tahdeera.Application.Features.Attendance.Commands.ScanCardAttendance;
 
 public sealed record ScanCardAttendanceCommand(
     Guid SessionId,
-    string RawToken
+    string RawToken,
+    Guid WorkspaceId = default
 ) : IRequest<Result<AttendanceScanResultDto>>, ITransactionalRequest;

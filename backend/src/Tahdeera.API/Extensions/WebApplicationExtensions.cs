@@ -21,34 +21,49 @@ public static class WebApplicationExtensions
         // 2. Global RFC 9457 Exception Handling Middleware
         app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-        // 3. Swagger UI at root
-        app.UseSwagger();
-        app.UseSwaggerUI(c =>
+        // 3. Defensive Security Headers
+        app.Use(async (context, next) =>
         {
-            c.SwaggerEndpoint("/swagger/v1/swagger.json", "Tahdeera API v1");
-            c.RoutePrefix = string.Empty;
+            context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+            context.Response.Headers.Append("X-Frame-Options", "DENY");
+            context.Response.Headers.Append("Referrer-Policy", "strict-origin-when-cross-origin");
+            context.Response.Headers.Append("X-XSS-Protection", "0");
+            context.Response.Headers.Append("Permissions-Policy", "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()");
+            context.Response.Headers.Append("Content-Security-Policy", "default-src 'self'; frame-ancestors 'none';");
+            await next();
         });
 
+        // 4. Swagger UI at root (Development only to prevent production information disclosure)
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Tahdeera API v1");
+                c.RoutePrefix = string.Empty;
+            });
+        }
 
-        // 4. CORS
+        // 5. CORS & Transport Hardening
         app.UseCors();
 
         if (!app.Environment.IsDevelopment())
         {
+            app.UseHsts();
             app.UseHttpsRedirection();
         }
 
-        // 5. Authentication & Authorization
+        // 6. Authentication & Authorization
         app.UseAuthentication();
         app.UseAuthorization();
 
-        // 6. Rate Limiting
+        // 7. Rate Limiting
         app.UseRateLimiter();
 
-        // 7. Server-Side Subscription Lockout Middleware (DEC-08)
+        // 8. Server-Side Subscription Lockout Middleware (DEC-08)
         app.UseMiddleware<SubscriptionLockoutMiddleware>();
 
-        // 7. Health Checks (Constitution Principle 10)
+        // 9. Health Checks (Constitution Principle 10)
         app.MapHealthChecks("/health/live", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
         {
             Predicate = _ => false
@@ -59,7 +74,7 @@ public static class WebApplicationExtensions
             Predicate = check => check.Tags.Contains("ready")
         });
 
-        // 8. Controllers
+        // 10. Controllers
         app.MapControllers();
 
         return app;

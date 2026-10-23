@@ -19,6 +19,7 @@ public class WorkspaceWhatsAppConfigTests
         config.MonthlyMessageQuota.Should().Be(1000);
         config.MessagesUsedThisMonth.Should().Be(0);
         config.IsNotificationsEnabled.Should().BeTrue();
+        config.NotificationsEnabled.Should().BeTrue();
         config.ActiveSenderConnectionId.Should().BeNull();
     }
 
@@ -68,5 +69,64 @@ public class WorkspaceWhatsAppConfigTests
 
         var ex = act.Should().Throw<DomainValidationException>().Which;
         ex.ErrorCode.Should().Be("INVALID_QUOTA");
+    }
+
+    [Fact]
+    public void SetMonthlyQuota_WithValidValue_UpdatesMonthlyMessageQuota()
+    {
+        var config = WorkspaceWhatsAppConfig.Create(_workspaceId);
+
+        config.SetMonthlyQuota(5000);
+
+        config.MonthlyMessageQuota.Should().Be(5000);
+    }
+
+    [Fact]
+    public void ToggleNotifications_UpdatesStatusAndComputedProperty()
+    {
+        var config = WorkspaceWhatsAppConfig.Create(_workspaceId);
+        config.NotificationsEnabled.Should().BeTrue();
+
+        config.ToggleNotifications(false);
+
+        config.IsNotificationsEnabled.Should().BeFalse();
+        config.NotificationsEnabled.Should().BeFalse();
+    }
+
+    [Fact]
+    public void AssignActiveConnection_SetsConnectionId()
+    {
+        var config = WorkspaceWhatsAppConfig.Create(_workspaceId);
+        var connectionId = Guid.NewGuid();
+
+        config.AssignActiveConnection(connectionId);
+
+        config.ActiveSenderConnectionId.Should().Be(connectionId);
+    }
+
+    [Fact]
+    public void ClearActiveConnection_WhenWorkspaceOwned_ResetsSenderModeToDisabled()
+    {
+        var config = WorkspaceWhatsAppConfig.Create(_workspaceId);
+        var connectionId = Guid.NewGuid();
+        config.UpdateSenderMode(WhatsAppSenderMode.WorkspaceOwned, connectionId);
+
+        config.ClearActiveConnection();
+
+        config.ActiveSenderConnectionId.Should().BeNull();
+        config.SenderMode.Should().Be(WhatsAppSenderMode.Disabled);
+    }
+
+    [Fact]
+    public void UpdateSenderMode_ToPlatformManaged_ClearsActiveSenderConnectionId()
+    {
+        var config = WorkspaceWhatsAppConfig.Create(_workspaceId);
+        var connectionId = Guid.NewGuid();
+        config.UpdateSenderMode(WhatsAppSenderMode.WorkspaceOwned, connectionId);
+
+        config.UpdateSenderMode(WhatsAppSenderMode.PlatformManaged);
+
+        config.SenderMode.Should().Be(WhatsAppSenderMode.PlatformManaged);
+        config.ActiveSenderConnectionId.Should().BeNull();
     }
 }

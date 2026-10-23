@@ -10,5 +10,6 @@ public sealed record CorrectAttendanceRecordCommand(
     Guid AttendanceRecordId,
     AttendanceStatus NewStatus,
     string Reason,
-    bool IsOwner = false
+    bool IsOwner = false,
+    Guid WorkspaceId = default
 ) : IRequest<Result<AttendanceCorrectedDto>>, ITransactionalRequest;

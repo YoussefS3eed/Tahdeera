@@ -1,7 +1,8 @@
 using Asp.Versioning;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Tahdeera.API.Security;
+using Tahdeera.Application.Common.Security;
 using Tahdeera.Application.Features.WhatsApp.DTOs;
 using Tahdeera.Application.Features.WhatsApp.Queries.GetWorkspaceWhatsAppUsage;
 
@@ -9,7 +10,7 @@ namespace Tahdeera.API.Controllers;
 
 [ApiVersion("1.0")]
 [ApiController]
-[Authorize]
+[HasPermission(Permissions.WhatsAppView)]
 [Route("api/workspaces/{workspaceId:guid}/whatsapp/usage")]
 public sealed class WhatsAppUsageController : ApiControllerBase
 {
