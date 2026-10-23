@@ -127,34 +127,34 @@ public class FinancesSecurityRoleIntegrationTests : IAsyncLifetime
         var receptionClient = await CreateStaffMemberClientAsync(workspaceId, ownerClient, "Reception");
 
         // Act & Assert 1: Accountant can view statement (200 OK)
-        var accStatementResp = await accountantClient.GetAsync($"/api/v1/workspaces/{workspaceId}/students/{studentId}/finance/account");
+        var accStatementResp = await accountantClient.GetAsync($"/api/workspaces/{workspaceId}/students/{studentId}/finance/account");
         accStatementResp.StatusCode.Should().Be(HttpStatusCode.OK);
 
         // Act & Assert 2: Accountant can create charge (201 Created)
         var chargeReq = new CreateStudentChargeRequest(null, "2026-10", "Tuition Fee", 300m, null, null);
         var accChargeResp = await accountantClient.PostAsJsonAsync(
-            $"/api/v1/workspaces/{workspaceId}/students/{studentId}/finance/charges",
+            $"/api/workspaces/{workspaceId}/students/{studentId}/finance/charges",
             chargeReq,
             JsonSerializationHelper.Options);
         accChargeResp.StatusCode.Should().Be(HttpStatusCode.Created);
 
         // Act & Assert 3: Teacher cannot view statement (403 Forbidden)
-        var teacherStatementResp = await teacherClient.GetAsync($"/api/v1/workspaces/{workspaceId}/students/{studentId}/finance/account");
+        var teacherStatementResp = await teacherClient.GetAsync($"/api/workspaces/{workspaceId}/students/{studentId}/finance/account");
         teacherStatementResp.StatusCode.Should().Be(HttpStatusCode.Forbidden);
 
         // Act & Assert 4: Teacher cannot create charge (403 Forbidden)
         var teacherChargeResp = await teacherClient.PostAsJsonAsync(
-            $"/api/v1/workspaces/{workspaceId}/students/{studentId}/finance/charges",
+            $"/api/workspaces/{workspaceId}/students/{studentId}/finance/charges",
             chargeReq,
             JsonSerializationHelper.Options);
         teacherChargeResp.StatusCode.Should().Be(HttpStatusCode.Forbidden);
 
         // Act & Assert 5: Assistant cannot view statement (403 Forbidden)
-        var assistantResp = await assistantClient.GetAsync($"/api/v1/workspaces/{workspaceId}/students/{studentId}/finance/account");
+        var assistantResp = await assistantClient.GetAsync($"/api/workspaces/{workspaceId}/students/{studentId}/finance/account");
         assistantResp.StatusCode.Should().Be(HttpStatusCode.Forbidden);
 
         // Act & Assert 6: Reception cannot view statement (403 Forbidden)
-        var receptionResp = await receptionClient.GetAsync($"/api/v1/workspaces/{workspaceId}/students/{studentId}/finance/account");
+        var receptionResp = await receptionClient.GetAsync($"/api/workspaces/{workspaceId}/students/{studentId}/finance/account");
         receptionResp.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 }

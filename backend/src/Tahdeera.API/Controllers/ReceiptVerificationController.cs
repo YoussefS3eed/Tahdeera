@@ -10,7 +10,6 @@ namespace Tahdeera.API.Controllers;
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/finance")]
-[Route("api/v1/finance")]
 public class ReceiptVerificationController : ApiControllerBase
 {
     private readonly ISender _sender;

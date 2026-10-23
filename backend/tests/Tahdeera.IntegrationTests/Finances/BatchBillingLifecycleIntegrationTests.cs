@@ -154,7 +154,7 @@ public class BatchBillingLifecycleIntegrationTests : IAsyncLifetime
             Amount: 400.00m);
 
         var run1Response = await ownerClient.PostAsJsonAsync(
-            $"/api/v1/workspaces/{workspaceId}/groups/{group.Id}/finance/billing-cycles",
+            $"/api/workspaces/{workspaceId}/groups/{group.Id}/finance/billing-cycles",
             billingReq,
             JsonSerializationHelper.Options);
 
@@ -169,7 +169,7 @@ public class BatchBillingLifecycleIntegrationTests : IAsyncLifetime
 
         // 5. Re-run Identical Billing Cycle -> All skipped as duplicates
         var run2Response = await ownerClient.PostAsJsonAsync(
-            $"/api/v1/workspaces/{workspaceId}/groups/{group.Id}/finance/billing-cycles",
+            $"/api/workspaces/{workspaceId}/groups/{group.Id}/finance/billing-cycles",
             billingReq,
             JsonSerializationHelper.Options);
 
@@ -192,7 +192,7 @@ public class BatchBillingLifecycleIntegrationTests : IAsyncLifetime
             Allocations: null);
 
         var payResponse = await ownerClient.PostAsJsonAsync(
-            $"/api/v1/workspaces/{workspaceId}/students/{st1.Id}/finance/payments",
+            $"/api/workspaces/{workspaceId}/students/{st1.Id}/finance/payments",
             payReq,
             JsonSerializationHelper.Options);
 
@@ -205,7 +205,7 @@ public class BatchBillingLifecycleIntegrationTests : IAsyncLifetime
             Amount: 400.00m);
 
         var run3Response = await ownerClient.PostAsJsonAsync(
-            $"/api/v1/workspaces/{workspaceId}/groups/{group.Id}/finance/billing-cycles",
+            $"/api/workspaces/{workspaceId}/groups/{group.Id}/finance/billing-cycles",
             novBillingReq,
             JsonSerializationHelper.Options);
 

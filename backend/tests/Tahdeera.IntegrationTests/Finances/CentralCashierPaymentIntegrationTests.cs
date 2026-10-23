@@ -117,7 +117,7 @@ public class CentralCashierPaymentIntegrationTests : IAsyncLifetime
             Allocations: null);
 
         // Act
-        var response = await ownerClient.PostAsJsonAsync($"/api/v1/workspaces/{workspaceId}/payments", request, JsonSerializationHelper.Options);
+        var response = await ownerClient.PostAsJsonAsync($"/api/workspaces/{workspaceId}/payments", request, JsonSerializationHelper.Options);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Created);

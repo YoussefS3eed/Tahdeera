@@ -12,9 +12,7 @@ using Tahdeera.Application.Features.WhatsApp.Queries.GetWhatsAppTemplates;
 [ApiVersion("1.0")]
 [ApiController]
 [Authorize(Policy = Permissions.WhatsAppView)]
-[Route("api/v1/workspaces/{workspaceId:guid}/whatsapp/templates")]
 [Route("api/workspaces/{workspaceId:guid}/whatsapp/templates")]
-[Route("api/v1/whatsapp/templates")]
 [Route("api/whatsapp/templates")]
 public sealed class WhatsAppTemplatesController : ApiControllerBase
 {

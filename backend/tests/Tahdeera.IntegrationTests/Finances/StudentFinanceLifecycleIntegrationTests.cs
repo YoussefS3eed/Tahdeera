@@ -112,7 +112,7 @@ public class StudentFinanceLifecycleIntegrationTests : IAsyncLifetime
             Notes: "Includes 4 sessions");
 
         var chargeResponse = await client.PostAsJsonAsync(
-            $"/api/v1/workspaces/{workspaceId}/students/{studentId}/finance/charges",
+            $"/api/workspaces/{workspaceId}/students/{studentId}/finance/charges",
             chargeRequest,
             JsonSerializationHelper.Options);
 
@@ -123,7 +123,7 @@ public class StudentFinanceLifecycleIntegrationTests : IAsyncLifetime
         chargeDto.RemainingAmount.Should().Be(400.00m);
 
         // 3. Query Statement -> InArrears (400 EGP)
-        var statement1Response = await client.GetAsync($"/api/v1/workspaces/{workspaceId}/students/{studentId}/finance/account");
+        var statement1Response = await client.GetAsync($"/api/workspaces/{workspaceId}/students/{studentId}/finance/account");
         statement1Response.StatusCode.Should().Be(HttpStatusCode.OK);
         var statement1 = await statement1Response.Content.ReadFromJsonAsync<StudentAccountStatementDto>(JsonSerializationHelper.Options);
         statement1!.CurrentBalance.Should().Be(400.00m);
@@ -139,7 +139,7 @@ public class StudentFinanceLifecycleIntegrationTests : IAsyncLifetime
             Allocations: null);
 
         var paymentResponse = await client.PostAsJsonAsync(
-            $"/api/v1/workspaces/{workspaceId}/students/{studentId}/finance/payments",
+            $"/api/workspaces/{workspaceId}/students/{studentId}/finance/payments",
             paymentRequest,
             JsonSerializationHelper.Options);
 
@@ -151,7 +151,7 @@ public class StudentFinanceLifecycleIntegrationTests : IAsyncLifetime
         paymentDto.WhatsAppReceiptStaged.Should().BeTrue();
 
         // 5. Query Statement -> Settled (0 EGP)
-        var statement2Response = await client.GetAsync($"/api/v1/workspaces/{workspaceId}/students/{studentId}/finance/account");
+        var statement2Response = await client.GetAsync($"/api/workspaces/{workspaceId}/students/{studentId}/finance/account");
         statement2Response.StatusCode.Should().Be(HttpStatusCode.OK);
         var statement2 = await statement2Response.Content.ReadFromJsonAsync<StudentAccountStatementDto>(JsonSerializationHelper.Options);
         statement2!.CurrentBalance.Should().Be(0.00m);
@@ -160,7 +160,7 @@ public class StudentFinanceLifecycleIntegrationTests : IAsyncLifetime
         // 6. Act: Reverse Payment
         var reverseRequest = new ReverseStudentPaymentRequest("Bounced check or refund");
         var reverseResponse = await client.PostAsJsonAsync(
-            $"/api/v1/workspaces/{workspaceId}/students/{studentId}/finance/payments/{paymentDto.PaymentId}/reverse",
+            $"/api/workspaces/{workspaceId}/students/{studentId}/finance/payments/{paymentDto.PaymentId}/reverse",
             reverseRequest,
             JsonSerializationHelper.Options);
 
@@ -170,7 +170,7 @@ public class StudentFinanceLifecycleIntegrationTests : IAsyncLifetime
         reverseDto.ReopenedChargesCount.Should().Be(1);
 
         // 7. Query Statement -> InArrears Restored (400 EGP)
-        var statement3Response = await client.GetAsync($"/api/v1/workspaces/{workspaceId}/students/{studentId}/finance/account");
+        var statement3Response = await client.GetAsync($"/api/workspaces/{workspaceId}/students/{studentId}/finance/account");
         statement3Response.StatusCode.Should().Be(HttpStatusCode.OK);
         var statement3 = await statement3Response.Content.ReadFromJsonAsync<StudentAccountStatementDto>(JsonSerializationHelper.Options);
         statement3!.CurrentBalance.Should().Be(400.00m);

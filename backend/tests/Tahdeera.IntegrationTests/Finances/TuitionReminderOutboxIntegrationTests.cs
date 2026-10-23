@@ -106,7 +106,7 @@ public class TuitionReminderOutboxIntegrationTests : IAsyncLifetime
             MinimumBalanceThreshold: 50.00m);
 
         var trigger1Response = await ownerClient.PostAsJsonAsync(
-            $"/api/v1/workspaces/{workspaceId}/finance/reminders",
+            $"/api/workspaces/{workspaceId}/finance/reminders",
             reminderReq,
             JsonSerializationHelper.Options);
 
@@ -131,7 +131,7 @@ public class TuitionReminderOutboxIntegrationTests : IAsyncLifetime
 
         // 4. Second Reminder Trigger Immediately -> Cooldown applies
         var trigger2Response = await ownerClient.PostAsJsonAsync(
-            $"/api/v1/workspaces/{workspaceId}/finance/reminders",
+            $"/api/workspaces/{workspaceId}/finance/reminders",
             reminderReq,
             JsonSerializationHelper.Options);
 

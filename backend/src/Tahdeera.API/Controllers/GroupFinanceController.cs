@@ -14,7 +14,6 @@ namespace Tahdeera.API.Controllers;
 [ApiController]
 [Authorize]
 [Route("api/workspaces/{workspaceId:guid}/groups/{groupId:guid}/finance")]
-[Route("api/v1/workspaces/{workspaceId:guid}/groups/{groupId:guid}/finance")]
 public class GroupFinanceController : ApiControllerBase
 {
     private readonly ISender _sender;

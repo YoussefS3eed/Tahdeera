@@ -22,7 +22,6 @@ namespace Tahdeera.API.Controllers;
 [ApiController]
 [Authorize]
 [Route("api/workspaces/{workspaceId:guid}/finance")]
-[Route("api/v1/workspaces/{workspaceId:guid}/finance")]
 public class WorkspaceFinanceController : ApiControllerBase
 {
     private readonly ISender _sender;
@@ -105,7 +104,6 @@ public class WorkspaceFinanceController : ApiControllerBase
     }
 
     [HttpPost("payments")]
-    [HttpPost("/api/v1/workspaces/{workspaceId:guid}/payments")]
     [HttpPost("/api/workspaces/{workspaceId:guid}/payments")]
     [HasPermission(Permissions.FinancesManage)]
     [ProducesResponseType(typeof(RecordPaymentResultDto), StatusCodes.Status201Created)]

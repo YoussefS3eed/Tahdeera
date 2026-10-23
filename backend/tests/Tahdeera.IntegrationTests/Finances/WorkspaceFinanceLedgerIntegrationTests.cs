@@ -123,7 +123,7 @@ public class WorkspaceFinanceLedgerIntegrationTests : IAsyncLifetime
         }
 
         // Act 1: Get ledger
-        var response = await ownerClient.GetAsync($"/api/v1/workspaces/{workspaceId}/finance/ledger?pageIndex=0&pageSize=10");
+        var response = await ownerClient.GetAsync($"/api/workspaces/{workspaceId}/finance/ledger?pageIndex=0&pageSize=10");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var result = await response.Content.ReadFromJsonAsync<PagedResult<WorkspaceFinanceLedgerItemDto>>(JsonSerializationHelper.Options);
@@ -141,7 +141,7 @@ public class WorkspaceFinanceLedgerIntegrationTests : IAsyncLifetime
         result.Items[1].Amount.Should().Be(400m);
 
         // Act 2: Filter by transactionType=Charge
-        var chargeResponse = await ownerClient.GetAsync($"/api/v1/workspaces/{workspaceId}/finance/ledger?transactionType=Charge");
+        var chargeResponse = await ownerClient.GetAsync($"/api/workspaces/{workspaceId}/finance/ledger?transactionType=Charge");
         chargeResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         var chargeResult = await chargeResponse.Content.ReadFromJsonAsync<PagedResult<WorkspaceFinanceLedgerItemDto>>(JsonSerializationHelper.Options);
         chargeResult!.TotalCount.Should().Be(1);
@@ -149,7 +149,7 @@ public class WorkspaceFinanceLedgerIntegrationTests : IAsyncLifetime
 
         // Act 3: RBAC check
         var anonClient = _factory.CreateClient();
-        var anonResponse = await anonClient.GetAsync($"/api/v1/workspaces/{workspaceId}/finance/ledger");
+        var anonResponse = await anonClient.GetAsync($"/api/workspaces/{workspaceId}/finance/ledger");
         anonResponse.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 }

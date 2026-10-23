@@ -23,7 +23,6 @@ namespace Tahdeera.API.Controllers;
 [ApiController]
 [Authorize]
 [Route("api/workspaces/{workspaceId:guid}/students/{studentId:guid}/finance")]
-[Route("api/v1/workspaces/{workspaceId:guid}/students/{studentId:guid}/finance")]
 public class StudentFinanceController : ApiControllerBase
 {
     private readonly ISender _sender;

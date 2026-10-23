@@ -116,7 +116,7 @@ public class FinanceExportIntegrationTests : IAsyncLifetime
         var toDate = DateTimeOffset.UtcNow.AddDays(5).ToString("yyyy-MM-ddTHH:mm:ssZ");
 
         var exportResponse = await ownerClient.GetAsync(
-            $"/api/v1/workspaces/{workspaceId}/finance/export?fromDate={fromDate}&toDate={toDate}");
+            $"/api/workspaces/{workspaceId}/finance/export?fromDate={fromDate}&toDate={toDate}");
 
         exportResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         exportResponse.Content.Headers.ContentType?.MediaType.Should().Be("text/csv");

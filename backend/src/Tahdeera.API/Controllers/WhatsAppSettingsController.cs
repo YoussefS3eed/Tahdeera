@@ -16,7 +16,6 @@ using Tahdeera.Application.Features.WhatsApp.Queries.GetWorkspaceWhatsAppConfig;
 [ApiVersion("1.0")]
 [ApiController]
 [Authorize(Policy = Permissions.WhatsAppManage)]
-[Route("api/v1/workspaces/{workspaceId:guid}/whatsapp")]
 [Route("api/workspaces/{workspaceId:guid}/whatsapp")]
 public sealed class WhatsAppSettingsController : ApiControllerBase
 {

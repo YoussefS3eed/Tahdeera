@@ -131,7 +131,7 @@ public class PublicReceiptVerificationIntegrationTests : IAsyncLifetime
         var anonClient = _factory.CreateClient();
 
         // Act 1: Call public verification endpoint with valid hash
-        var response = await anonClient.GetAsync($"/api/v1/finance/verify-receipt/{receiptNumber}/{validHash}");
+        var response = await anonClient.GetAsync($"/api/finance/verify-receipt/{receiptNumber}/{validHash}");
         var body = await response.Content.ReadAsStringAsync();
         response.StatusCode.Should().Be(HttpStatusCode.OK, because: $"Response body: {body}");
         var result = await response.Content.ReadFromJsonAsync<VerifiedReceiptDto>(JsonSerializationHelper.Options);
@@ -146,7 +146,7 @@ public class PublicReceiptVerificationIntegrationTests : IAsyncLifetime
 
         // Act 2: Altered hash should return 404 NotFound
         var fakeHash = new string('f', 64);
-        var badResponse = await anonClient.GetAsync($"/api/v1/finance/verify-receipt/{receiptNumber}/{fakeHash}");
+        var badResponse = await anonClient.GetAsync($"/api/finance/verify-receipt/{receiptNumber}/{fakeHash}");
         badResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 }

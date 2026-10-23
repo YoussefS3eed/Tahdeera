@@ -17,7 +17,6 @@ using Tahdeera.Domain.Repositories;
 [ApiVersion("1.0")]
 [ApiController]
 [Authorize(Policy = Permissions.WhatsAppView)]
-[Route("api/v1/workspaces/{workspaceId:guid}/whatsapp/messages")]
 [Route("api/workspaces/{workspaceId:guid}/whatsapp/messages")]
 public sealed class WhatsAppMessagesController : ApiControllerBase
 {

@@ -102,7 +102,7 @@ public class FinancesConcurrencyIntegrationTests : IAsyncLifetime
             Notes: null);
 
         var chargeResponse = await client.PostAsJsonAsync(
-            $"/api/v1/workspaces/{wsResult.WorkspaceId}/students/{student.Id}/finance/charges",
+            $"/api/workspaces/{wsResult.WorkspaceId}/students/{student.Id}/finance/charges",
             chargeRequest,
             JsonSerializationHelper.Options);
         chargeResponse.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -123,7 +123,7 @@ public class FinancesConcurrencyIntegrationTests : IAsyncLifetime
                 Allocations: null);
 
             return await taskClient.PostAsJsonAsync(
-                $"/api/v1/workspaces/{wsResult.WorkspaceId}/students/{student.Id}/finance/payments",
+                $"/api/workspaces/{wsResult.WorkspaceId}/students/{student.Id}/finance/payments",
                 paymentRequest,
                 JsonSerializationHelper.Options);
         }).ToArray();
@@ -134,7 +134,7 @@ public class FinancesConcurrencyIntegrationTests : IAsyncLifetime
         responses.Should().OnlyContain(r => r.StatusCode == HttpStatusCode.Created);
 
         // 5. Query final statement
-        var statementResponse = await client.GetAsync($"/api/v1/workspaces/{wsResult.WorkspaceId}/students/{student.Id}/finance/account");
+        var statementResponse = await client.GetAsync($"/api/workspaces/{wsResult.WorkspaceId}/students/{student.Id}/finance/account");
         statementResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         var statement = await statementResponse.Content.ReadFromJsonAsync<StudentAccountStatementDto>(JsonSerializationHelper.Options);
 

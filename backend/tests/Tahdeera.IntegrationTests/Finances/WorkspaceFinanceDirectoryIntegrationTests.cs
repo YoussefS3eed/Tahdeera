@@ -132,7 +132,7 @@ public class WorkspaceFinanceDirectoryIntegrationTests : IAsyncLifetime
         }
 
         // Act 1: Get page 0 with size 10
-        var page0Response = await ownerClient.GetAsync($"/api/v1/workspaces/{workspaceId}/finance/students?pageIndex=0&pageSize=10");
+        var page0Response = await ownerClient.GetAsync($"/api/workspaces/{workspaceId}/finance/students?pageIndex=0&pageSize=10");
         page0Response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var page0Result = await page0Response.Content.ReadFromJsonAsync<PagedResult<WorkspaceFinanceStudentItemDto>>(JsonSerializationHelper.Options);
@@ -144,7 +144,7 @@ public class WorkspaceFinanceDirectoryIntegrationTests : IAsyncLifetime
         page0Result.HasPreviousPage.Should().BeFalse();
 
         // Act 2: Filter by status=Unpaid
-        var unpaidResponse = await ownerClient.GetAsync($"/api/v1/workspaces/{workspaceId}/finance/students?status=Unpaid&pageSize=50");
+        var unpaidResponse = await ownerClient.GetAsync($"/api/workspaces/{workspaceId}/finance/students?status=Unpaid&pageSize=50");
         unpaidResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var unpaidResult = await unpaidResponse.Content.ReadFromJsonAsync<PagedResult<WorkspaceFinanceStudentItemDto>>(JsonSerializationHelper.Options);
@@ -154,7 +154,7 @@ public class WorkspaceFinanceDirectoryIntegrationTests : IAsyncLifetime
         unpaidResult.Items.Should().OnlyContain(item => item.PaymentStatus == "Unpaid");
 
         // Act 3: Filter by status=Paid
-        var paidResponse = await ownerClient.GetAsync($"/api/v1/workspaces/{workspaceId}/finance/students?status=Paid&pageSize=50");
+        var paidResponse = await ownerClient.GetAsync($"/api/workspaces/{workspaceId}/finance/students?status=Paid&pageSize=50");
         paidResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var paidResult = await paidResponse.Content.ReadFromJsonAsync<PagedResult<WorkspaceFinanceStudentItemDto>>(JsonSerializationHelper.Options);
@@ -163,7 +163,7 @@ public class WorkspaceFinanceDirectoryIntegrationTests : IAsyncLifetime
         paidResult.Items.Should().OnlyContain(item => item.PaymentStatus == "Paid");
 
         // Act 4: Filter by status=Settled
-        var settledResponse = await ownerClient.GetAsync($"/api/v1/workspaces/{workspaceId}/finance/students?status=Settled&pageSize=50");
+        var settledResponse = await ownerClient.GetAsync($"/api/workspaces/{workspaceId}/finance/students?status=Settled&pageSize=50");
         settledResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var settledResult = await settledResponse.Content.ReadFromJsonAsync<PagedResult<WorkspaceFinanceStudentItemDto>>(JsonSerializationHelper.Options);
@@ -173,7 +173,7 @@ public class WorkspaceFinanceDirectoryIntegrationTests : IAsyncLifetime
 
         // Act 5: RBAC - Unauthenticated client
         var anonClient = _factory.CreateClient();
-        var anonResponse = await anonClient.GetAsync($"/api/v1/workspaces/{workspaceId}/finance/students");
+        var anonResponse = await anonClient.GetAsync($"/api/workspaces/{workspaceId}/finance/students");
         anonResponse.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 }
